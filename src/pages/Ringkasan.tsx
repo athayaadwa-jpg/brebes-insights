@@ -1,11 +1,18 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Banknote, BarChart3, Briefcase, GraduationCap, Scale, TrendingUp, Users, UserMinus, Wheat, LineChart, Percent } from "lucide-react";
+import {
+  ArrowRight, Banknote, BarChart3, Briefcase, GraduationCap, Scale, TrendingUp,
+  Users, UserMinus, LineChart, Percent, AlertCircle, Building2, BookOpen, HeartPulse, Wallet, RefreshCw
+} from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { RINGKASAN } from "@/data/statistik";
+import { useRingkasanSheets, type LatestValue } from "@/hooks/useRingkasanSheets";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
-const fmt = (n: number) => n.toLocaleString("id-ID");
-const fmtRp = (n: number) => `Rp ${n.toLocaleString("id-ID")}`;
+const fmt = (n: number, digits = 2) =>
+  n.toLocaleString("id-ID", { maximumFractionDigits: digits, minimumFractionDigits: digits });
+const fmtInt = (n: number) => Math.round(n).toLocaleString("id-ID");
+const fmtRp = (n: number) => `Rp ${Math.round(n).toLocaleString("id-ID")}`;
 
 const indicatorLinks = [
   { to: "/indikator/tpt", label: "Tingkat Pengangguran Terbuka" },
@@ -16,73 +23,248 @@ const indicatorLinks = [
   { to: "/indikator/pertumbuhan-ekonomi", label: "Pertumbuhan Ekonomi" },
 ];
 
+// Hitung tren YoY (% point) berdasar dua entri terakhir yang punya nilai pada `key`.
+const tren = (
+  seri: Array<Record<string, number | null>>,
+  key: string,
+  higherIsBetter: boolean,
+): { value: number; positive: boolean } | undefined => {
+  const valid = seri.filter((r) => r[key] !== null && r[key] !== undefined);
+  if (valid.length < 2) return undefined;
+  const last = valid[valid.length - 1][key] as number;
+  const prev = valid[valid.length - 2][key] as number;
+  const delta = +(last - prev).toFixed(2);
+  if (delta === 0) return undefined;
+  const naik = delta > 0;
+  return { value: delta, positive: higherIsBetter ? naik : !naik };
+};
+
+// Garis Kemiskinan kadang ditulis "563,762" di sheet (dimaksud 563.762 Rp).
+// Jika nilai hasil parser < 10.000, anggap satuan "ribu" dan kalikan 1000.
+const fixGarisKemiskinan = (v: number) => (v < 10000 ? Math.round(v * 1000) : Math.round(v));
+
+const LoadingCard = () => (
+  <div className="rounded-xl border border-border bg-card p-5 shadow-soft">
+    <Skeleton className="h-4 w-24" />
+    <Skeleton className="mt-3 h-8 w-32" />
+    <Skeleton className="mt-2 h-3 w-20" />
+  </div>
+);
+
 const Ringkasan = () => {
-  const r = RINGKASAN;
+  const { data, isLoading, isError, error, refetch, isFetching } = useRingkasanSheets();
+
+  if (isLoading) {
+    return (
+      <div className="animate-fade-in">
+        <PageHeader eyebrow="Memuat data…" title="Ringkasan Eksekutif" description="Mengambil angka terbaru dari Google Sheets." />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 9 }).map((_, i) => <LoadingCard key={i} />)}
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="animate-fade-in">
+        <PageHeader eyebrow="Gagal memuat" title="Ringkasan Eksekutif" description="Terjadi kesalahan saat mengambil data." />
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="mt-0.5 h-5 w-5 text-destructive" />
+            <div className="flex-1">
+              <p className="font-semibold text-destructive">Tidak dapat memuat data dari Google Sheets</p>
+              <p className="mt-1 text-sm text-muted-foreground">{(error as Error)?.message ?? "Unknown error"}</p>
+              <Button onClick={() => refetch()} size="sm" className="mt-4">
+                <RefreshCw className="mr-2 h-4 w-4" /> Coba lagi
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const r = data.ringkasan;
+  const v = (lv: LatestValue) => (lv ? lv.value : null);
+  const yr = (lv: LatestValue) => (lv ? lv.tahun : null);
+  // Tahun referensi = tahun terbesar dari indikator-indikator utama
+  const tahunRef = Math.max(
+    ...[r.persenMiskin, r.tpt, r.tpak, r.ipm, r.gini, r.jumlahMiskin]
+      .map((x) => x?.tahun ?? 0),
+  );
+
   return (
     <div className="animate-fade-in">
       <PageHeader
-        eyebrow={`Data Tahun ${r.tahun}`}
+        eyebrow={`Data terkini · hingga tahun ${tahunRef}`}
         title="Ringkasan Eksekutif"
-        description="Sajian angka-angka kunci yang menggambarkan kondisi terkini Kabupaten Brebes pada satu halaman. Klik indikator untuk melihat detail tren dan peringkat."
+        description="Sajian angka-angka kunci yang menggambarkan kondisi terkini Kabupaten Brebes. Sumber data: Google Sheets BPS Kab. Brebes — diperbarui otomatis."
       />
 
-      {/* Kependudukan */}
-      <section className="mb-10">
-        <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Kependudukan</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <StatCard label="Jumlah Penduduk" value={fmt(r.jumlahPenduduk)} unit="jiwa" icon={Users} variant="primary" hint={`Tahun ${r.tahun}`} />
-          <StatCard label="Penduduk Laki-laki" value={fmt(r.pendudukLaki)} unit="jiwa" icon={Users} hint={`${((r.pendudukLaki / r.jumlahPenduduk) * 100).toFixed(2)}% dari total`} />
-          <StatCard label="Penduduk Perempuan" value={fmt(r.pendudukPerempuan)} unit="jiwa" icon={Users} hint={`${((r.pendudukPerempuan / r.jumlahPenduduk) * 100).toFixed(2)}% dari total`} />
-        </div>
-      </section>
+      <div className="mb-6 flex items-center justify-between">
+        <p className="text-xs text-muted-foreground">
+          Pembaruan terakhir: {new Date(data.lastUpdated).toLocaleString("id-ID")}
+        </p>
+        <Button onClick={() => refetch()} size="sm" variant="outline" disabled={isFetching}>
+          <RefreshCw className={`mr-2 h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} /> Muat ulang
+        </Button>
+      </div>
 
-      {/* Kemiskinan */}
+      {/* Kemiskinan & Pemerataan */}
       <section className="mb-10">
         <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Kemiskinan & Pemerataan</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <StatCard label="Penduduk Miskin" value={fmt(r.pendudukMiskin)} unit="jiwa" icon={UserMinus} variant="accent" />
-          <StatCard label="Miskin Laki-laki" value={fmt(r.miskinLaki)} unit="jiwa" icon={UserMinus} />
-          <StatCard label="Miskin Perempuan" value={fmt(r.miskinPerempuan)} unit="jiwa" icon={UserMinus} />
-          <StatCard label="Persentase Kemiskinan" value={r.persentaseKemiskinan.toFixed(2)} unit="%" icon={Percent} variant="accent" trend={{ value: -0.73, positive: true }} hint="vs tahun sebelumnya" />
-          <StatCard label="Garis Kemiskinan" value={fmtRp(r.garisKemiskinan)} unit="/kapita/bln" icon={Banknote} />
-          <StatCard label="Gini Ratio" value={r.giniRatio.toFixed(3)} icon={Scale} hint="0 = merata, 1 = timpang" />
+          {v(r.persenMiskin) !== null && (
+            <StatCard
+              label="Persentase Penduduk Miskin"
+              value={fmt(v(r.persenMiskin)!)}
+              unit="%"
+              icon={Percent}
+              variant="accent"
+              trend={tren(data.seri, "persenMiskin", false)}
+              hint={`Tahun ${yr(r.persenMiskin)}`}
+            />
+          )}
+          {v(r.jumlahMiskin) !== null && (
+            <StatCard
+              label="Jumlah Penduduk Miskin"
+              value={fmt(v(r.jumlahMiskin)!, 2)}
+              unit="ribu jiwa"
+              icon={UserMinus}
+              variant="accent"
+              trend={tren(data.seri, "jumlahMiskin", false)}
+              hint={`Tahun ${yr(r.jumlahMiskin)}`}
+            />
+          )}
+          {v(r.miskinEkstrem) !== null && (
+            <StatCard
+              label="Kemiskinan Ekstrem"
+              value={fmt(v(r.miskinEkstrem)!)}
+              unit="%"
+              icon={UserMinus}
+              hint={`Tahun ${yr(r.miskinEkstrem)}`}
+            />
+          )}
+          {v(r.garisKemiskinan) !== null && (
+            <StatCard
+              label="Garis Kemiskinan"
+              value={fmtRp(fixGarisKemiskinan(v(r.garisKemiskinan)!))}
+              unit="/kapita/bln"
+              icon={Banknote}
+              hint={`Tahun ${yr(r.garisKemiskinan)}`}
+            />
+          )}
+          {v(r.p1) !== null && (
+            <StatCard label="Indeks Kedalaman (P1)" value={fmt(v(r.p1)!)} icon={LineChart} hint={`Tahun ${yr(r.p1)}`} />
+          )}
+          {v(r.p2) !== null && (
+            <StatCard label="Indeks Keparahan (P2)" value={fmt(v(r.p2)!)} icon={LineChart} hint={`Tahun ${yr(r.p2)}`} />
+          )}
+          {v(r.gini) !== null && (
+            <StatCard
+              label="Gini Ratio"
+              value={fmt(v(r.gini)!, 3)}
+              icon={Scale}
+              hint={`Tahun ${yr(r.gini)} · 0 = merata, 1 = timpang`}
+            />
+          )}
+        </div>
+      </section>
+
+      {/* Ketenagakerjaan */}
+      <section className="mb-10">
+        <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Ketenagakerjaan</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {v(r.tpak) !== null && (
+            <StatCard
+              label="TPAK"
+              value={fmt(v(r.tpak)!)}
+              unit="%"
+              icon={Users}
+              variant="primary"
+              trend={tren(data.seri, "tpak", true)}
+              hint={`Partisipasi angkatan kerja · ${yr(r.tpak)}`}
+            />
+          )}
+          {v(r.tpt) !== null && (
+            <StatCard
+              label="TPT"
+              value={fmt(v(r.tpt)!)}
+              unit="%"
+              icon={Briefcase}
+              variant="accent"
+              trend={tren(data.seri, "tpt", false)}
+              hint={`Pengangguran terbuka · ${yr(r.tpt)}`}
+            />
+          )}
+        </div>
+      </section>
+
+      {/* Pembangunan Manusia */}
+      <section className="mb-10">
+        <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Pembangunan Manusia</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {v(r.ipm) !== null && (
+            <StatCard
+              label="IPM"
+              value={fmt(v(r.ipm)!)}
+              icon={GraduationCap}
+              variant="primary"
+              trend={tren(data.seri, "ipmLF", true) ?? tren(data.seri, "ipm", true)}
+              hint={`Tahun ${yr(r.ipm)}`}
+            />
+          )}
+          {v(r.uhh) !== null && (
+            <StatCard label="Umur Harapan Hidup" value={fmt(v(r.uhh)!)} unit="tahun" icon={HeartPulse} hint={`Tahun ${yr(r.uhh)}`} />
+          )}
+          {v(r.eys) !== null && (
+            <StatCard label="Harapan Lama Sekolah" value={fmt(v(r.eys)!)} unit="tahun" icon={BookOpen} hint={`Tahun ${yr(r.eys)}`} />
+          )}
+          {v(r.mys) !== null && (
+            <StatCard label="Rata-rata Lama Sekolah" value={fmt(v(r.mys)!)} unit="tahun" icon={BookOpen} hint={`Tahun ${yr(r.mys)}`} />
+          )}
+          {v(r.ppp) !== null && (
+            <StatCard
+              label="Pengeluaran per Kapita"
+              value={fmtRp(v(r.ppp)! * 1000)}
+              unit="/tahun"
+              icon={Wallet}
+              hint={`Disesuaikan · ${yr(r.ppp)}`}
+            />
+          )}
         </div>
       </section>
 
       {/* Ekonomi */}
       <section className="mb-10">
         <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Ekonomi</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard label="PDRB ADHB" value={r.pdrbAdhb} unit="triliun Rp" icon={BarChart3} variant="primary" />
-          <StatCard label="PDRB ADHK" value={r.pdrbAdhk} unit="triliun Rp" icon={BarChart3} />
-          <StatCard label="Pertumbuhan Ekonomi" value={r.pertumbuhanEkonomi.toFixed(2)} unit="%" icon={LineChart} variant="primary" trend={{ value: 0.16, positive: true }} hint="YoY" />
-          <StatCard label="Inflasi" value={r.inflasi.toFixed(2)} unit="%" icon={TrendingUp} hint="Year-on-year" />
-        </div>
-      </section>
-
-      {/* Sosial & Ketenagakerjaan */}
-      <section className="mb-10">
-        <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Sosial & Ketenagakerjaan</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <StatCard label="IPM" value={r.ipm.toFixed(2)} icon={GraduationCap} variant="primary" trend={{ value: 0.49, positive: true }} hint="Pembangunan manusia" />
-          <StatCard label="TPT" value={r.tpt.toFixed(2)} unit="%" icon={Briefcase} trend={{ value: -0.38, positive: true }} hint="Pengangguran terbuka" />
-          <StatCard label="TPAK" value={r.tpak.toFixed(2)} unit="%" icon={Users} trend={{ value: 0.53, positive: true }} hint="Partisipasi kerja" />
-        </div>
-      </section>
-
-      {/* Pertanian */}
-      <section className="mb-10">
-        <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Pertanian</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <StatCard label="Luas Panen Padi" value={fmt(r.luasPanen)} unit="hektar" icon={Wheat} variant="accent" />
-          <StatCard label="Produksi Padi" value={fmt(r.produksiPadi)} unit="ton GKG" icon={Wheat} variant="accent" />
+          {data.pdrb && data.pdrb.laju !== null && (
+            <StatCard
+              label="Laju Pertumbuhan PDRB (q-to-q)"
+              value={fmt(data.pdrb.laju)}
+              unit="%"
+              icon={TrendingUp}
+              variant="primary"
+              hint={data.pdrb.periode}
+            />
+          )}
+          {v(r.ikk) !== null && (
+            <StatCard
+              label="Indeks Kemahalan Konstruksi"
+              value={fmt(v(r.ikk)!)}
+              icon={Building2}
+              hint={`Tahun ${yr(r.ikk)}`}
+            />
+          )}
         </div>
       </section>
 
       {/* Quick links */}
       <section className="rounded-2xl border border-border bg-gradient-subtle p-6 sm:p-8">
         <h2 className="font-display text-xl font-bold">Telusuri Indikator Detail</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Setiap indikator menyajikan tren 5 tahun, peringkat antar kab/kota Jateng, serta perbandingan dengan Provinsi & Nasional.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Setiap indikator menyajikan tren tahunan, peringkat antar kab/kota Jateng, serta perbandingan dengan Provinsi & Nasional.</p>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {indicatorLinks.map((l) => (
             <Link

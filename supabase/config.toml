@@ -1,0 +1,4 @@
+project_id = "shnvkktsukzauoacaqfi"
+
+[functions.sheets-ringkasan]
+verify_jwt = false
