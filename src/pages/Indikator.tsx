@@ -4,8 +4,9 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { SeriesChart, RankingChart } from "@/components/dashboard/Charts";
 import { Button } from "@/components/ui/button";
 import { getIndicator, INDICATORS } from "@/data/statistik";
+import { formatSmart, withUnit } from "@/lib/format";
 
-const fmt = (n: number) => n.toLocaleString("id-ID", { maximumFractionDigits: 2 });
+const fmt = (n: number) => formatSmart(n, 2);
 
 const Indikator = () => {
   const { slug } = useParams();
@@ -40,7 +41,7 @@ const Indikator = () => {
           </div>
           <div className="mt-2 flex items-baseline gap-1.5">
             <span className="font-display text-4xl font-extrabold text-brebes">{fmt(data.highlight.brebes)}</span>
-            {data.satuan && <span className="text-sm font-medium text-muted-foreground">{data.satuan}</span>}
+            {data.satuan && <span className={`text-sm font-medium text-muted-foreground ${data.satuan === "%" ? "-ml-1.5" : ""}`}>{data.satuan}</span>}
           </div>
           <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-brebes/10 px-2 py-0.5 text-xs font-semibold text-brebes">
             <Trophy className="h-3 w-3" /> Peringkat {rankBrebes} dari {sorted.length}
@@ -52,7 +53,7 @@ const Indikator = () => {
           </div>
           <div className="mt-2 flex items-baseline gap-1.5">
             <span className="font-display text-4xl font-bold text-jateng">{fmt(data.highlight.jateng)}</span>
-            {data.satuan && <span className="text-sm font-medium text-muted-foreground">{data.satuan}</span>}
+            {data.satuan && <span className={`text-sm font-medium text-muted-foreground ${data.satuan === "%" ? "-ml-1.5" : ""}`}>{data.satuan}</span>}
           </div>
           <div className="mt-2 text-xs text-muted-foreground">Rata-rata Jawa Tengah</div>
         </div>
@@ -62,7 +63,7 @@ const Indikator = () => {
           </div>
           <div className="mt-2 flex items-baseline gap-1.5">
             <span className="font-display text-4xl font-bold text-nasional">{fmt(data.highlight.nasional)}</span>
-            {data.satuan && <span className="text-sm font-medium text-muted-foreground">{data.satuan}</span>}
+            {data.satuan && <span className={`text-sm font-medium text-muted-foreground ${data.satuan === "%" ? "-ml-1.5" : ""}`}>{data.satuan}</span>}
           </div>
           <div className="mt-2 text-xs text-muted-foreground">Angka Indonesia</div>
         </div>

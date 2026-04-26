@@ -8,11 +8,10 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { useRingkasanSheets, type LatestValue } from "@/hooks/useRingkasanSheets";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { formatDecimal, formatRupiah, normalizeGarisKemiskinan } from "@/lib/format";
 
-const fmt = (n: number, digits = 2) =>
-  n.toLocaleString("id-ID", { maximumFractionDigits: digits, minimumFractionDigits: digits });
-const fmtInt = (n: number) => Math.round(n).toLocaleString("id-ID");
-const fmtRp = (n: number) => `Rp ${Math.round(n).toLocaleString("id-ID")}`;
+const fmt = formatDecimal;
+const fmtRp = (n: number) => formatRupiah(n);
 
 const indicatorLinks = [
   { to: "/indikator/tpt", label: "Tingkat Pengangguran Terbuka" },
@@ -41,7 +40,7 @@ const tren = (
 
 // Garis Kemiskinan kadang ditulis "563,762" di sheet (dimaksud 563.762 Rp).
 // Jika nilai hasil parser < 10.000, anggap satuan "ribu" dan kalikan 1000.
-const fixGarisKemiskinan = (v: number) => (v < 10000 ? Math.round(v * 1000) : Math.round(v));
+const fixGarisKemiskinan = normalizeGarisKemiskinan;
 
 const LoadingCard = () => (
   <div className="rounded-xl border border-border bg-card p-5 shadow-soft">

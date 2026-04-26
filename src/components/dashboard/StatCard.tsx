@@ -39,7 +39,11 @@ export const StatCard = ({ label, value, unit, icon: Icon, hint, trend, variant 
       </div>
       <div className="mt-3 flex items-baseline gap-1.5">
         <span className="font-display text-3xl font-bold tracking-tight text-foreground">{value}</span>
-        {unit && <span className="text-sm font-medium text-muted-foreground">{unit}</span>}
+        {unit && (
+          <span className={cn("text-sm font-medium text-muted-foreground", unit === "%" && "-ml-1.5")}>
+            {unit}
+          </span>
+        )}
       </div>
       {(hint || trend) && (
         <div className="mt-2 flex items-center gap-2 text-xs">
