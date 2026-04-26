@@ -20,6 +20,15 @@ export type RingkasanSheets = {
     ppp: LatestValue;                 // ribu Rp / tahun
     ipm: LatestValue;
     ikk: LatestValue;
+    luasPanen: LatestValue;           // hektare
+    produksiPadi: LatestValue;        // ton GKG
+    produksiBeras: LatestValue;       // ton beras
+    pendudukLaki: LatestValue;        // jiwa
+    pendudukPerempuan: LatestValue;   // jiwa
+    pendudukTotal: LatestValue;       // jiwa
+    pertumbuhanLU: LatestValue;       // %
+    pdrbKonstan: LatestValue;         // miliar Rp
+    lajuPdrbTahunan: LatestValue;     // %
   };
   seri: Array<Record<string, number | null>>;
   pdrb: { periode: string; laju: number | null } | null;

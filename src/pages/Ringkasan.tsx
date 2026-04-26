@@ -1,16 +1,18 @@
 import { Link } from "react-router-dom";
 import {
   ArrowRight, Banknote, BarChart3, Briefcase, GraduationCap, Scale, TrendingUp,
-  Users, UserMinus, LineChart, Percent, AlertCircle, Building2, BookOpen, HeartPulse, Wallet, RefreshCw
+  Users, UserMinus, LineChart, Percent, AlertCircle, Building2, BookOpen, HeartPulse, Wallet, RefreshCw,
+  Wheat, Sprout, Package, User, UserRound, UsersRound, Factory
 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { useRingkasanSheets, type LatestValue } from "@/hooks/useRingkasanSheets";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { formatDecimal, formatRupiah, normalizeGarisKemiskinan } from "@/lib/format";
+import { formatDecimal, formatInt, formatRupiah, normalizeGarisKemiskinan } from "@/lib/format";
 
 const fmt = formatDecimal;
+const fmtInt = formatInt;
 const fmtRp = (n: number) => formatRupiah(n);
 
 const indicatorLinks = [
@@ -109,6 +111,41 @@ const Ringkasan = () => {
           <RefreshCw className={`mr-2 h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} /> Muat ulang
         </Button>
       </div>
+
+      {/* Demografi */}
+      <section className="mb-10">
+        <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Demografi</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {v(r.pendudukTotal) !== null && (
+            <StatCard
+              label="Jumlah Penduduk"
+              value={fmtInt(v(r.pendudukTotal)!)}
+              unit="jiwa"
+              icon={UsersRound}
+              variant="primary"
+              hint={`Proyeksi · Tahun ${yr(r.pendudukTotal)}`}
+            />
+          )}
+          {v(r.pendudukLaki) !== null && (
+            <StatCard
+              label="Penduduk Laki-laki"
+              value={fmtInt(v(r.pendudukLaki)!)}
+              unit="jiwa"
+              icon={User}
+              hint={`Tahun ${yr(r.pendudukLaki)}`}
+            />
+          )}
+          {v(r.pendudukPerempuan) !== null && (
+            <StatCard
+              label="Penduduk Perempuan"
+              value={fmtInt(v(r.pendudukPerempuan)!)}
+              unit="jiwa"
+              icon={UserRound}
+              hint={`Tahun ${yr(r.pendudukPerempuan)}`}
+            />
+          )}
+        </div>
+      </section>
 
       {/* Kemiskinan & Pemerataan */}
       <section className="mb-10">
@@ -235,6 +272,41 @@ const Ringkasan = () => {
         </div>
       </section>
 
+      {/* Pertanian */}
+      <section className="mb-10">
+        <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Pertanian Padi</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {v(r.luasPanen) !== null && (
+            <StatCard
+              label="Luas Panen Padi"
+              value={fmtInt(v(r.luasPanen)!)}
+              unit="hektare"
+              icon={Sprout}
+              variant="primary"
+              hint={`Tahun ${yr(r.luasPanen)}`}
+            />
+          )}
+          {v(r.produksiPadi) !== null && (
+            <StatCard
+              label="Produksi Padi"
+              value={fmtInt(v(r.produksiPadi)!)}
+              unit="ton GKG"
+              icon={Wheat}
+              hint={`Tahun ${yr(r.produksiPadi)}`}
+            />
+          )}
+          {v(r.produksiBeras) !== null && (
+            <StatCard
+              label="Produksi Beras"
+              value={fmtInt(v(r.produksiBeras)!)}
+              unit="ton beras"
+              icon={Package}
+              hint={`Tahun ${yr(r.produksiBeras)}`}
+            />
+          )}
+        </div>
+      </section>
+
       {/* Ekonomi */}
       <section className="mb-10">
         <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Ekonomi</h2>
@@ -247,6 +319,36 @@ const Ringkasan = () => {
               icon={TrendingUp}
               variant="primary"
               hint={data.pdrb.periode}
+            />
+          )}
+          {v(r.pdrbKonstan) !== null && (
+            <StatCard
+              label="PDRB Atas Dasar Harga Konstan"
+              value={fmt(v(r.pdrbKonstan)!)}
+              unit="miliar Rp"
+              icon={Factory}
+              variant="accent"
+              trend={tren(data.seri, "pdrbKonstan", true)}
+              hint={`Tahun ${yr(r.pdrbKonstan)}`}
+            />
+          )}
+          {v(r.pertumbuhanLU) !== null && (
+            <StatCard
+              label="Pertumbuhan Ekonomi Menurut Lapangan Usaha"
+              value={fmt(v(r.pertumbuhanLU)!)}
+              unit="%"
+              icon={BarChart3}
+              trend={tren(data.seri, "pertumbuhanLU", true)}
+              hint={`Tahun ${yr(r.pertumbuhanLU)}`}
+            />
+          )}
+          {v(r.lajuPdrbTahunan) !== null && (
+            <StatCard
+              label="Laju Pertumbuhan PDRB (tahunan)"
+              value={fmt(v(r.lajuPdrbTahunan)!)}
+              unit="%"
+              icon={TrendingUp}
+              hint={`Tahun ${yr(r.lajuPdrbTahunan)}`}
             />
           )}
           {v(r.ikk) !== null && (

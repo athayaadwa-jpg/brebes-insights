@@ -20,8 +20,8 @@ Deno.serve(async (req) => {
     if (!GOOGLE_SHEETS_API_KEY) throw new Error("GOOGLE_SHEETS_API_KEY tidak tersedia (sambungkan Google Sheets connector)");
 
     const ranges = [
-      "Indikator!A1:Z60",
-      "PDRB!A1:D20",
+      "Indikator!A1:AZ60",
+      "PDRB!A1:D30",
     ];
     const qs = ranges.map((r) => `ranges=${encodeURIComponent(r)}`).join("&");
     const url = `${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${qs}`;
@@ -74,6 +74,15 @@ Deno.serve(async (req) => {
       ppp: idx("PPP (000 Rp)"),
       ipm: idx("IPM metode baru"),
       ipmLF: idx("IPM Metode baru (Dg UHH hasil Long Form SP2020)"),
+      luasPanen: idx("Luas Panen Padi (Hektare)"),
+      produksiPadi: idx("Produksi Padi (Ton GKG)"),
+      produksiBeras: idx("Produksi Beras (Ton Beras)"),
+      pendudukLaki: idx("Proyeksi Penduduk Laki-laki (Jiwa)"),
+      pendudukPerempuan: idx("Proyeksi Penduduk Perempuan (Jiwa)"),
+      pendudukTotal: idx("Proyeksi Penduduk Total (Jiwa)"),
+      pertumbuhanLU: idx("Pertumbuhan Ekonomi Menurut Lapangan Usaha"),
+      pdrbKonstan: idx("PDRB Atas Dasar Harga Konstan (miliar rupiah)"),
+      lajuPdrbTahunan: idx("Laju Pertumbuhan PDRB (q to q) (persen)"),
     };
 
     // Bangun seri tahunan
@@ -97,6 +106,15 @@ Deno.serve(async (req) => {
       ipm: parseId(r[COL.ipm]),
       ipmLF: parseId(r[COL.ipmLF]),
       ikk: parseId(r[COL.ikk]),
+      luasPanen: parseId(r[COL.luasPanen]),
+      produksiPadi: parseId(r[COL.produksiPadi]),
+      produksiBeras: parseId(r[COL.produksiBeras]),
+      pendudukLaki: parseId(r[COL.pendudukLaki]),
+      pendudukPerempuan: parseId(r[COL.pendudukPerempuan]),
+      pendudukTotal: parseId(r[COL.pendudukTotal]),
+      pertumbuhanLU: parseId(r[COL.pertumbuhanLU]),
+      pdrbKonstan: parseId(r[COL.pdrbKonstan]),
+      lajuPdrbTahunan: parseId(r[COL.lajuPdrbTahunan]),
     }));
 
     // Ambil tahun terakhir yang punya nilai untuk setiap indikator
@@ -124,6 +142,15 @@ Deno.serve(async (req) => {
       ppp: latest("ppp"),
       ipm: latest("ipmLF") ?? latest("ipm"),
       ikk: latest("ikk"),
+      luasPanen: latest("luasPanen"),
+      produksiPadi: latest("produksiPadi"),
+      produksiBeras: latest("produksiBeras"),
+      pendudukLaki: latest("pendudukLaki"),
+      pendudukPerempuan: latest("pendudukPerempuan"),
+      pendudukTotal: latest("pendudukTotal"),
+      pertumbuhanLU: latest("pertumbuhanLU"),
+      pdrbKonstan: latest("pdrbKonstan"),
+      lajuPdrbTahunan: latest("lajuPdrbTahunan"),
     };
 
     // PDRB (q-to-q) -> ambil baris terakhir
