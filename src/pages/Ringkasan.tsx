@@ -40,7 +40,7 @@ const tren = (
 
 // Garis Kemiskinan kadang ditulis "563,762" di sheet (dimaksud 563.762 Rp).
 // Jika nilai hasil parser < 10.000, anggap satuan "ribu" dan kalikan 1000.
-const fixGarisKemiskinan = (v: number) => (v < 10000 ? Math.round(v * 1000) : Math.round(v));
+const fixGarisKemiskinan = normalizeGarisKemiskinan;
 
 const LoadingCard = () => (
   <div className="rounded-xl border border-border bg-card p-5 shadow-soft">
