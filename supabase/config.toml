@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.sheets-konsep]
 verify_jwt = false
+
+[functions.sheets-indikator]
+verify_jwt = false
