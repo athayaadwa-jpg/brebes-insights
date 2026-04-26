@@ -33,35 +33,95 @@ export const SeriesChart = ({ data, satuan }: { data: SeriesPoint[]; satuan: str
   </ResponsiveContainer>
 );
 
+// Rapikan label nama wilayah:
+// - "Kota X"  -> tetap "Kota X"
+// - selain "Brebes" / agregat -> diberi prefix "Kab. "
+const formatWilayah = (nama: string): string => {
+  if (nama === "Jawa Tengah" || nama === "Indonesia") return nama;
+  if (nama.startsWith("Kota ")) return nama;
+  return `Kab. ${nama}`;
+};
+
+type RankingEntry = RankPoint & { _kind: "brebes" | "jateng" | "nasional" | "kab" | "kota" };
+
 export const RankingChart = ({
   data,
   higherIsBetter,
   satuan,
+  jateng,
+  nasional,
 }: {
   data: RankPoint[];
   higherIsBetter: boolean;
   satuan: string;
+  jateng?: number;
+  nasional?: number;
 }) => {
-  const sorted = [...data].sort((a, b) => (higherIsBetter ? b.nilai - a.nilai : a.nilai - b.nilai));
+  const enriched: RankingEntry[] = [
+    ...data.map((d) => ({
+      ...d,
+      _kind: d.wilayah === "Brebes" ? ("brebes" as const) : d.wilayah.startsWith("Kota") ? ("kota" as const) : ("kab" as const),
+    })),
+    ...(jateng !== undefined ? [{ wilayah: "Jawa Tengah", nilai: jateng, _kind: "jateng" as const }] : []),
+    ...(nasional !== undefined ? [{ wilayah: "Indonesia", nilai: nasional, _kind: "nasional" as const }] : []),
+  ];
+  const sorted = [...enriched].sort((a, b) => (higherIsBetter ? b.nilai - a.nilai : a.nilai - b.nilai));
+
+  const colorFor = (kind: RankingEntry["_kind"]): string => {
+    switch (kind) {
+      case "brebes":   return "hsl(var(--brebes))";
+      case "jateng":   return "hsl(var(--jateng))";
+      case "nasional": return "hsl(var(--nasional))";
+      default:         return "hsl(var(--muted-foreground) / 0.35)";
+    }
+  };
+
+  // Sediakan field label yang sudah dirapikan untuk Y-axis & tooltip.
+  const chartData = sorted.map((d) => ({ ...d, label: formatWilayah(d.wilayah) }));
+
   return (
-    <ResponsiveContainer width="100%" height={Math.max(540, sorted.length * 18)}>
-      <BarChart data={sorted} layout="vertical" margin={{ top: 4, right: 40, bottom: 4, left: 8 }}>
+    <ResponsiveContainer width="100%" height={Math.max(560, chartData.length * 20)}>
+      <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 48, bottom: 4, left: 8 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
         <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v: number) => formatSmart(v, 1)} />
-        <YAxis type="category" dataKey="wilayah" stroke="hsl(var(--muted-foreground))" fontSize={10} width={110} interval={0} />
-        <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => withUnit(formatSmart(v), satuan)} />
+        <YAxis
+          type="category"
+          dataKey="label"
+          stroke="hsl(var(--muted-foreground))"
+          fontSize={11}
+          width={140}
+          interval={0}
+          tick={({ x, y, payload }: { x: number; y: number; payload: { value: string } }) => {
+            const entry = chartData.find((d) => d.label === payload.value);
+            const highlight = entry && entry._kind !== "kab" && entry._kind !== "kota";
+            return (
+              <text
+                x={x}
+                y={y}
+                dy={4}
+                textAnchor="end"
+                fontSize={11}
+                fontWeight={highlight ? 700 : 400}
+                fill={
+                  entry?._kind === "brebes" ? "hsl(var(--brebes))"
+                  : entry?._kind === "jateng" ? "hsl(var(--jateng))"
+                  : entry?._kind === "nasional" ? "hsl(var(--nasional))"
+                  : "hsl(var(--muted-foreground))"
+                }
+              >
+                {payload.value}
+              </text>
+            );
+          }}
+        />
+        <Tooltip
+          contentStyle={tooltipStyle}
+          formatter={(v: number) => withUnit(formatSmart(v), satuan)}
+          labelFormatter={(label) => String(label)}
+        />
         <Bar dataKey="nilai" radius={[0, 4, 4, 0]}>
-          {sorted.map((entry, i) => (
-            <Cell
-              key={i}
-              fill={
-                entry.wilayah === "Brebes"
-                  ? "hsl(var(--brebes))"
-                  : entry.wilayah.startsWith("Kota")
-                  ? "hsl(var(--muted-foreground) / 0.5)"
-                  : "hsl(var(--primary-glow) / 0.55)"
-              }
-            />
+          {chartData.map((entry, i) => (
+            <Cell key={i} fill={colorFor(entry._kind)} />
           ))}
         </Bar>
       </BarChart>
