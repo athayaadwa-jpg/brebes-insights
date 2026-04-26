@@ -133,27 +133,37 @@ Deno.serve(async (req) => {
     }
 
     // ---- Ranking per indikator: ambil tahun terbaru yang memiliki data ----
-    const buildRanking = (sheetName: string): { tahun: number | null; data: RankRow[] } => {
+    // Sekaligus pisahkan baris "Jawa Tengah" / "Indonesia"/"Nasional" sebagai
+    // pembanding, bukan sebagai entry kab/kota.
+    const buildRanking = (sheetName: string): {
+      tahun: number | null;
+      data: RankRow[];
+      jateng: number | null;
+      nasional: number | null;
+    } => {
       const rows = byRange.get(sheetName) ?? [];
-      if (rows.length < 2) return { tahun: null, data: [] };
-      // Cari tahun terbaru
+      if (rows.length < 2) return { tahun: null, data: [], jateng: null, nasional: null };
       const years = new Set<number>();
       for (let i = 1; i < rows.length; i++) {
         const y = Number(rows[i][2]);
         if (Number.isFinite(y)) years.add(y);
       }
-      if (!years.size) return { tahun: null, data: [] };
+      if (!years.size) return { tahun: null, data: [], jateng: null, nasional: null };
       const tahun = Math.max(...years);
       const data: RankRow[] = [];
+      let jateng: number | null = null;
+      let nasional: number | null = null;
       for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
         if (Number(r[2]) !== tahun) continue;
-        const wilayah = cleanWilayah(String(r[0] ?? ""));
+        const wilayahRaw = String(r[0] ?? "").trim();
         const nilai = parseId(r[3]);
-        if (!wilayah || nilai === null) continue;
-        data.push({ wilayah, nilai });
+        if (!wilayahRaw || nilai === null) continue;
+        if (/^jawa tengah$/i.test(wilayahRaw)) { jateng = nilai; continue; }
+        if (/^(indonesia|nasional)$/i.test(wilayahRaw)) { nasional = nilai; continue; }
+        data.push({ wilayah: cleanWilayah(wilayahRaw), nilai });
       }
-      return { tahun, data };
+      return { tahun, data, jateng, nasional };
     };
 
     const indicators: Record<string, {
@@ -161,6 +171,8 @@ Deno.serve(async (req) => {
       series: SeriesRow[];
       ranking: RankRow[];
       rankingTahun: number | null;
+      jateng: number | null;
+      nasional: number | null;
     }> = {};
 
     for (const def of INDICATOR_DEFS) {
@@ -170,12 +182,16 @@ Deno.serve(async (req) => {
       } else if (def.seriesLabel) {
         series = seriesByLabel.get(def.seriesLabel) ?? [];
       }
-      const rank = def.rankingSheet ? buildRanking(def.rankingSheet) : { tahun: null, data: [] };
+      const rank = def.rankingSheet
+        ? buildRanking(def.rankingSheet)
+        : { tahun: null, data: [], jateng: null, nasional: null };
       indicators[def.slug] = {
         slug: def.slug,
         series,
         ranking: rank.data,
         rankingTahun: rank.tahun,
+        jateng: rank.jateng,
+        nasional: rank.nasional,
       };
     }
 
