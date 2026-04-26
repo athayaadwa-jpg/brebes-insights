@@ -34,7 +34,7 @@ const Indikator = () => {
       />
 
       {/* Highlight comparison */}
-      <section className="grid gap-4 sm:grid-cols-3">
+      <section className={`grid gap-4 ${data.highlight.jateng !== undefined && data.highlight.nasional !== undefined ? "sm:grid-cols-3" : data.highlight.jateng !== undefined || data.highlight.nasional !== undefined ? "sm:grid-cols-2" : "sm:grid-cols-1"}`}>
         <div className="rounded-xl border-2 border-brebes/40 bg-card p-5 shadow-soft">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brebes">
             <MapPin className="h-3.5 w-3.5" /> Kab. Brebes
@@ -47,26 +47,30 @@ const Indikator = () => {
             <Trophy className="h-3 w-3" /> Peringkat {rankBrebes} dari {sorted.length}
           </div>
         </div>
-        <div className="rounded-xl border border-border bg-card p-5 shadow-soft">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-jateng">
-            <MapPin className="h-3.5 w-3.5" /> Prov. Jawa Tengah
+        {data.highlight.jateng !== undefined && (
+          <div className="rounded-xl border border-border bg-card p-5 shadow-soft">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-jateng">
+              <MapPin className="h-3.5 w-3.5" /> Prov. Jawa Tengah
+            </div>
+            <div className="mt-2 flex items-baseline gap-1.5">
+              <span className="font-display text-4xl font-bold text-jateng">{fmt(data.highlight.jateng)}</span>
+              {data.satuan && <span className={`text-sm font-medium text-muted-foreground ${data.satuan === "%" ? "-ml-1.5" : ""}`}>{data.satuan}</span>}
+            </div>
+            <div className="mt-2 text-xs text-muted-foreground">Rata-rata Jawa Tengah</div>
           </div>
-          <div className="mt-2 flex items-baseline gap-1.5">
-            <span className="font-display text-4xl font-bold text-jateng">{fmt(data.highlight.jateng)}</span>
-            {data.satuan && <span className={`text-sm font-medium text-muted-foreground ${data.satuan === "%" ? "-ml-1.5" : ""}`}>{data.satuan}</span>}
+        )}
+        {data.highlight.nasional !== undefined && (
+          <div className="rounded-xl border border-border bg-card p-5 shadow-soft">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-nasional">
+              <MapPin className="h-3.5 w-3.5" /> Nasional
+            </div>
+            <div className="mt-2 flex items-baseline gap-1.5">
+              <span className="font-display text-4xl font-bold text-nasional">{fmt(data.highlight.nasional)}</span>
+              {data.satuan && <span className={`text-sm font-medium text-muted-foreground ${data.satuan === "%" ? "-ml-1.5" : ""}`}>{data.satuan}</span>}
+            </div>
+            <div className="mt-2 text-xs text-muted-foreground">Angka Indonesia</div>
           </div>
-          <div className="mt-2 text-xs text-muted-foreground">Rata-rata Jawa Tengah</div>
-        </div>
-        <div className="rounded-xl border border-border bg-card p-5 shadow-soft">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-nasional">
-            <MapPin className="h-3.5 w-3.5" /> Nasional
-          </div>
-          <div className="mt-2 flex items-baseline gap-1.5">
-            <span className="font-display text-4xl font-bold text-nasional">{fmt(data.highlight.nasional)}</span>
-            {data.satuan && <span className={`text-sm font-medium text-muted-foreground ${data.satuan === "%" ? "-ml-1.5" : ""}`}>{data.satuan}</span>}
-          </div>
-          <div className="mt-2 text-xs text-muted-foreground">Angka Indonesia</div>
-        </div>
+        )}
       </section>
 
       {/* Series chart */}
