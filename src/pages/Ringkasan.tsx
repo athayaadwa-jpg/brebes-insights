@@ -8,11 +8,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { useRingkasanSheets, type LatestValue } from "@/hooks/useRingkasanSheets";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-
-const fmt = (n: number, digits = 2) =>
-  n.toLocaleString("id-ID", { maximumFractionDigits: digits, minimumFractionDigits: digits });
-const fmtInt = (n: number) => Math.round(n).toLocaleString("id-ID");
-const fmtRp = (n: number) => `Rp ${Math.round(n).toLocaleString("id-ID")}`;
+import { formatDecimal, formatRupiah, normalizeGarisKemiskinan } from "@/lib/format";
 
 const indicatorLinks = [
   { to: "/indikator/tpt", label: "Tingkat Pengangguran Terbuka" },
