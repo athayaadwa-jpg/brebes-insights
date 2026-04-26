@@ -272,6 +272,41 @@ const Ringkasan = () => {
         </div>
       </section>
 
+      {/* Pertanian */}
+      <section className="mb-10">
+        <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Pertanian Padi</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {v(r.luasPanen) !== null && (
+            <StatCard
+              label="Luas Panen Padi"
+              value={fmtInt(v(r.luasPanen)!)}
+              unit="hektare"
+              icon={Sprout}
+              variant="primary"
+              hint={`Tahun ${yr(r.luasPanen)}`}
+            />
+          )}
+          {v(r.produksiPadi) !== null && (
+            <StatCard
+              label="Produksi Padi"
+              value={fmtInt(v(r.produksiPadi)!)}
+              unit="ton GKG"
+              icon={Wheat}
+              hint={`Tahun ${yr(r.produksiPadi)}`}
+            />
+          )}
+          {v(r.produksiBeras) !== null && (
+            <StatCard
+              label="Produksi Beras"
+              value={fmtInt(v(r.produksiBeras)!)}
+              unit="ton beras"
+              icon={Package}
+              hint={`Tahun ${yr(r.produksiBeras)}`}
+            />
+          )}
+        </div>
+      </section>
+
       {/* Ekonomi */}
       <section className="mb-10">
         <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Ekonomi</h2>
@@ -284,6 +319,36 @@ const Ringkasan = () => {
               icon={TrendingUp}
               variant="primary"
               hint={data.pdrb.periode}
+            />
+          )}
+          {v(r.pdrbKonstan) !== null && (
+            <StatCard
+              label="PDRB Atas Dasar Harga Konstan"
+              value={fmt(v(r.pdrbKonstan)!)}
+              unit="miliar Rp"
+              icon={Factory}
+              variant="accent"
+              trend={tren(data.seri, "pdrbKonstan", true)}
+              hint={`Tahun ${yr(r.pdrbKonstan)}`}
+            />
+          )}
+          {v(r.pertumbuhanLU) !== null && (
+            <StatCard
+              label="Pertumbuhan Ekonomi Menurut Lapangan Usaha"
+              value={fmt(v(r.pertumbuhanLU)!)}
+              unit="%"
+              icon={BarChart3}
+              trend={tren(data.seri, "pertumbuhanLU", true)}
+              hint={`Tahun ${yr(r.pertumbuhanLU)}`}
+            />
+          )}
+          {v(r.lajuPdrbTahunan) !== null && (
+            <StatCard
+              label="Laju Pertumbuhan PDRB (tahunan)"
+              value={fmt(v(r.lajuPdrbTahunan)!)}
+              unit="%"
+              icon={TrendingUp}
+              hint={`Tahun ${yr(r.lajuPdrbTahunan)}`}
             />
           )}
           {v(r.ikk) !== null && (
