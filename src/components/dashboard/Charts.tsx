@@ -10,28 +10,36 @@ const tooltipStyle = {
   boxShadow: "var(--shadow-md)",
 };
 
-export const SeriesChart = ({ data, satuan }: { data: SeriesPoint[]; satuan: string }) => (
-  <ResponsiveContainer width="100%" height={320}>
-    <LineChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: -8 }}>
-      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-      <XAxis dataKey="tahun" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-      <YAxis
-        stroke="hsl(var(--muted-foreground))"
-        fontSize={12}
-        tickFormatter={(v: number) => formatSmart(v, 1)}
-      />
-      <Tooltip
-        contentStyle={tooltipStyle}
-        formatter={(v: number) => withUnit(formatSmart(v), satuan)}
-        labelFormatter={(label) => `Tahun ${label}`}
-      />
-      <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
-      <Line type="monotone" dataKey="brebes" name="Kab. Brebes" stroke="hsl(var(--brebes))" strokeWidth={3} dot={{ r: 5, fill: "hsl(var(--brebes))" }} activeDot={{ r: 7 }} />
-      <Line type="monotone" dataKey="jateng" name="Jawa Tengah" stroke="hsl(var(--jateng))" strokeWidth={2} dot={{ r: 4 }} />
-      <Line type="monotone" dataKey="nasional" name="Nasional" stroke="hsl(var(--nasional))" strokeWidth={2} strokeDasharray="6 4" dot={{ r: 4 }} />
-    </LineChart>
-  </ResponsiveContainer>
-);
+export const SeriesChart = ({ data, satuan }: { data: SeriesPoint[]; satuan: string }) => {
+  const hasJateng = data.some((d) => d.jateng !== undefined && d.jateng !== null);
+  const hasNasional = data.some((d) => d.nasional !== undefined && d.nasional !== null);
+  return (
+    <ResponsiveContainer width="100%" height={320}>
+      <LineChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: -8 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+        <XAxis dataKey="tahun" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+        <YAxis
+          stroke="hsl(var(--muted-foreground))"
+          fontSize={12}
+          tickFormatter={(v: number) => formatSmart(v, 1)}
+        />
+        <Tooltip
+          contentStyle={tooltipStyle}
+          formatter={(v: number) => withUnit(formatSmart(v), satuan)}
+          labelFormatter={(label) => `Tahun ${label}`}
+        />
+        <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
+        <Line type="monotone" dataKey="brebes" name="Kab. Brebes" stroke="hsl(var(--brebes))" strokeWidth={3} dot={{ r: 5, fill: "hsl(var(--brebes))" }} activeDot={{ r: 7 }} />
+        {hasJateng && (
+          <Line type="monotone" dataKey="jateng" name="Jawa Tengah" stroke="hsl(var(--jateng))" strokeWidth={2} dot={{ r: 4 }} connectNulls />
+        )}
+        {hasNasional && (
+          <Line type="monotone" dataKey="nasional" name="Nasional" stroke="hsl(var(--nasional))" strokeWidth={2} strokeDasharray="6 4" dot={{ r: 4 }} connectNulls />
+        )}
+      </LineChart>
+    </ResponsiveContainer>
+  );
+};
 
 // Rapikan label nama wilayah:
 // - "Kota X"  -> tetap "Kota X"
