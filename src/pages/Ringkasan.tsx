@@ -10,6 +10,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { formatDecimal, formatRupiah, normalizeGarisKemiskinan } from "@/lib/format";
 
+const fmt = formatDecimal;
+const fmtRp = (n: number) => formatRupiah(n);
+
 const indicatorLinks = [
   { to: "/indikator/tpt", label: "Tingkat Pengangguran Terbuka" },
   { to: "/indikator/tpak", label: "Tingkat Partisipasi Angkatan Kerja" },
