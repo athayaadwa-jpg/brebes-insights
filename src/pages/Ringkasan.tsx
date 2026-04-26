@@ -112,6 +112,41 @@ const Ringkasan = () => {
         </Button>
       </div>
 
+      {/* Demografi */}
+      <section className="mb-10">
+        <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Demografi</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {v(r.pendudukTotal) !== null && (
+            <StatCard
+              label="Jumlah Penduduk"
+              value={fmtInt(v(r.pendudukTotal)!)}
+              unit="jiwa"
+              icon={UsersRound}
+              variant="primary"
+              hint={`Proyeksi · Tahun ${yr(r.pendudukTotal)}`}
+            />
+          )}
+          {v(r.pendudukLaki) !== null && (
+            <StatCard
+              label="Penduduk Laki-laki"
+              value={fmtInt(v(r.pendudukLaki)!)}
+              unit="jiwa"
+              icon={User}
+              hint={`Tahun ${yr(r.pendudukLaki)}`}
+            />
+          )}
+          {v(r.pendudukPerempuan) !== null && (
+            <StatCard
+              label="Penduduk Perempuan"
+              value={fmtInt(v(r.pendudukPerempuan)!)}
+              unit="jiwa"
+              icon={UserRound}
+              hint={`Tahun ${yr(r.pendudukPerempuan)}`}
+            />
+          )}
+        </div>
+      </section>
+
       {/* Kemiskinan & Pemerataan */}
       <section className="mb-10">
         <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Kemiskinan & Pemerataan</h2>
