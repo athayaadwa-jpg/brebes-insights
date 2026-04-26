@@ -15,8 +15,16 @@ export const SeriesChart = ({ data, satuan }: { data: SeriesPoint[]; satuan: str
     <LineChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: -8 }}>
       <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
       <XAxis dataKey="tahun" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-      <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v.toLocaleString("id-ID")} ${satuan}`} />
+      <YAxis
+        stroke="hsl(var(--muted-foreground))"
+        fontSize={12}
+        tickFormatter={(v: number) => formatSmart(v, 1)}
+      />
+      <Tooltip
+        contentStyle={tooltipStyle}
+        formatter={(v: number) => withUnit(formatSmart(v), satuan)}
+        labelFormatter={(label) => `Tahun ${label}`}
+      />
       <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
       <Line type="monotone" dataKey="brebes" name="Kab. Brebes" stroke="hsl(var(--brebes))" strokeWidth={3} dot={{ r: 5, fill: "hsl(var(--brebes))" }} activeDot={{ r: 7 }} />
       <Line type="monotone" dataKey="jateng" name="Jawa Tengah" stroke="hsl(var(--jateng))" strokeWidth={2} dot={{ r: 4 }} />
