@@ -20,8 +20,10 @@ const indicatorLinks = [
   { to: "/indikator/tpak", label: "Tingkat Partisipasi Angkatan Kerja" },
   { to: "/indikator/kemiskinan", label: "Kemiskinan" },
   { to: "/indikator/ipm", label: "IPM" },
-  { to: "/indikator/padi", label: "Luas Panen & Produksi Padi" },
+  { to: "/indikator/luas-panen-padi", label: "Luas Panen Padi" },
+  { to: "/indikator/produksi-padi", label: "Produksi Padi" },
   { to: "/indikator/pertumbuhan-ekonomi", label: "Pertumbuhan Ekonomi" },
+  { to: "/indikator/ikk", label: "Indeks Kemahalan Konstruksi" },
 ];
 
 // Hitung tren YoY (% point) berdasar dua entri terakhir yang punya nilai pada `key`.
