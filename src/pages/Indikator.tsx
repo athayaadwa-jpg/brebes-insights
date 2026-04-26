@@ -96,9 +96,17 @@ const Indikator = () => {
           <h2 className="mt-1 font-display text-xl font-bold">Posisi Brebes di Jawa Tengah</h2>
           <p className="text-sm text-muted-foreground">
             Diurutkan dari yang {data.higherIsBetter ? "tertinggi" : "terendah"} (lebih baik). Batang berwarna menandai{" "}
-            <span className="font-semibold text-brebes">Kab. Brebes</span>,{" "}
-            <span className="font-semibold text-jateng">Jawa Tengah</span>, dan{" "}
-            <span className="font-semibold text-nasional">Indonesia</span>.
+            <span className="font-semibold text-brebes">Kab. Brebes</span>
+            {data.highlight.jateng !== undefined && (
+              <>, <span className="font-semibold text-jateng">Jawa Tengah</span></>
+            )}
+            {data.highlight.nasional !== undefined && (
+              <>
+                {data.highlight.jateng !== undefined ? ", dan " : " dan "}
+                <span className="font-semibold text-nasional">Indonesia</span>
+              </>
+            )}
+            .
           </p>
         </div>
         <RankingChart
