@@ -106,6 +106,15 @@ Deno.serve(async (req) => {
       ipm: parseId(r[COL.ipm]),
       ipmLF: parseId(r[COL.ipmLF]),
       ikk: parseId(r[COL.ikk]),
+      luasPanen: parseId(r[COL.luasPanen]),
+      produksiPadi: parseId(r[COL.produksiPadi]),
+      produksiBeras: parseId(r[COL.produksiBeras]),
+      pendudukLaki: parseId(r[COL.pendudukLaki]),
+      pendudukPerempuan: parseId(r[COL.pendudukPerempuan]),
+      pendudukTotal: parseId(r[COL.pendudukTotal]),
+      pertumbuhanLU: parseId(r[COL.pertumbuhanLU]),
+      pdrbKonstan: parseId(r[COL.pdrbKonstan]),
+      lajuPdrbTahunan: parseId(r[COL.lajuPdrbTahunan]),
     }));
 
     // Ambil tahun terakhir yang punya nilai untuk setiap indikator
@@ -133,6 +142,15 @@ Deno.serve(async (req) => {
       ppp: latest("ppp"),
       ipm: latest("ipmLF") ?? latest("ipm"),
       ikk: latest("ikk"),
+      luasPanen: latest("luasPanen"),
+      produksiPadi: latest("produksiPadi"),
+      produksiBeras: latest("produksiBeras"),
+      pendudukLaki: latest("pendudukLaki"),
+      pendudukPerempuan: latest("pendudukPerempuan"),
+      pendudukTotal: latest("pendudukTotal"),
+      pertumbuhanLU: latest("pertumbuhanLU"),
+      pdrbKonstan: latest("pdrbKonstan"),
+      lajuPdrbTahunan: latest("lajuPdrbTahunan"),
     };
 
     // PDRB (q-to-q) -> ambil baris terakhir
