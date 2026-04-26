@@ -30,12 +30,17 @@ const parseId = (s: unknown): number | null => {
   return Number.isFinite(n) ? n : null;
 };
 
-// Bersihkan nama wilayah: hapus prefix "Kab. " / "Kota " agar konsisten dengan
-// daftar internal (kecuali "Kota X" tetap ditandai sebagai kota di FE).
+// Bersihkan nama wilayah:
+// - hilangkan prefix "Kab. "
+// - rapikan spasi ganda (mis. "P a t i" -> "Pati" dijaga manual via map khusus)
+// - "Kota X" tetap apa adanya
+const WILAYAH_FIX: Record<string, string> = {
+  "P a t i": "Pati",
+};
 const cleanWilayah = (s: string): string => {
-  const t = s.trim();
-  if (t.startsWith("Kab. ")) return t.slice(5);
-  return t; // "Kota X" tetap apa adanya
+  let t = s.trim().replace(/\s+/g, " ");
+  if (t.startsWith("Kab. ")) t = t.slice(5);
+  return WILAYAH_FIX[t] ?? t;
 };
 
 type RankRow = { wilayah: string; nilai: number };
