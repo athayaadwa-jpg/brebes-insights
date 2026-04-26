@@ -4,8 +4,9 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { SeriesChart, RankingChart } from "@/components/dashboard/Charts";
 import { Button } from "@/components/ui/button";
 import { getIndicator, INDICATORS } from "@/data/statistik";
+import { formatSmart, withUnit } from "@/lib/format";
 
-const fmt = (n: number) => n.toLocaleString("id-ID", { maximumFractionDigits: 2 });
+const fmt = (n: number) => formatSmart(n, 2);
 
 const Indikator = () => {
   const { slug } = useParams();
