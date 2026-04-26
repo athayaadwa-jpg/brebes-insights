@@ -1,16 +1,18 @@
 import { Link } from "react-router-dom";
 import {
   ArrowRight, Banknote, BarChart3, Briefcase, GraduationCap, Scale, TrendingUp,
-  Users, UserMinus, LineChart, Percent, AlertCircle, Building2, BookOpen, HeartPulse, Wallet, RefreshCw
+  Users, UserMinus, LineChart, Percent, AlertCircle, Building2, BookOpen, HeartPulse, Wallet, RefreshCw,
+  Wheat, Sprout, Package, User, UserRound, UsersRound, Factory
 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { useRingkasanSheets, type LatestValue } from "@/hooks/useRingkasanSheets";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { formatDecimal, formatRupiah, normalizeGarisKemiskinan } from "@/lib/format";
+import { formatDecimal, formatInt, formatRupiah, normalizeGarisKemiskinan } from "@/lib/format";
 
 const fmt = formatDecimal;
+const fmtInt = formatInt;
 const fmtRp = (n: number) => formatRupiah(n);
 
 const indicatorLinks = [
