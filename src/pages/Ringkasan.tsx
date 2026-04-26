@@ -43,8 +43,12 @@ const tren = (
 // Jika nilai hasil parser < 10.000, anggap satuan "ribu" dan kalikan 1000.
 const fixGarisKemiskinan = (v: number) => (v < 10000 ? Math.round(v * 1000) : Math.round(v));
 
-const Card = ({ children }: { children: React.ReactNode }) => (
-  <div className="rounded-xl border border-border bg-card p-5 shadow-soft"><Skeleton className="h-20 w-full" />{children}</div>
+const LoadingCard = () => (
+  <div className="rounded-xl border border-border bg-card p-5 shadow-soft">
+    <Skeleton className="h-4 w-24" />
+    <Skeleton className="mt-3 h-8 w-32" />
+    <Skeleton className="mt-2 h-3 w-20" />
+  </div>
 );
 
 const Ringkasan = () => {
