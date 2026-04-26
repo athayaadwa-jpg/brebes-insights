@@ -20,8 +20,8 @@ Deno.serve(async (req) => {
     if (!GOOGLE_SHEETS_API_KEY) throw new Error("GOOGLE_SHEETS_API_KEY tidak tersedia (sambungkan Google Sheets connector)");
 
     const ranges = [
-      "Indikator!A1:Z60",
-      "PDRB!A1:D20",
+      "Indikator!A1:AZ60",
+      "PDRB!A1:D30",
     ];
     const qs = ranges.map((r) => `ranges=${encodeURIComponent(r)}`).join("&");
     const url = `${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${qs}`;
