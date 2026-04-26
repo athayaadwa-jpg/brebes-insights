@@ -47,9 +47,9 @@ export const RankingChart = ({
     <ResponsiveContainer width="100%" height={Math.max(540, sorted.length * 18)}>
       <BarChart data={sorted} layout="vertical" margin={{ top: 4, right: 40, bottom: 4, left: 8 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
-        <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+        <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v: number) => formatSmart(v, 1)} />
         <YAxis type="category" dataKey="wilayah" stroke="hsl(var(--muted-foreground))" fontSize={10} width={110} interval={0} />
-        <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v.toLocaleString("id-ID")} ${satuan}`} />
+        <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => withUnit(formatSmart(v), satuan)} />
         <Bar dataKey="nilai" radius={[0, 4, 4, 0]}>
           {sorted.map((entry, i) => (
             <Cell
