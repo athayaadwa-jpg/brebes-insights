@@ -74,6 +74,15 @@ Deno.serve(async (req) => {
       ppp: idx("PPP (000 Rp)"),
       ipm: idx("IPM metode baru"),
       ipmLF: idx("IPM Metode baru (Dg UHH hasil Long Form SP2020)"),
+      luasPanen: idx("Luas Panen Padi (Hektare)"),
+      produksiPadi: idx("Produksi Padi (Ton GKG)"),
+      produksiBeras: idx("Produksi Beras (Ton Beras)"),
+      pendudukLaki: idx("Proyeksi Penduduk Laki-laki (Jiwa)"),
+      pendudukPerempuan: idx("Proyeksi Penduduk Perempuan (Jiwa)"),
+      pendudukTotal: idx("Proyeksi Penduduk Total (Jiwa)"),
+      pertumbuhanLU: idx("Pertumbuhan Ekonomi Menurut Lapangan Usaha"),
+      pdrbKonstan: idx("PDRB Atas Dasar Harga Konstan (miliar rupiah)"),
+      lajuPdrbTahunan: idx("Laju Pertumbuhan PDRB (q to q) (persen)"),
     };
 
     // Bangun seri tahunan
