@@ -11,7 +11,7 @@ export const KAB_KOTA_JATENG = [
   "Kota Pekalongan", "Kota Tegal",
 ];
 
-export type SeriesPoint = { tahun: number; brebes: number; jateng: number; nasional: number };
+export type SeriesPoint = { tahun: number; brebes: number; jateng?: number; nasional?: number };
 export type RankPoint = { wilayah: string; nilai: number };
 
 export type IndicatorData = {
@@ -19,7 +19,7 @@ export type IndicatorData = {
   nama: string;
   satuan: string;
   deskripsi: string;
-  highlight: { brebes: number; jateng: number; nasional: number; tahun: number };
+  highlight: { brebes: number; jateng?: number; nasional?: number; tahun: number };
   series: SeriesPoint[];
   // makin tinggi makin baik? (untuk styling rank: kemiskinan & TPT = false)
   higherIsBetter: boolean;
