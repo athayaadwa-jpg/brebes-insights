@@ -26,14 +26,6 @@ export type IndicatorData = {
   ranking: RankPoint[];
 };
 
-const mkRanking = (brebesNilai: number, range: [number, number]) => {
-  const [min, max] = range;
-  const others = KAB_KOTA_JATENG.filter(w => w !== "Brebes").map(w => ({
-    wilayah: w,
-    nilai: +(min + Math.random() * (max - min)).toFixed(2),
-  }));
-  return [...others, { wilayah: "Brebes", nilai: brebesNilai }];
-};
 
 export const RINGKASAN = {
   jumlahPenduduk: 2003706,
