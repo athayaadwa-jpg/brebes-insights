@@ -59,7 +59,7 @@ const Ringkasan = () => {
       <div className="animate-fade-in">
         <PageHeader eyebrow="Memuat data…" title="Ringkasan Eksekutif" description="Mengambil angka terbaru dari Google Sheets." />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 9 }).map((_, i) => <Card key={i}>{null}</Card>)}
+          {Array.from({ length: 9 }).map((_, i) => <LoadingCard key={i} />)}
         </div>
       </div>
     );
