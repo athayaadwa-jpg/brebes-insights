@@ -1,5 +1,6 @@
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, Cell, ReferenceLine } from "recharts";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, Cell } from "recharts";
 import type { SeriesPoint, RankPoint } from "@/data/statistik";
+import { formatSmart, withUnit } from "@/lib/format";
 
 const tooltipStyle = {
   backgroundColor: "hsl(var(--popover))",
