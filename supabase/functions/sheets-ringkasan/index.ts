@@ -1,6 +1,9 @@
 // Edge function: ambil data Ringkasan Eksekutif dari Google Sheets
 // via Lovable Connector Gateway (kunci API tidak pernah keluar ke browser).
-import { corsHeaders } from "@supabase/supabase-js/cors";
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
 
 const SPREADSHEET_ID = "1BGKHK-qIYPe5Vpez9b7lRS3vp7igJ7JzW_jGGsmfjaw";
 const GATEWAY = "https://connector-gateway.lovable.dev/google_sheets/v4";
