@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { BarChart3, Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, Wheat, GraduationCap, Briefcase, LineChart, Menu, X } from "lucide-react";
+import { BarChart3, Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, Wheat, GraduationCap, Briefcase, LineChart, Menu, X, Sprout, Building2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -13,8 +13,10 @@ const nav = [
       { to: "/indikator/tpak", label: "Tingkat Partisipasi Angkatan Kerja", icon: Users },
       { to: "/indikator/kemiskinan", label: "Kemiskinan", icon: TrendingUp },
       { to: "/indikator/ipm", label: "Indeks Pembangunan Manusia", icon: GraduationCap },
-      { to: "/indikator/padi", label: "Luas Panen & Produksi Padi", icon: Wheat },
+      { to: "/indikator/luas-panen-padi", label: "Luas Panen Padi", icon: Sprout },
+      { to: "/indikator/produksi-padi", label: "Produksi Padi", icon: Wheat },
       { to: "/indikator/pertumbuhan-ekonomi", label: "Pertumbuhan Ekonomi", icon: LineChart },
+      { to: "/indikator/ikk", label: "Indeks Kemahalan Konstruksi", icon: Building2 },
     ],
   },
   {
@@ -56,12 +58,12 @@ export const AppLayout = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-30 w-72 transform border-r border-sidebar-border bg-sidebar transition-transform lg:translate-x-0",
+          "fixed left-0 top-14 bottom-0 z-30 w-72 transform border-r border-sidebar-border bg-sidebar transition-transform lg:top-0 lg:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         <div className="flex h-full flex-col">
-          <div className="flex items-center gap-3 border-b border-sidebar-border px-6 py-5">
+          <div className="hidden items-center gap-3 border-b border-sidebar-border px-6 py-5 lg:flex">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-accent shadow-glow">
               <BarChart3 className="h-5 w-5 text-accent-foreground" />
             </div>
@@ -113,7 +115,7 @@ export const AppLayout = () => {
         </div>
       </main>
 
-      {open && <div className="fixed inset-0 z-20 bg-foreground/40 lg:hidden" onClick={() => setOpen(false)} />}
+      {open && <div className="fixed left-0 right-0 top-14 bottom-0 z-20 bg-foreground/40 lg:hidden" onClick={() => setOpen(false)} />}
     </div>
   );
 };
