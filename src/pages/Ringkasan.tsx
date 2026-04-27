@@ -40,7 +40,7 @@ type TrenOpts = {
 };
 
 const tren = (
-  seri: Array<Record<string, number | null>> & Array<{ tahun: number }>,
+  seri: Array<Record<string, number | null>>,
   key: string,
   opts: TrenOpts = {},
 ): StatCardTrend | undefined => {
