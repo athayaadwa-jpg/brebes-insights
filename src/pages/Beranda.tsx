@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, BarChart3, Database, Layers, MapPin, ShieldCheck, TrendingUp } from "lucide-react";
 import heroImage from "@/assets/hero-brebes.jpg";
+import logoInteresLight from "@/assets/logo-interes-light.png";
 import { Button } from "@/components/ui/button";
 
 const features = [
