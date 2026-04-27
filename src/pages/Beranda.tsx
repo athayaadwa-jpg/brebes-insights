@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, BarChart3, Database, Layers, MapPin, ShieldCheck, TrendingUp } from "lucide-react";
 import heroImage from "@/assets/hero-brebes.jpg";
+import logoInteresLight from "@/assets/logo-interes-light.png";
 import { Button } from "@/components/ui/button";
 
 const features = [
@@ -27,11 +28,13 @@ const Beranda = () => {
           <div className="inline-flex items-center gap-2 rounded-full bg-accent/95 px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground shadow-soft">
             <MapPin className="h-3 w-3" /> Kabupaten Brebes · Jawa Tengah
           </div>
-          <h1 className="mt-5 max-w-3xl font-display text-4xl font-extrabold leading-tight text-primary-foreground sm:text-5xl lg:text-6xl">
-            INTERES
-            <span className="block text-2xl font-semibold text-primary-foreground/85 sm:text-3xl lg:text-4xl">
-              Indikator Statistik Kabupaten Brebes
-            </span>
+          <img
+            src={logoInteresLight}
+            alt="Interes"
+            className="mt-5 h-16 w-auto object-contain sm:h-20 lg:h-24"
+          />
+          <h1 className="mt-3 max-w-3xl font-display text-3xl font-extrabold leading-tight text-primary-foreground sm:text-4xl lg:text-5xl">
+            Indikator Strategis Kabupaten Brebes
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-primary-foreground/90 sm:text-lg">
             Dashboard interaktif yang menyajikan indikator-indikator statistik utama Kabupaten Brebes secara
