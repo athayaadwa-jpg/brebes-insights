@@ -153,7 +153,8 @@ const Ringkasan = () => {
               unit="jiwa"
               icon={UsersRound}
               variant="primary"
-              hint={`Proyeksi · Tahun ${yr(r.pendudukTotal)}`}
+              trend={tren(data.seri, "pendudukTotal", { formatDelta: fmtInt, unit: "jiwa" })}
+              hint={`Proyeksi · ${periodHint(yr(r.pendudukTotal))}`}
             />
           )}
           {v(r.pendudukLaki) !== null && (
@@ -162,7 +163,8 @@ const Ringkasan = () => {
               value={fmtInt(v(r.pendudukLaki)!)}
               unit="jiwa"
               icon={User}
-              hint={`Tahun ${yr(r.pendudukLaki)}`}
+              trend={tren(data.seri, "pendudukLaki", { formatDelta: fmtInt, unit: "jiwa" })}
+              hint={periodHint(yr(r.pendudukLaki))}
             />
           )}
           {v(r.pendudukPerempuan) !== null && (
@@ -171,7 +173,8 @@ const Ringkasan = () => {
               value={fmtInt(v(r.pendudukPerempuan)!)}
               unit="jiwa"
               icon={UserRound}
-              hint={`Tahun ${yr(r.pendudukPerempuan)}`}
+              trend={tren(data.seri, "pendudukPerempuan", { formatDelta: fmtInt, unit: "jiwa" })}
+              hint={periodHint(yr(r.pendudukPerempuan))}
             />
           )}
         </div>
@@ -188,8 +191,8 @@ const Ringkasan = () => {
               unit="%"
               icon={Percent}
               variant="accent"
-              trend={tren(data.seri, "persenMiskin", false)}
-              hint={`Tahun ${yr(r.persenMiskin)}`}
+              trend={tren(data.seri, "persenMiskin", { higherIsBetter: false, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
+              hint={periodHint(yr(r.persenMiskin))}
             />
           )}
           {v(r.jumlahMiskin) !== null && (
@@ -199,8 +202,8 @@ const Ringkasan = () => {
               unit="ribu jiwa"
               icon={UserMinus}
               variant="accent"
-              trend={tren(data.seri, "jumlahMiskin", false)}
-              hint={`Tahun ${yr(r.jumlahMiskin)}`}
+              trend={tren(data.seri, "jumlahMiskin", { higherIsBetter: false, formatDelta: (n) => fmt(n), unit: "ribu jiwa" })}
+              hint={periodHint(yr(r.jumlahMiskin))}
             />
           )}
           {v(r.miskinEkstrem) !== null && (
@@ -209,7 +212,8 @@ const Ringkasan = () => {
               value={fmt(v(r.miskinEkstrem)!)}
               unit="%"
               icon={UserMinus}
-              hint={`Tahun ${yr(r.miskinEkstrem)}`}
+              trend={tren(data.seri, "miskinEkstrem", { higherIsBetter: false, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
+              hint={periodHint(yr(r.miskinEkstrem))}
             />
           )}
           {v(r.garisKemiskinan) !== null && (
@@ -218,21 +222,35 @@ const Ringkasan = () => {
               value={fmtRp(fixGarisKemiskinan(v(r.garisKemiskinan)!))}
               unit="/kapita/bln"
               icon={Banknote}
-              hint={`Tahun ${yr(r.garisKemiskinan)}`}
+              trend={tren(data.seri, "garisKemiskinan", { formatDelta: (n) => fmtInt(fixGarisKemiskinan(n)), unit: "Rp" })}
+              hint={periodHint(yr(r.garisKemiskinan))}
             />
           )}
           {v(r.p1) !== null && (
-            <StatCard label="Indeks Kedalaman (P1)" value={fmt(v(r.p1)!)} icon={LineChart} hint={`Tahun ${yr(r.p1)}`} />
+            <StatCard
+              label="Indeks Kedalaman (P1)"
+              value={fmt(v(r.p1)!)}
+              icon={LineChart}
+              trend={tren(data.seri, "p1", { higherIsBetter: false, formatDelta: (n) => fmt(n) })}
+              hint={periodHint(yr(r.p1))}
+            />
           )}
           {v(r.p2) !== null && (
-            <StatCard label="Indeks Keparahan (P2)" value={fmt(v(r.p2)!)} icon={LineChart} hint={`Tahun ${yr(r.p2)}`} />
+            <StatCard
+              label="Indeks Keparahan (P2)"
+              value={fmt(v(r.p2)!)}
+              icon={LineChart}
+              trend={tren(data.seri, "p2", { higherIsBetter: false, formatDelta: (n) => fmt(n) })}
+              hint={periodHint(yr(r.p2))}
+            />
           )}
           {v(r.gini) !== null && (
             <StatCard
               label="Gini Ratio"
               value={fmt(v(r.gini)!, 3)}
               icon={Scale}
-              hint={`Tahun ${yr(r.gini)} · 0 = merata, 1 = timpang`}
+              trend={tren(data.seri, "gini", { higherIsBetter: false, formatDelta: (n) => fmt(n, 3) })}
+              hint={`${periodHint(yr(r.gini))} · 0 = merata, 1 = timpang`}
             />
           )}
         </div>
@@ -249,7 +267,7 @@ const Ringkasan = () => {
               unit="%"
               icon={Users}
               variant="primary"
-              trend={tren(data.seri, "tpak", true)}
+              trend={tren(data.seri, "tpak", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
               hint={`Partisipasi angkatan kerja · ${yr(r.tpak)}`}
             />
           )}
@@ -260,7 +278,7 @@ const Ringkasan = () => {
               unit="%"
               icon={Briefcase}
               variant="accent"
-              trend={tren(data.seri, "tpt", false)}
+              trend={tren(data.seri, "tpt", { higherIsBetter: false, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
               hint={`Pengangguran terbuka · ${yr(r.tpt)}`}
             />
           )}
@@ -277,18 +295,45 @@ const Ringkasan = () => {
               value={fmt(v(r.ipm)!)}
               icon={GraduationCap}
               variant="primary"
-              trend={tren(data.seri, "ipmLF", true) ?? tren(data.seri, "ipm", true)}
-              hint={`Tahun ${yr(r.ipm)}`}
+              trend={
+                tren(data.seri, "ipmLF", { higherIsBetter: true, formatDelta: (n) => fmt(n) }) ??
+                tren(data.seri, "ipm", { higherIsBetter: true, formatDelta: (n) => fmt(n) })
+              }
+              hint={periodHint(yr(r.ipm))}
             />
           )}
           {v(r.uhh) !== null && (
-            <StatCard label="Umur Harapan Hidup" value={fmt(v(r.uhh)!)} unit="tahun" icon={HeartPulse} hint={`Tahun ${yr(r.uhh)}`} />
+            <StatCard
+              label="Umur Harapan Hidup"
+              value={fmt(v(r.uhh)!)}
+              unit="tahun"
+              icon={HeartPulse}
+              trend={
+                tren(data.seri, "uhhLF", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "th" }) ??
+                tren(data.seri, "uhh", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "th" })
+              }
+              hint={periodHint(yr(r.uhh))}
+            />
           )}
           {v(r.eys) !== null && (
-            <StatCard label="Harapan Lama Sekolah" value={fmt(v(r.eys)!)} unit="tahun" icon={BookOpen} hint={`Tahun ${yr(r.eys)}`} />
+            <StatCard
+              label="Harapan Lama Sekolah"
+              value={fmt(v(r.eys)!)}
+              unit="tahun"
+              icon={BookOpen}
+              trend={tren(data.seri, "eys", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "th" })}
+              hint={periodHint(yr(r.eys))}
+            />
           )}
           {v(r.mys) !== null && (
-            <StatCard label="Rata-rata Lama Sekolah" value={fmt(v(r.mys)!)} unit="tahun" icon={BookOpen} hint={`Tahun ${yr(r.mys)}`} />
+            <StatCard
+              label="Rata-rata Lama Sekolah"
+              value={fmt(v(r.mys)!)}
+              unit="tahun"
+              icon={BookOpen}
+              trend={tren(data.seri, "mys", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "th" })}
+              hint={periodHint(yr(r.mys))}
+            />
           )}
           {v(r.ppp) !== null && (
             <StatCard
@@ -296,6 +341,7 @@ const Ringkasan = () => {
               value={fmtRp(v(r.ppp)! * 1000)}
               unit="/tahun"
               icon={Wallet}
+              trend={tren(data.seri, "ppp", { higherIsBetter: true, formatDelta: (n) => fmtInt(n * 1000), unit: "Rp" })}
               hint={`Disesuaikan · ${yr(r.ppp)}`}
             />
           )}
@@ -313,7 +359,8 @@ const Ringkasan = () => {
               unit="hektare"
               icon={Sprout}
               variant="primary"
-              hint={`Tahun ${yr(r.luasPanen)}`}
+              trend={tren(data.seri, "luasPanen", { higherIsBetter: true, formatDelta: fmtInt, unit: "ha" })}
+              hint={periodHint(yr(r.luasPanen))}
             />
           )}
           {v(r.produksiPadi) !== null && (
@@ -322,7 +369,8 @@ const Ringkasan = () => {
               value={fmtInt(v(r.produksiPadi)!)}
               unit="ton GKG"
               icon={Wheat}
-              hint={`Tahun ${yr(r.produksiPadi)}`}
+              trend={tren(data.seri, "produksiPadi", { higherIsBetter: true, formatDelta: fmtInt, unit: "ton" })}
+              hint={periodHint(yr(r.produksiPadi))}
             />
           )}
           {v(r.produksiBeras) !== null && (
@@ -331,7 +379,8 @@ const Ringkasan = () => {
               value={fmtInt(v(r.produksiBeras)!)}
               unit="ton beras"
               icon={Package}
-              hint={`Tahun ${yr(r.produksiBeras)}`}
+              trend={tren(data.seri, "produksiBeras", { higherIsBetter: true, formatDelta: fmtInt, unit: "ton" })}
+              hint={periodHint(yr(r.produksiBeras))}
             />
           )}
         </div>
@@ -358,8 +407,8 @@ const Ringkasan = () => {
               unit="miliar Rp"
               icon={Factory}
               variant="accent"
-              trend={tren(data.seri, "pdrbKonstan", true)}
-              hint={`Tahun ${yr(r.pdrbKonstan)}`}
+              trend={tren(data.seri, "pdrbKonstan", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "miliar" })}
+              hint={periodHint(yr(r.pdrbKonstan))}
             />
           )}
           {v(r.pertumbuhanLU) !== null && (
@@ -368,8 +417,8 @@ const Ringkasan = () => {
               value={fmt(v(r.pertumbuhanLU)!)}
               unit="%"
               icon={BarChart3}
-              trend={tren(data.seri, "pertumbuhanLU", true)}
-              hint={`Tahun ${yr(r.pertumbuhanLU)}`}
+              trend={tren(data.seri, "pertumbuhanLU", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
+              hint={periodHint(yr(r.pertumbuhanLU))}
             />
           )}
           {v(r.lajuPdrbTahunan) !== null && (
@@ -378,7 +427,8 @@ const Ringkasan = () => {
               value={fmt(v(r.lajuPdrbTahunan)!)}
               unit="%"
               icon={TrendingUp}
-              hint={`Tahun ${yr(r.lajuPdrbTahunan)}`}
+              trend={tren(data.seri, "lajuPdrbTahunan", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
+              hint={periodHint(yr(r.lajuPdrbTahunan))}
             />
           )}
           {v(r.ikk) !== null && (
@@ -386,13 +436,13 @@ const Ringkasan = () => {
               label="Indeks Kemahalan Konstruksi"
               value={fmt(v(r.ikk)!)}
               icon={Building2}
-              hint={`Tahun ${yr(r.ikk)}`}
+              trend={tren(data.seri, "ikk", { higherIsBetter: false, formatDelta: (n) => fmt(n) })}
+              hint={periodHint(yr(r.ikk))}
             />
           )}
         </div>
       </section>
 
-      {/* Quick links */}
       <section className="rounded-2xl border border-border bg-gradient-subtle p-6 sm:p-8">
         <h2 className="font-display text-xl font-bold">Telusuri Indikator Detail</h2>
         <p className="mt-1 text-sm text-muted-foreground">Setiap indikator menyajikan tren tahunan, peringkat antar kab/kota Jateng, serta perbandingan dengan Provinsi & Nasional.</p>
