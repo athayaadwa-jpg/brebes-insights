@@ -115,7 +115,7 @@ export const AppLayout = () => {
         </div>
       </main>
 
-      {open && <div className="fixed inset-0 z-20 bg-foreground/40 lg:hidden" onClick={() => setOpen(false)} />}
+      {open && <div className="fixed left-0 right-0 top-14 bottom-0 z-20 bg-foreground/40 lg:hidden" onClick={() => setOpen(false)} />}
     </div>
   );
 };
