@@ -66,6 +66,12 @@ const tren = (
 
 // Garis Kemiskinan kadang ditulis "563,762" di sheet (dimaksud 563.762 Rp).
 // Jika nilai hasil parser < 10.000, anggap satuan "ribu" dan kalikan 1000.
+// Hint period builder for cards
+const periodHint = (year: number | null, prefix = "Tahun") =>
+  year ? `${prefix} ${year}` : "";
+
+// Garis Kemiskinan kadang ditulis "563,762" di sheet (dimaksud 563.762 Rp).
+// Jika nilai hasil parser < 10.000, anggap satuan "ribu" dan kalikan 1000.
 const fixGarisKemiskinan = normalizeGarisKemiskinan;
 
 const LoadingCard = () => (
