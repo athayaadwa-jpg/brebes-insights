@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { BarChart3, Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, Wheat, GraduationCap, Briefcase, LineChart, Menu, X } from "lucide-react";
+import { BarChart3, Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, Wheat, GraduationCap, Briefcase, LineChart, Menu, X, Sprout, Building2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
