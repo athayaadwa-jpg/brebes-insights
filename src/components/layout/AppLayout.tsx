@@ -45,11 +45,11 @@ export const AppLayout = () => {
     <div className="min-h-screen bg-background">
       {/* Mobile topbar */}
       <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-card px-4 lg:hidden">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-hero text-primary-foreground">
-            <BarChart3 className="h-4 w-4" />
-          </div>
-          <span className="font-display text-lg font-bold">INTERES</span>
+        <div className="flex min-w-0 items-center gap-2">
+          <img src={logoInteres} alt="Interes" className="h-7 w-auto shrink-0 object-contain" />
+          <span className="truncate font-display text-sm font-semibold text-foreground/80">
+            Indikator Strategis Kab. Brebes
+          </span>
         </div>
         <button onClick={() => setOpen(!open)} className="rounded-md p-2 hover:bg-muted" aria-label="Menu">
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
