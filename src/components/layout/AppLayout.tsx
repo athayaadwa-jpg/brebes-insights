@@ -58,7 +58,7 @@ export const AppLayout = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-30 w-72 transform border-r border-sidebar-border bg-sidebar transition-transform lg:translate-x-0",
+          "fixed left-0 top-14 bottom-0 z-30 w-72 transform border-r border-sidebar-border bg-sidebar transition-transform lg:top-0 lg:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
