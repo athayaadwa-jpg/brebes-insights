@@ -13,8 +13,10 @@ const nav = [
       { to: "/indikator/tpak", label: "Tingkat Partisipasi Angkatan Kerja", icon: Users },
       { to: "/indikator/kemiskinan", label: "Kemiskinan", icon: TrendingUp },
       { to: "/indikator/ipm", label: "Indeks Pembangunan Manusia", icon: GraduationCap },
-      { to: "/indikator/padi", label: "Luas Panen & Produksi Padi", icon: Wheat },
+      { to: "/indikator/luas-panen-padi", label: "Luas Panen Padi", icon: Sprout },
+      { to: "/indikator/produksi-padi", label: "Produksi Padi", icon: Wheat },
       { to: "/indikator/pertumbuhan-ekonomi", label: "Pertumbuhan Ekonomi", icon: LineChart },
+      { to: "/indikator/ikk", label: "Indeks Kemahalan Konstruksi", icon: Building2 },
     ],
   },
   {
