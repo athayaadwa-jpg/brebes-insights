@@ -64,15 +64,10 @@ export const AppLayout = () => {
         )}
       >
         <div className="flex h-full flex-col">
-          <div className="hidden items-center gap-3 border-b border-sidebar-border px-6 py-5 lg:flex">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-accent shadow-glow">
-              <BarChart3 className="h-5 w-5 text-accent-foreground" />
-            </div>
-            <div>
-              <div className="font-display text-xl font-bold text-sidebar-foreground">INTERES</div>
-              <div className="text-[10px] uppercase tracking-wider text-sidebar-foreground/60">
-                Indikator Statistik Brebes
-              </div>
+          <div className="hidden flex-col items-start gap-1 border-b border-sidebar-border px-6 py-5 lg:flex">
+            <img src={logoInteres} alt="Interes" className="h-10 w-auto object-contain" />
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/70">
+              Indikator Strategis Kab. Brebes
             </div>
           </div>
 
