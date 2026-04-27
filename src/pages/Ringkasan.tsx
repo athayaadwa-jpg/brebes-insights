@@ -27,20 +27,41 @@ const indicatorLinks = [
   { to: "/indikator/ikk", label: "Indeks Kemahalan Konstruksi" },
 ];
 
-// Hitung tren YoY (% point) berdasar dua entri terakhir yang punya nilai pada `key`.
+// Hitung tren (delta + persen) berdasar dua entri terakhir yang punya nilai pada `key`.
+type TrenOpts = {
+  /** Apakah nilai naik berarti baik (hijau)? Default true. */
+  higherIsBetter?: boolean;
+  /** Formatter angka delta (default desimal 2 digit). */
+  formatDelta?: (n: number) => string;
+  /** Satuan delta (mis. "%", "jiwa"). */
+  unit?: string;
+  /** Tampilkan persentase perubahan? Default true untuk indikator kuantitas, false untuk indikator yang sudah dalam %. */
+  showPercent?: boolean;
+};
+
 const tren = (
-  seri: Array<Record<string, number | null>>,
+  seri: Array<Record<string, number | null>> & Array<{ tahun: number }>,
   key: string,
-  higherIsBetter: boolean,
-): { value: number; positive: boolean } | undefined => {
+  opts: TrenOpts = {},
+): StatCardTrend | undefined => {
+  const { higherIsBetter = true, formatDelta, unit, showPercent = true } = opts;
   const valid = seri.filter((r) => r[key] !== null && r[key] !== undefined);
   if (valid.length < 2) return undefined;
-  const last = valid[valid.length - 1][key] as number;
-  const prev = valid[valid.length - 2][key] as number;
-  const delta = +(last - prev).toFixed(2);
-  if (delta === 0) return undefined;
+  const lastRow = valid[valid.length - 1];
+  const prevRow = valid[valid.length - 2];
+  const last = lastRow[key] as number;
+  const prev = prevRow[key] as number;
+  const delta = +(last - prev).toFixed(4);
+  const percent = showPercent && prev !== 0 ? +(((last - prev) / Math.abs(prev)) * 100).toFixed(2) : undefined;
   const naik = delta > 0;
-  return { value: delta, positive: higherIsBetter ? naik : !naik };
+  return {
+    delta,
+    percent,
+    positive: delta === 0 ? true : higherIsBetter ? naik : !naik,
+    comparedTo: `vs ${prevRow.tahun}`,
+    formatDelta,
+    unit,
+  };
 };
 
 // Garis Kemiskinan kadang ditulis "563,762" di sheet (dimaksud 563.762 Rp).
