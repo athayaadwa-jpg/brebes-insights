@@ -10,6 +10,7 @@ import { useRingkasanSheets, type LatestValue } from "@/hooks/useRingkasanSheets
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { formatDecimal, formatInt, formatRupiah, normalizeGarisKemiskinan } from "@/lib/format";
+import type { StatCardTrend } from "@/components/dashboard/StatCard";
 
 const fmt = formatDecimal;
 const fmtInt = formatInt;
