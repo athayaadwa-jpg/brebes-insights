@@ -105,14 +105,14 @@ export const StatCard = ({
       </div>
 
       <div className="mt-4 flex flex-1 items-end">
-        <div className="flex items-baseline gap-1.5 leading-none">
-          <span className="font-display text-[2.25rem] sm:text-[2.5rem] font-extrabold tracking-tight text-foreground leading-none">
+        <div className="flex w-full flex-wrap items-baseline gap-x-1.5 gap-y-0 leading-none">
+          <span className="font-display text-[1.875rem] sm:text-[2.25rem] font-extrabold tracking-tight text-foreground leading-[1.05] break-words min-w-0">
             {value}
           </span>
           {unit && (
             <span
               className={cn(
-                "text-sm font-medium text-muted-foreground",
+                "text-sm font-medium text-muted-foreground whitespace-nowrap",
                 unit === "%" && "-ml-1.5",
               )}
             >
