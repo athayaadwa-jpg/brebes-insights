@@ -66,12 +66,12 @@
 
     --sidebar-background: 215 40% 12%;
     --sidebar-foreground: 210 20% 85%;
-    --sidebar-primary: 172 65% 45%;
-    --sidebar-primary-foreground: 215 40% 12%;
+    --sidebar-primary: 210 90% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 215 35% 18%;
     --sidebar-accent-foreground: 210 20% 95%;
     --sidebar-border: 215 30% 20%;
-    --sidebar-ring: 172 65% 45%;
+    --sidebar-ring: 210 90% 55%;
   }
 
   .dark {
