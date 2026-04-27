@@ -1,7 +1,8 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { BarChart3, Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, Wheat, GraduationCap, Briefcase, LineChart, Menu, X, Sprout, Building2 } from "lucide-react";
+import { Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, Wheat, GraduationCap, Briefcase, LineChart, Menu, X, Sprout, Building2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import logoInteres from "@/assets/logo-interes.png";
 
 const nav = [
   { to: "/", label: "Beranda", icon: Home, end: true },
