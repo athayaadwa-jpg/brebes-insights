@@ -78,10 +78,9 @@ const Indikator = () => {
 
   if (!meta) return <Navigate to="/ringkasan" replace />;
 
-  // ----- Series Brebes (5 tahun terakhir) + series Jateng & Nasional -----
+  // ----- Series Brebes (3 tahun terakhir) + series Jateng & Nasional -----
   const allSeries = live?.series ?? [];
-  const last5Years = allSeries.slice(-5);
-  const last5YearSet = new Set(last5Years.map((p) => p.tahun));
+  const lastYears = allSeries.slice(-3);
 
   const jatengMap = new Map<number, number>(
     (live?.seriesJateng ?? []).map((p) => [p.tahun, p.nilai]),
@@ -90,7 +89,7 @@ const Indikator = () => {
     (live?.seriesNasional ?? []).map((p) => [p.tahun, p.nilai]),
   );
 
-  const series: SeriesPoint[] = last5Years.map((p) => ({
+  const series: SeriesPoint[] = lastYears.map((p) => ({
     tahun: p.tahun,
     brebes: p.brebes,
     jateng: jatengMap.get(p.tahun),
@@ -223,7 +222,7 @@ const Indikator = () => {
           <div className="mb-4 flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
-                <TrendingUp className="h-3.5 w-3.5" /> Tren 5 Tahun Terakhir
+                <TrendingUp className="h-3.5 w-3.5" /> Tren 3 Tahun Terakhir
               </div>
               <h2 className="mt-1 font-display text-xl font-bold">Perkembangan {meta.nama}</h2>
               <p className="text-sm text-muted-foreground">
