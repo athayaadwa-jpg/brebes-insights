@@ -53,7 +53,15 @@ Deno.serve(async (req) => {
 
     // Header di baris 0, baris 1 sub-header. Data mulai baris 2.
     const header = indikator[0] ?? [];
-    const idx = (label: string) => header.findIndex((h: string) => (h ?? "").toString().trim().toLowerCase() === label.toLowerCase());
+    const norm = (s: unknown) => (s ?? "").toString().trim().toLowerCase().replace(/\s+/g, " ");
+    // Cari kolom dengan exact match dulu, lalu prefix match (toleran terhadap
+    // suffix tambahan seperti " (Triwulan II)" yang muncul di header sumber).
+    const idx = (label: string) => {
+      const want = norm(label);
+      const exact = header.findIndex((h: string) => norm(h) === want);
+      if (exact !== -1) return exact;
+      return header.findIndex((h: string) => norm(h).startsWith(want));
+    };
 
     const COL = {
       tahun: idx("Tahun"),
@@ -88,9 +96,17 @@ Deno.serve(async (req) => {
       pendudukLaki: idx("Proyeksi Penduduk Laki-laki (Jiwa)"),
       pendudukPerempuan: idx("Proyeksi Penduduk Perempuan (Jiwa)"),
       pendudukTotal: idx("Proyeksi Penduduk Total (Jiwa)"),
+      // Catatan: header sheet kini menambah suffix " (Triwulan II)" untuk kolom
+      // PDRB. Pencarian prefix di atas menanganinya secara otomatis.
       pertumbuhanLU: idx("Pertumbuhan Ekonomi Menurut Lapangan Usaha"),
       pdrbKonstan: idx("PDRB Atas Dasar Harga Konstan (miliar rupiah)"),
       lajuPdrbTahunan: idx("Laju Pertumbuhan PDRB (q to q) (persen)"),
+      // Kolom partisipasi sekolah (header utama + sub-header pada baris 1).
+      // Kolom utama hanya berisi label "APS"/"APM"/"APK"; nilai per kelompok
+      // umur/jenjang ada di kolom-kolom berikutnya berurutan.
+      apsBase: idx("APS"),
+      apmBase: idx("APM"),
+      apkBase: idx("APK"),
     };
 
     // Bangun seri tahunan
