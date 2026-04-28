@@ -31,10 +31,10 @@ const Hubungi = () => {
       <div className="grid gap-8 lg:grid-cols-5">
         <div className="space-y-4 lg:col-span-2">
           {[
-            { icon: MapPin, title: "Alamat", body: "Jl. MT. Haryono No. 75\nBrebes, Jawa Tengah 52212" },
-            { icon: Mail, title: "Email", body: "interes@brebeskab.go.id" },
-            { icon: Phone, title: "Telepon", body: "(0283) 671025" },
-            { icon: Clock, title: "Jam Layanan", body: "Senin – Jumat\n08.00 – 16.00 WIB" },
+            { icon: MapPin, title: "Alamat", body: "Jl. MT. Haryono No. 74\nBrebes, Jawa Tengah 52212" },
+            { icon: Mail, title: "Email", body: "bps3329@bps.go.id" },
+            { icon: Phone, title: "Telepon", body: "(0283) 671168" },
+            { icon: Clock, title: "Jam Layanan", body: "Senin – Kamis\n08.00 – 15.00 WIB\nJum'at\n08.00 – 15.30 WIB" },
           ].map((c) => (
             <div key={c.title} className="flex gap-4 rounded-xl border border-border bg-card p-5 shadow-soft">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
