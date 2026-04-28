@@ -321,7 +321,10 @@ const Ringkasan = () => {
               value={fmt(v(r.eys)!)}
               unit="tahun"
               icon={BookOpen}
-              trend={tren(data.seri, "eys", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "th" })}
+              trend={
+                tren(data.seri, "hls", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "th" }) ??
+                tren(data.seri, "eys", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "th" })
+              }
               hint={periodHint(yr(r.eys))}
             />
           )}
@@ -331,7 +334,10 @@ const Ringkasan = () => {
               value={fmt(v(r.mys)!)}
               unit="tahun"
               icon={BookOpen}
-              trend={tren(data.seri, "mys", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "th" })}
+              trend={
+                tren(data.seri, "rls", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "th" }) ??
+                tren(data.seri, "mys", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "th" })
+              }
               hint={periodHint(yr(r.mys))}
             />
           )}
@@ -341,7 +347,10 @@ const Ringkasan = () => {
               value={fmtRp(v(r.ppp)! * 1000)}
               unit="/tahun"
               icon={Wallet}
-              trend={tren(data.seri, "ppp", { higherIsBetter: true, formatDelta: (n) => fmtInt(n * 1000), unit: "Rp" })}
+              trend={
+                tren(data.seri, "pengeluaranKapita", { higherIsBetter: true, formatDelta: (n) => fmtInt(n * 1000), unit: "Rp" }) ??
+                tren(data.seri, "ppp", { higherIsBetter: true, formatDelta: (n) => fmtInt(n * 1000), unit: "Rp" })
+              }
               hint={`Disesuaikan · ${yr(r.ppp)}`}
             />
           )}
