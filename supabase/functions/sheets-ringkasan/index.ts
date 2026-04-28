@@ -109,6 +109,11 @@ Deno.serve(async (req) => {
       apkBase: idx("APK"),
     };
 
+    // Helper: ambil nilai pada offset relatif terhadap kolom dasar (untuk
+    // kolom bertingkat seperti APS/APM/APK yang memiliki sub-header).
+    const at = (r: any[], base: number, offset: number) =>
+      base >= 0 ? parseId(r[base + offset]) : null;
+
     // Bangun seri tahunan
     const dataRows = indikator.slice(2).filter((r: any[]) => parseId(r[COL.tahun]));
     const seri = dataRows.map((r: any[]) => ({
@@ -146,6 +151,16 @@ Deno.serve(async (req) => {
       pertumbuhanLU: parseId(r[COL.pertumbuhanLU]),
       pdrbKonstan: parseId(r[COL.pdrbKonstan]),
       lajuPdrbTahunan: parseId(r[COL.lajuPdrbTahunan]),
+      // Partisipasi sekolah: APS (07-12, 13-15, 16-18 th), APM/APK (SD, SMP, SMA)
+      apsSd: at(r, COL.apsBase, 0),
+      apsSmp: at(r, COL.apsBase, 1),
+      apsSma: at(r, COL.apsBase, 2),
+      apmSd: at(r, COL.apmBase, 0),
+      apmSmp: at(r, COL.apmBase, 1),
+      apmSma: at(r, COL.apmBase, 2),
+      apkSd: at(r, COL.apkBase, 0),
+      apkSmp: at(r, COL.apkBase, 1),
+      apkSma: at(r, COL.apkBase, 2),
     }));
 
     // Ambil tahun terakhir yang punya nilai untuk setiap indikator
