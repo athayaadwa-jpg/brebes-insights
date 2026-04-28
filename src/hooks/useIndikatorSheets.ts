@@ -3,12 +3,19 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type IndikatorSeriesPoint = { tahun: number; brebes: number };
 export type IndikatorRankPoint = { wilayah: string; nilai: number };
+export type IndikatorComparePoint = { tahun: number; nilai: number };
 
 export type IndikatorSheetsItem = {
   slug: string;
   series: IndikatorSeriesPoint[];
+  seriesJateng: IndikatorComparePoint[];
+  seriesNasional: IndikatorComparePoint[];
   ranking: IndikatorRankPoint[];
   rankingTahun: number | null;
+  rankingByYear: Record<string, IndikatorRankPoint[]>;
+  rankingYears: number[];
+  jatengByYear: Record<string, number>;
+  nasionalByYear: Record<string, number>;
   jateng: number | null;
   nasional: number | null;
 };

@@ -132,45 +132,68 @@ Deno.serve(async (req) => {
       if (Number.isFinite(tahun) && nilai !== null) ikkSeries.push({ tahun, brebes: nilai });
     }
 
-    // ---- Ranking per indikator: ambil tahun terbaru yang memiliki data ----
-    // Sekaligus pisahkan baris "Jawa Tengah" / "Indonesia"/"Nasional" sebagai
-    // pembanding, bukan sebagai entry kab/kota.
+    // ---- Ranking per indikator: kelompokkan per tahun ----
+    // Mengembalikan ranking untuk SEMUA tahun yang tersedia, plus jateng &
+    // nasional series (per tahun). Frontend dapat memilih tahun untuk grafik
+    // batang dan menggambar garis Jateng/Nasional pada chart tren.
+    type RankByYear = Record<number, RankRow[]>;
+    type CompareByYear = Record<number, number>;
     const buildRanking = (sheetName: string): {
       tahun: number | null;
       data: RankRow[];
       jateng: number | null;
       nasional: number | null;
+      rankingByYear: RankByYear;
+      jatengByYear: CompareByYear;
+      nasionalByYear: CompareByYear;
+      years: number[];
     } => {
       const rows = byRange.get(sheetName) ?? [];
-      if (rows.length < 2) return { tahun: null, data: [], jateng: null, nasional: null };
-      const years = new Set<number>();
-      for (let i = 1; i < rows.length; i++) {
-        const y = Number(rows[i][2]);
-        if (Number.isFinite(y)) years.add(y);
-      }
-      if (!years.size) return { tahun: null, data: [], jateng: null, nasional: null };
-      const tahun = Math.max(...years);
-      const data: RankRow[] = [];
-      let jateng: number | null = null;
-      let nasional: number | null = null;
+      const empty = {
+        tahun: null, data: [], jateng: null, nasional: null,
+        rankingByYear: {}, jatengByYear: {}, nasionalByYear: {}, years: [],
+      };
+      if (rows.length < 2) return empty;
+      const rankingByYear: RankByYear = {};
+      const jatengByYear: CompareByYear = {};
+      const nasionalByYear: CompareByYear = {};
       for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
-        if (Number(r[2]) !== tahun) continue;
+        const y = Number(r[2]);
+        if (!Number.isFinite(y)) continue;
         const wilayahRaw = String(r[0] ?? "").trim();
         const nilai = parseId(r[3]);
         if (!wilayahRaw || nilai === null) continue;
-        if (/^jawa tengah$/i.test(wilayahRaw)) { jateng = nilai; continue; }
-        if (/^(indonesia|nasional)$/i.test(wilayahRaw)) { nasional = nilai; continue; }
-        data.push({ wilayah: cleanWilayah(wilayahRaw), nilai });
+        if (/^jawa tengah$/i.test(wilayahRaw)) { jatengByYear[y] = nilai; continue; }
+        if (/^(indonesia|nasional)$/i.test(wilayahRaw)) { nasionalByYear[y] = nilai; continue; }
+        (rankingByYear[y] ??= []).push({ wilayah: cleanWilayah(wilayahRaw), nilai });
       }
-      return { tahun, data, jateng, nasional };
+      const years = Object.keys(rankingByYear).map(Number).sort((a, b) => a - b);
+      if (!years.length) return empty;
+      const tahun = years[years.length - 1];
+      return {
+        tahun,
+        data: rankingByYear[tahun] ?? [],
+        jateng: jatengByYear[tahun] ?? null,
+        nasional: nasionalByYear[tahun] ?? null,
+        rankingByYear,
+        jatengByYear,
+        nasionalByYear,
+        years,
+      };
     };
 
     const indicators: Record<string, {
       slug: string;
       series: SeriesRow[];
+      seriesJateng: { tahun: number; nilai: number }[];
+      seriesNasional: { tahun: number; nilai: number }[];
       ranking: RankRow[];
       rankingTahun: number | null;
+      rankingByYear: Record<number, RankRow[]>;
+      rankingYears: number[];
+      jatengByYear: Record<number, number>;
+      nasionalByYear: Record<number, number>;
       jateng: number | null;
       nasional: number | null;
     }> = {};
@@ -184,12 +207,30 @@ Deno.serve(async (req) => {
       }
       const rank = def.rankingSheet
         ? buildRanking(def.rankingSheet)
-        : { tahun: null, data: [], jateng: null, nasional: null };
+        : {
+            tahun: null, data: [], jateng: null, nasional: null,
+            rankingByYear: {}, jatengByYear: {}, nasionalByYear: {}, years: [],
+          };
+
+      // Bangun series Jateng/Nasional dari ranking per tahun (untuk grafik tren).
+      const seriesJateng = Object.entries(rank.jatengByYear)
+        .map(([y, v]) => ({ tahun: Number(y), nilai: v as number }))
+        .sort((a, b) => a.tahun - b.tahun);
+      const seriesNasional = Object.entries(rank.nasionalByYear)
+        .map(([y, v]) => ({ tahun: Number(y), nilai: v as number }))
+        .sort((a, b) => a.tahun - b.tahun);
+
       indicators[def.slug] = {
         slug: def.slug,
         series,
+        seriesJateng,
+        seriesNasional,
         ranking: rank.data,
         rankingTahun: rank.tahun,
+        rankingByYear: rank.rankingByYear,
+        rankingYears: rank.years,
+        jatengByYear: rank.jatengByYear,
+        nasionalByYear: rank.nasionalByYear,
         jateng: rank.jateng,
         nasional: rank.nasional,
       };
