@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
     const title = sheet?.properties?.title;
     if (!title) return new Response(JSON.stringify({ meta }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     // 2. Get first ~6 rows
-    const range = `${title}!A1:BZ8`;
+    const range = `${title}!A1:BZ30`;
     const data = await fetch(`${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values/${range}`, { headers }).then(r => r.json());
     return new Response(JSON.stringify({ title, data }, null, 2), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
