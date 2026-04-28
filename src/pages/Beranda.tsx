@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 const features = [
   { icon: Layers, title: "Data Terintegrasi", desc: "Indikator strategis kependudukan, ekonomi, dan kesejahteraan dalam satu tampilan." },
   { icon: TrendingUp, title: "Tren 5 Tahun", desc: "Pantau perkembangan setiap indikator dengan grafik time-series yang jelas." },
-  { icon: BarChart3, title: "Perbandingan Wilayah", desc: "Posisi Kab. Brebes dibanding 35 kab/kota se-Jawa Tengah." },
+  { icon: BarChart3, title: "Perbandingan Wilayah", desc: "Posisi Kab. Brebes dibanding 17 Kecamatan se-Kabupaten Brebes." },
   { icon: ShieldCheck, title: "Sumber Resmi", desc: "Data bersumber dari BPS Kabupaten Brebes dan Provinsi Jawa Tengah." },
 ];
 
@@ -55,10 +55,10 @@ const Beranda = () => {
           {/* Inline mini-stats */}
           <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             {[
-              { v: "2,00 jt", l: "Penduduk" },
-              { v: "35", l: "Kab/Kota Jateng" },
+              { v: "2,08 jt", l: "Penduduk" },
+              { v: "17", l: "Kecamatan" },
               { v: "5+", l: "Tahun Data" },
-              { v: "6", l: "Indikator Detail" },
+              { v: "8", l: "Indikator Detail" },
             ].map((s) => (
               <div key={s.l} className="rounded-xl border border-primary-foreground/20 bg-primary-foreground/10 p-4 backdrop-blur-sm">
                 <div className="font-display text-2xl font-bold text-primary-foreground">{s.v}</div>
