@@ -1,45 +1,135 @@
+import { useMemo, useState } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
-import { ArrowLeft, Info, MapPin, TrendingUp, Trophy, Loader2 } from "lucide-react";
+import { ArrowLeft, Info, MapPin, TrendingUp, TrendingDown, Minus, Trophy, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { SeriesChart, RankingChart } from "@/components/dashboard/Charts";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getIndicator, INDICATORS, type SeriesPoint, type RankPoint } from "@/data/statistik";
 import { formatSmart } from "@/lib/format";
 import { useIndikatorSheets } from "@/hooks/useIndikatorSheets";
 
 const fmt = (n: number) => formatSmart(n, 2);
 
+// Komponen badge perubahan (naik/turun) dari periode sebelumnya.
+// higherIsBetter menentukan warna: kenaikan pada indikator "lebih tinggi
+// lebih baik" tampil hijau, sebaliknya merah.
+const DeltaBadge = ({
+  current,
+  previous,
+  satuan,
+  higherIsBetter,
+  prevTahun,
+}: {
+  current: number;
+  previous: number | null | undefined;
+  satuan: string;
+  higherIsBetter: boolean;
+  prevTahun?: number | null;
+}) => {
+  if (previous === null || previous === undefined || !Number.isFinite(previous)) {
+    return (
+      <div className="mt-2 text-xs text-muted-foreground">Belum ada pembanding</div>
+    );
+  }
+  const diff = current - previous;
+  const pct = previous !== 0 ? (diff / Math.abs(previous)) * 100 : 0;
+  const isUp = diff > 0;
+  const isFlat = Math.abs(diff) < 1e-9;
+  const good = isFlat ? null : higherIsBetter ? isUp : !isUp;
+  const tone = isFlat
+    ? "bg-muted text-muted-foreground"
+    : good
+    ? "bg-success/10 text-success"
+    : "bg-destructive/10 text-destructive";
+  const Icon = isFlat ? Minus : isUp ? TrendingUp : TrendingDown;
+  const sign = isFlat ? "" : isUp ? "+" : "−";
+  const absDiff = Math.abs(diff);
+  const unitText = satuan === "%" ? " poin" : satuan ? ` ${satuan}` : "";
+  return (
+    <div className={`mt-2 inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold ${tone}`}>
+      <Icon className="h-3 w-3" />
+      <span>
+        {sign}{fmt(absDiff)}{unitText}
+        {previous !== 0 && (
+          <span className="ml-1 opacity-80">({sign}{fmt(Math.abs(pct))}%)</span>
+        )}
+      </span>
+      {prevTahun && <span className="opacity-70">vs {prevTahun}</span>}
+    </div>
+  );
+};
+
 const Indikator = () => {
   const { slug } = useParams();
   const meta = getIndicator(slug || "");
   const { data: sheets, isLoading, isError } = useIndikatorSheets();
 
+  const live = sheets?.indicators[meta?.slug ?? ""];
+
+  // Tahun terpilih untuk grafik ranking (default = tahun terbaru).
+  // Disimpan sebagai string untuk kompatibilitas dengan komponen Select.
+  const rankingYears = useMemo(() => {
+    const ys = live?.rankingYears ?? [];
+    return [...ys].sort((a, b) => b - a).slice(0, 3); // 3 tahun terakhir
+  }, [live]);
+  const [pickedYear, setPickedYear] = useState<string>("");
+  const activeYear = pickedYear ? Number(pickedYear) : rankingYears[0];
+
   if (!meta) return <Navigate to="/ringkasan" replace />;
 
-  const live = sheets?.indicators[meta.slug];
+  // ----- Series Brebes (5 tahun terakhir) + series Jateng & Nasional -----
+  const allSeries = live?.series ?? [];
+  const last5Years = allSeries.slice(-5);
+  const last5YearSet = new Set(last5Years.map((p) => p.tahun));
 
-  // Series Brebes dari sheet -> SeriesPoint (jateng/nasional opsional, tidak
-  // ada di sumber per-tahun -> dibiarkan undefined supaya garis tidak dirender).
-  const series: SeriesPoint[] = (live?.series ?? []).map((p) => ({
+  const jatengMap = new Map<number, number>(
+    (live?.seriesJateng ?? []).map((p) => [p.tahun, p.nilai]),
+  );
+  const nasionalMap = new Map<number, number>(
+    (live?.seriesNasional ?? []).map((p) => [p.tahun, p.nilai]),
+  );
+
+  const series: SeriesPoint[] = last5Years.map((p) => ({
     tahun: p.tahun,
     brebes: p.brebes,
+    jateng: jatengMap.get(p.tahun),
+    nasional: nasionalMap.get(p.tahun),
   }));
 
-  const ranking: RankPoint[] = live?.ranking ?? [];
-  const jateng = live?.jateng ?? undefined;
-  const nasional = live?.nasional ?? undefined;
-  const rankingTahun = live?.rankingTahun ?? meta.highlight.tahun;
+  // ----- Ranking untuk tahun terpilih -----
+  const rankingByYear = (live?.rankingByYear ?? {}) as Record<string, RankPoint[]>;
+  const ranking: RankPoint[] = activeYear ? rankingByYear[String(activeYear)] ?? [] : [];
+  const jatengActive = activeYear ? live?.jatengByYear?.[String(activeYear)] : undefined;
+  const nasionalActive = activeYear ? live?.nasionalByYear?.[String(activeYear)] : undefined;
 
-  // Highlight: pakai nilai dari sheet jika ada (entry Brebes pada ranking
-  // tahun terbaru), fallback ke meta default.
-  const brebesEntry = ranking.find((r) => r.wilayah === "Brebes");
-  const brebesNilai = brebesEntry?.nilai ?? meta.highlight.brebes;
+  // ----- Highlight comparison (tahun terbaru vs sebelumnya) -----
+  const latestYear = live?.rankingTahun ?? meta.highlight.tahun;
+  const prevYear = (live?.rankingYears ?? [])
+    .filter((y) => y < (latestYear ?? Infinity))
+    .sort((a, b) => b - a)[0] ?? null;
 
-  // Hitung peringkat Brebes pada ranking tahun terbaru
-  const sorted = [...ranking].sort((a, b) =>
+  const brebesLatest =
+    rankingByYear[String(latestYear)]?.find((r) => r.wilayah === "Brebes")?.nilai
+    ?? allSeries.at(-1)?.brebes
+    ?? meta.highlight.brebes;
+  const brebesPrev = prevYear
+    ? rankingByYear[String(prevYear)]?.find((r) => r.wilayah === "Brebes")?.nilai
+      ?? allSeries.find((p) => p.tahun === prevYear)?.brebes
+      ?? null
+    : null;
+
+  const jatengLatest = live?.jateng ?? undefined;
+  const jatengPrev = prevYear ? live?.jatengByYear?.[String(prevYear)] ?? null : null;
+  const nasionalLatest = live?.nasional ?? undefined;
+  const nasionalPrev = prevYear ? live?.nasionalByYear?.[String(prevYear)] ?? null : null;
+
+  // Hitung peringkat Brebes pada tahun terbaru
+  const latestRanking = rankingByYear[String(latestYear)] ?? [];
+  const sortedLatest = [...latestRanking].sort((a, b) =>
     meta.higherIsBetter ? b.nilai - a.nilai : a.nilai - b.nilai
   );
-  const rankBrebes = sorted.findIndex((d) => d.wilayah === "Brebes") + 1;
+  const rankBrebes = sortedLatest.findIndex((d) => d.wilayah === "Brebes") + 1;
 
   const others = INDICATORS.filter((i) => i.slug !== meta.slug).slice(0, 4);
 
@@ -50,7 +140,7 @@ const Indikator = () => {
       </Button>
 
       <PageHeader
-        eyebrow={`Indikator · ${rankingTahun}`}
+        eyebrow={`Indikator · ${latestYear}`}
         title={meta.nama}
         description={meta.deskripsi}
       />
@@ -67,43 +157,62 @@ const Indikator = () => {
       )}
 
       {/* Highlight comparison */}
-      <section className={`grid gap-4 ${jateng !== undefined && nasional !== undefined ? "sm:grid-cols-3" : jateng !== undefined || nasional !== undefined ? "sm:grid-cols-2" : "sm:grid-cols-1"}`}>
+      <section className={`grid gap-4 ${jatengLatest !== undefined && nasionalLatest !== undefined ? "sm:grid-cols-3" : jatengLatest !== undefined || nasionalLatest !== undefined ? "sm:grid-cols-2" : "sm:grid-cols-1"}`}>
         <div className="rounded-xl border-2 border-brebes/40 bg-card p-5 shadow-soft">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brebes">
             <MapPin className="h-3.5 w-3.5" /> Kab. Brebes
           </div>
           <div className="mt-2 flex items-baseline gap-1.5">
-            <span className="font-display text-4xl font-extrabold text-brebes">{fmt(brebesNilai)}</span>
+            <span className="font-display text-4xl font-extrabold text-brebes">{fmt(brebesLatest)}</span>
             {meta.satuan && <span className={`text-sm font-medium text-muted-foreground ${meta.satuan === "%" ? "-ml-1.5" : ""}`}>{meta.satuan}</span>}
           </div>
+          <DeltaBadge
+            current={brebesLatest}
+            previous={brebesPrev}
+            satuan={meta.satuan}
+            higherIsBetter={meta.higherIsBetter}
+            prevTahun={prevYear}
+          />
           {ranking.length > 0 && rankBrebes > 0 && (
             <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-brebes/10 px-2 py-0.5 text-xs font-semibold text-brebes">
-              <Trophy className="h-3 w-3" /> Peringkat {rankBrebes} dari {sorted.length}
+              <Trophy className="h-3 w-3" /> Peringkat {rankBrebes} dari {sortedLatest.length}
             </div>
           )}
         </div>
-        {jateng !== undefined && (
+        {jatengLatest !== undefined && (
           <div className="rounded-xl border border-border bg-card p-5 shadow-soft">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-jateng">
               <MapPin className="h-3.5 w-3.5" /> Prov. Jawa Tengah
             </div>
             <div className="mt-2 flex items-baseline gap-1.5">
-              <span className="font-display text-4xl font-bold text-jateng">{fmt(jateng)}</span>
+              <span className="font-display text-4xl font-bold text-jateng">{fmt(jatengLatest)}</span>
               {meta.satuan && <span className={`text-sm font-medium text-muted-foreground ${meta.satuan === "%" ? "-ml-1.5" : ""}`}>{meta.satuan}</span>}
             </div>
-            <div className="mt-2 text-xs text-muted-foreground">Rata-rata Jawa Tengah</div>
+            <DeltaBadge
+              current={jatengLatest}
+              previous={jatengPrev}
+              satuan={meta.satuan}
+              higherIsBetter={meta.higherIsBetter}
+              prevTahun={prevYear}
+            />
           </div>
         )}
-        {nasional !== undefined && (
+        {nasionalLatest !== undefined && (
           <div className="rounded-xl border border-border bg-card p-5 shadow-soft">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-nasional">
               <MapPin className="h-3.5 w-3.5" /> Nasional
             </div>
             <div className="mt-2 flex items-baseline gap-1.5">
-              <span className="font-display text-4xl font-bold text-nasional">{fmt(nasional)}</span>
+              <span className="font-display text-4xl font-bold text-nasional">{fmt(nasionalLatest)}</span>
               {meta.satuan && <span className={`text-sm font-medium text-muted-foreground ${meta.satuan === "%" ? "-ml-1.5" : ""}`}>{meta.satuan}</span>}
             </div>
-            <div className="mt-2 text-xs text-muted-foreground">Angka Indonesia</div>
+            <DeltaBadge
+              current={nasionalLatest}
+              previous={nasionalPrev}
+              satuan={meta.satuan}
+              higherIsBetter={meta.higherIsBetter}
+              prevTahun={prevYear}
+            />
           </div>
         )}
       </section>
@@ -114,10 +223,12 @@ const Indikator = () => {
           <div className="mb-4 flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
-                <TrendingUp className="h-3.5 w-3.5" /> Tren {series.length} Tahun Terakhir
+                <TrendingUp className="h-3.5 w-3.5" /> Tren 5 Tahun Terakhir
               </div>
               <h2 className="mt-1 font-display text-xl font-bold">Perkembangan {meta.nama}</h2>
-              <p className="text-sm text-muted-foreground">Data tahunan Kab. Brebes berdasarkan publikasi BPS.</p>
+              <p className="text-sm text-muted-foreground">
+                Perbandingan Kab. Brebes, Jawa Tengah, dan Nasional berdasarkan publikasi BPS.
+              </p>
             </div>
           </div>
           <SeriesChart data={series} satuan={meta.satuan} />
@@ -125,34 +236,52 @@ const Indikator = () => {
       )}
 
       {/* Ranking chart */}
-      {ranking.length > 0 && (
+      {rankingYears.length > 0 && (
         <section className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-soft">
-          <div className="mb-4">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
-              <Trophy className="h-3.5 w-3.5" /> Peringkat Antar Kabupaten/Kota · {rankingTahun}
+          <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
+                <Trophy className="h-3.5 w-3.5" /> Peringkat Antar Kabupaten/Kota · {activeYear}
+              </div>
+              <h2 className="mt-1 font-display text-xl font-bold">Posisi Brebes di Jawa Tengah</h2>
+              <p className="text-sm text-muted-foreground">
+                Diurutkan dari yang {meta.higherIsBetter ? "tertinggi" : "terendah"} (lebih baik). Batang berwarna menandai{" "}
+                <span className="font-semibold text-brebes">Kab. Brebes</span>
+                {jatengActive !== undefined && (
+                  <>, <span className="font-semibold text-jateng">Jawa Tengah</span></>
+                )}
+                {nasionalActive !== undefined && (
+                  <>
+                    {jatengActive !== undefined ? ", dan " : " dan "}
+                    <span className="font-semibold text-nasional">Indonesia</span>
+                  </>
+                )}
+                .
+              </p>
             </div>
-            <h2 className="mt-1 font-display text-xl font-bold">Posisi Brebes di Jawa Tengah</h2>
-            <p className="text-sm text-muted-foreground">
-              Diurutkan dari yang {meta.higherIsBetter ? "tertinggi" : "terendah"} (lebih baik). Batang berwarna menandai{" "}
-              <span className="font-semibold text-brebes">Kab. Brebes</span>
-              {jateng !== undefined && (
-                <>, <span className="font-semibold text-jateng">Jawa Tengah</span></>
-              )}
-              {nasional !== undefined && (
-                <>
-                  {jateng !== undefined ? ", dan " : " dan "}
-                  <span className="font-semibold text-nasional">Indonesia</span>
-                </>
-              )}
-              .
-            </p>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-muted-foreground">Tahun:</span>
+              <Select
+                value={String(activeYear ?? "")}
+                onValueChange={(v) => setPickedYear(v)}
+              >
+                <SelectTrigger className="h-9 w-28">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {rankingYears.map((y) => (
+                    <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <RankingChart
             data={ranking}
             higherIsBetter={meta.higherIsBetter}
             satuan={meta.satuan}
-            jateng={jateng}
-            nasional={nasional}
+            jateng={jatengActive ?? undefined}
+            nasional={nasionalActive ?? undefined}
           />
         </section>
       )}
@@ -162,8 +291,8 @@ const Indikator = () => {
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-info" />
         <p className="text-muted-foreground">
           <strong className="text-foreground">Sumber:</strong> Data dihimpun dari Google Sheet
-          publikasi BPS Kabupaten Brebes. Tahun pembanding ranking mengikuti tahun terbaru
-          yang tersedia di sheet sumber.
+          publikasi BPS Kabupaten Brebes. Perubahan dihitung terhadap periode sebelumnya
+          yang tersedia pada sheet sumber.
         </p>
       </section>
 
