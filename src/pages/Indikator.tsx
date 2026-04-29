@@ -65,6 +65,14 @@ const Indikator = () => {
   const { slug } = useParams();
   const meta = getIndicator(slug || "");
   const { data: sheets, isLoading, isError } = useIndikatorSheets();
+  const { data: ringkasan } = useRingkasanSheets();
+
+  // Suffix periode (mis. "Triwulan II") — hanya berlaku untuk indikator PDRB/Pertumbuhan Ekonomi
+  // jika header sumber memuatnya.
+  const periodeSuffix =
+    meta?.slug === "pertumbuhan-ekonomi"
+      ? ringkasan?.periods?.pertumbuhanLU ?? null
+      : null;
 
   const live = sheets?.indicators[meta?.slug ?? ""];
 
