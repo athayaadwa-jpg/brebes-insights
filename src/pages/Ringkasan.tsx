@@ -434,7 +434,7 @@ const Ringkasan = () => {
               unit="%"
               icon={BarChart3}
               trend={tren(data.seri, "pertumbuhanLU", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
-              hint={periodHint(yr(r.pertumbuhanLU))}
+              hint={periodHintQ(yr(r.pertumbuhanLU), data.periods?.pertumbuhanLU)}
             />
           )}
           {v(r.lajuPdrbTahunan) !== null && (
