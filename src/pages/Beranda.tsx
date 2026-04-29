@@ -33,7 +33,7 @@ const Beranda = () => {
             alt="Interes"
             className="mt-5 h-16 w-auto object-contain sm:h-20 lg:h-24"
           />
-          <h1 className="mt-3 max-w-3xl font-display text-3xl font-extrabold leading-tight text-primary-foreground sm:text-4xl lg:text-2xl">
+          <h1 className="mt-3 max-w-3xl font-display text-3xl leading-tight text-primary-foreground sm:text-4xl lg:text-2xl font-bold">
             Indikator Strategis Kabupaten Brebes
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-primary-foreground/90 sm:text-lg">
