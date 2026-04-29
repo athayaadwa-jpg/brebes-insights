@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.sheets-indikator]
 verify_jwt = false
+
+[functions.tanya-santika]
+verify_jwt = false
