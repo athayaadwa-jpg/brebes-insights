@@ -50,7 +50,22 @@ export const AppLayout = () => {
           <span className="truncate font-display text-sm font-semibold text-foreground/80">
             ​
           </span>
-...
+        </div>
+        <button onClick={() => setOpen(!open)} className="rounded-md p-2 hover:bg-muted" aria-label="Menu">
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </header>
+
+      {/* Sidebar */}
+      <aside
+        className={cn(
+          "fixed left-0 top-14 bottom-0 z-30 w-72 transform border-r border-sidebar-border bg-sidebar transition-transform lg:top-0 lg:translate-x-0",
+          open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        )}
+      >
+        <div className="flex h-full flex-col">
+          <div className="hidden flex-col items-start gap-1 border-b border-sidebar-border px-6 py-5 lg:flex">
+            <img src={logoInteres} alt="Interes" className="h-10 w-auto object-contain" />
             <div className="text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/70">
               ​
             </div>
