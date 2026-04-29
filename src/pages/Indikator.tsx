@@ -298,7 +298,7 @@ const Indikator = () => {
       <section className="mt-6 flex items-start gap-3 rounded-xl border border-info/20 bg-info/5 p-4 text-sm">
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-info" />
         <p className="text-muted-foreground">
-          <strong className="text-foreground">Sumber:</strong> Data dihimpun dari Google Sheet
+          <strong className="text-foreground">Sumber:</strong> Data dihimpun dari
           publikasi BPS Kabupaten Brebes. Perubahan dihitung terhadap periode sebelumnya
           yang tersedia pada sheet sumber.
         </p>
