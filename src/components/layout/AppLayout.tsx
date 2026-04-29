@@ -98,9 +98,9 @@ export const AppLayout = () => {
           </nav>
 
           <div className="border-t border-sidebar-border p-4 text-xs text-sidebar-foreground/60">
-            <div className="font-semibold text-sidebar-foreground/80">Sumber Data</div>
+            <div className="font-semibold text-sidebar-foreground/80">​</div>
             <div>BPS Kabupaten Brebes</div>
-            <div>BPS Provinsi Jawa Tengah</div>
+            <div>2026</div>
           </div>
         </div>
       </aside>
