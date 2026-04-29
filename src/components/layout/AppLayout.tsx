@@ -48,7 +48,7 @@ export const AppLayout = () => {
         <div className="flex min-w-0 items-center gap-2">
           <img src={logoInteres} alt="Interes" className="h-7 w-auto shrink-0 object-contain" />
           <span className="truncate font-display text-sm font-semibold text-foreground/80">
-            Indikator Strategis Kab. Brebes
+            ​
           </span>
         </div>
         <button onClick={() => setOpen(!open)} className="rounded-md p-2 hover:bg-muted" aria-label="Menu">
@@ -67,7 +67,7 @@ export const AppLayout = () => {
           <div className="hidden flex-col items-start gap-1 border-b border-sidebar-border px-6 py-5 lg:flex">
             <img src={logoInteres} alt="Interes" className="h-10 w-auto object-contain" />
             <div className="text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/70">
-              Indikator Strategis Kab. Brebes
+              ​
             </div>
           </div>
 
