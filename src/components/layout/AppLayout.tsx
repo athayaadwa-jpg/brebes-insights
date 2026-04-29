@@ -3,6 +3,7 @@ import { Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, W
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import logoInteres from "@/assets/logo-interes.png";
+import { TanyaSantika } from "@/components/TanyaSantika";
 
 const nav = [
   { to: "/", label: "Beranda", icon: Home, end: true },
@@ -112,6 +113,8 @@ export const AppLayout = () => {
       </main>
 
       {open && <div className="fixed left-0 right-0 top-14 bottom-0 z-20 bg-foreground/40 lg:hidden" onClick={() => setOpen(false)} />}
+
+      <TanyaSantika />
     </div>
   );
 };
