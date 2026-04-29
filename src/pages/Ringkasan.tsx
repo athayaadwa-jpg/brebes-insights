@@ -351,14 +351,14 @@ const Ringkasan = () => {
           {v(r.ppp) !== null && (
             <StatCard
               label="Pengeluaran per Kapita"
-              value={fmtRp(v(r.ppp)! * 1000)}
-              unit="/tahun"
+              value={fmtInt(v(r.ppp)!)}
+              unit="ribu Rp/tahun"
               icon={Wallet}
               trend={
-                tren(data.seri, "pengeluaranKapita", { higherIsBetter: true, formatDelta: (n) => fmtInt(n * 1000), unit: "Rp" }) ??
-                tren(data.seri, "ppp", { higherIsBetter: true, formatDelta: (n) => fmtInt(n * 1000), unit: "Rp" })
+                tren(data.seri, "pengeluaranKapita", { higherIsBetter: true, formatDelta: fmtInt, unit: "ribu Rp" }) ??
+                tren(data.seri, "ppp", { higherIsBetter: true, formatDelta: fmtInt, unit: "ribu Rp" })
               }
-              hint={`Disesuaikan · ${yr(r.ppp)}`}
+              hint={`Disesuaikan · dalam ribuan rupiah · ${yr(r.ppp)}`}
             />
           )}
         </div>
