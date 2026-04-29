@@ -137,7 +137,7 @@ const Ringkasan = () => {
       <PageHeader
         eyebrow={`Data terkini · hingga tahun ${tahunRef}`}
         title="Ringkasan Eksekutif"
-        description="Sajian angka-angka kunci yang menggambarkan kondisi terkini Kabupaten Brebes. Sumber data: Google Sheets BPS Kab. Brebes — diperbarui otomatis."
+        description="Sajian angka-angka kunci yang menggambarkan kondisi terkini Kabupaten Brebes. "
       />
 
       <div className="mb-6 flex items-center justify-between">
