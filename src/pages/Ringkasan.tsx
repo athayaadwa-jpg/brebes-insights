@@ -424,7 +424,7 @@ const Ringkasan = () => {
               icon={Factory}
               variant="accent"
               trend={tren(data.seri, "pdrbKonstan", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "miliar" })}
-              hint={periodHint(yr(r.pdrbKonstan))}
+              hint={periodHintQ(yr(r.pdrbKonstan), data.periods?.pdrbKonstan)}
             />
           )}
           {v(r.pertumbuhanLU) !== null && (
