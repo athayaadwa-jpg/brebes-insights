@@ -63,6 +63,15 @@ Deno.serve(async (req) => {
       return header.findIndex((h: string) => norm(h).startsWith(want));
     };
 
+    // Ekstrak label periode (mis. "Triwulan II") dari teks header sumber.
+    // Mengembalikan null jika tidak ditemukan pola triwulan.
+    const extractTriwulan = (colIdx: number): string | null => {
+      if (colIdx < 0) return null;
+      const raw = String(header[colIdx] ?? "");
+      const m = raw.match(/triwulan\s+([IVX]+|\d+)/i);
+      return m ? `Triwulan ${m[1].toUpperCase()}` : null;
+    };
+
     const COL = {
       tahun: idx("Tahun"),
       ikk: idx("Indeks Kemahalan Konstruksi"),
