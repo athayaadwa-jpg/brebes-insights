@@ -70,6 +70,13 @@ const tren = (
 const periodHint = (year: number | null, prefix = "Tahun") =>
   year ? `${prefix} ${year}` : "";
 
+// Hint period dengan dukungan label triwulan (mis. "Tahun 2025 · Triwulan II").
+const periodHintQ = (year: number | null, suffix?: string | null, prefix = "Tahun") => {
+  const base = periodHint(year, prefix);
+  if (!base) return suffix ?? "";
+  return suffix ? `${base} · ${suffix}` : base;
+};
+
 // Garis Kemiskinan kadang ditulis "563,762" di sheet (dimaksud 563.762 Rp).
 // Jika nilai hasil parser < 10.000, anggap satuan "ribu" dan kalikan 1000.
 const fixGarisKemiskinan = normalizeGarisKemiskinan;
