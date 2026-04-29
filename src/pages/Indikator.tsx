@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getIndicator, INDICATORS, type SeriesPoint, type RankPoint } from "@/data/statistik";
 import { formatSmart } from "@/lib/format";
 import { useIndikatorSheets } from "@/hooks/useIndikatorSheets";
+import { useRingkasanSheets } from "@/hooks/useRingkasanSheets";
 
 const fmt = (n: number) => formatSmart(n, 2);
 
