@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getIndicator, INDICATORS, type SeriesPoint, type RankPoint } from "@/data/statistik";
 import { formatSmart } from "@/lib/format";
 import { useIndikatorSheets } from "@/hooks/useIndikatorSheets";
+import { useRingkasanSheets } from "@/hooks/useRingkasanSheets";
 
 const fmt = (n: number) => formatSmart(n, 2);
 
@@ -64,6 +65,14 @@ const Indikator = () => {
   const { slug } = useParams();
   const meta = getIndicator(slug || "");
   const { data: sheets, isLoading, isError } = useIndikatorSheets();
+  const { data: ringkasan } = useRingkasanSheets();
+
+  // Suffix periode (mis. "Triwulan II") — hanya berlaku untuk indikator PDRB/Pertumbuhan Ekonomi
+  // jika header sumber memuatnya.
+  const periodeSuffix =
+    meta?.slug === "pertumbuhan-ekonomi"
+      ? ringkasan?.periods?.pertumbuhanLU ?? null
+      : null;
 
   const live = sheets?.indicators[meta?.slug ?? ""];
 
@@ -139,7 +148,7 @@ const Indikator = () => {
       </Button>
 
       <PageHeader
-        eyebrow={`Indikator · ${latestYear}`}
+        eyebrow={`Indikator · ${latestYear}${periodeSuffix ? ` · ${periodeSuffix}` : ""}`}
         title={meta.nama}
         description={meta.deskripsi}
       />

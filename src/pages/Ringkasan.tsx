@@ -70,6 +70,13 @@ const tren = (
 const periodHint = (year: number | null, prefix = "Tahun") =>
   year ? `${prefix} ${year}` : "";
 
+// Hint period dengan dukungan label triwulan (mis. "Tahun 2025 · Triwulan II").
+const periodHintQ = (year: number | null, suffix?: string | null, prefix = "Tahun") => {
+  const base = periodHint(year, prefix);
+  if (!base) return suffix ?? "";
+  return suffix ? `${base} · ${suffix}` : base;
+};
+
 // Garis Kemiskinan kadang ditulis "563,762" di sheet (dimaksud 563.762 Rp).
 // Jika nilai hasil parser < 10.000, anggap satuan "ribu" dan kalikan 1000.
 const fixGarisKemiskinan = normalizeGarisKemiskinan;
@@ -344,14 +351,14 @@ const Ringkasan = () => {
           {v(r.ppp) !== null && (
             <StatCard
               label="Pengeluaran per Kapita"
-              value={fmtRp(v(r.ppp)! * 1000)}
-              unit="/tahun"
+              value={fmtInt(v(r.ppp)!)}
+              unit="ribu Rp/tahun"
               icon={Wallet}
               trend={
-                tren(data.seri, "pengeluaranKapita", { higherIsBetter: true, formatDelta: (n) => fmtInt(n * 1000), unit: "Rp" }) ??
-                tren(data.seri, "ppp", { higherIsBetter: true, formatDelta: (n) => fmtInt(n * 1000), unit: "Rp" })
+                tren(data.seri, "pengeluaranKapita", { higherIsBetter: true, formatDelta: fmtInt, unit: "ribu Rp" }) ??
+                tren(data.seri, "ppp", { higherIsBetter: true, formatDelta: fmtInt, unit: "ribu Rp" })
               }
-              hint={`Disesuaikan · ${yr(r.ppp)}`}
+              hint={`Disesuaikan · dalam ribuan rupiah · ${yr(r.ppp)}`}
             />
           )}
         </div>
@@ -417,7 +424,7 @@ const Ringkasan = () => {
               icon={Factory}
               variant="accent"
               trend={tren(data.seri, "pdrbKonstan", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "miliar" })}
-              hint={periodHint(yr(r.pdrbKonstan))}
+              hint={periodHintQ(yr(r.pdrbKonstan), data.periods?.pdrbKonstan)}
             />
           )}
           {v(r.pertumbuhanLU) !== null && (
@@ -427,7 +434,7 @@ const Ringkasan = () => {
               unit="%"
               icon={BarChart3}
               trend={tren(data.seri, "pertumbuhanLU", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
-              hint={periodHint(yr(r.pertumbuhanLU))}
+              hint={periodHintQ(yr(r.pertumbuhanLU), data.periods?.pertumbuhanLU)}
             />
           )}
           {v(r.lajuPdrbTahunan) !== null && (
@@ -437,7 +444,7 @@ const Ringkasan = () => {
               unit="%"
               icon={TrendingUp}
               trend={tren(data.seri, "lajuPdrbTahunan", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
-              hint={periodHint(yr(r.lajuPdrbTahunan))}
+              hint={periodHintQ(yr(r.lajuPdrbTahunan), data.periods?.lajuPdrbTahunan)}
             />
           )}
           {v(r.ikk) !== null && (

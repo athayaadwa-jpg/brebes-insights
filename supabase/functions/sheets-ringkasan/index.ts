@@ -63,6 +63,15 @@ Deno.serve(async (req) => {
       return header.findIndex((h: string) => norm(h).startsWith(want));
     };
 
+    // Ekstrak label periode (mis. "Triwulan II") dari teks header sumber.
+    // Mengembalikan null jika tidak ditemukan pola triwulan.
+    const extractTriwulan = (colIdx: number): string | null => {
+      if (colIdx < 0) return null;
+      const raw = String(header[colIdx] ?? "");
+      const m = raw.match(/triwulan\s+([IVX]+|\d+)/i);
+      return m ? `Triwulan ${m[1].toUpperCase()}` : null;
+    };
+
     const COL = {
       tahun: idx("Tahun"),
       ikk: idx("Indeks Kemahalan Konstruksi"),
@@ -204,6 +213,14 @@ Deno.serve(async (req) => {
       lajuPdrbTahunan: latest("lajuPdrbTahunan"),
     };
 
+    // Label periode (mis. "Triwulan II") yang dideteksi dari header sumber.
+    // Hanya disetel jika header memang memuat kata "Triwulan ...".
+    const periods = {
+      pertumbuhanLU: extractTriwulan(COL.pertumbuhanLU),
+      pdrbKonstan: extractTriwulan(COL.pdrbKonstan),
+      lajuPdrbTahunan: extractTriwulan(COL.lajuPdrbTahunan),
+    };
+
     // PDRB (q-to-q) -> ambil baris terakhir
     const pdrbRows = pdrb.slice(1).filter((r: any[]) => r && r[2]);
     const lastPdrb = pdrbRows[pdrbRows.length - 1];
@@ -212,7 +229,7 @@ Deno.serve(async (req) => {
       : null;
 
     return new Response(
-      JSON.stringify({ ringkasan, seri, pdrb: pdrbInfo, lastUpdated: new Date().toISOString() }),
+      JSON.stringify({ ringkasan, seri, pdrb: pdrbInfo, periods, lastUpdated: new Date().toISOString() }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
     );
   } catch (err) {
