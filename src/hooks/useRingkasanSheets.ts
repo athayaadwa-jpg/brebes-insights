@@ -32,6 +32,11 @@ export type RingkasanSheets = {
   };
   seri: Array<Record<string, number | null>>;
   pdrb: { periode: string; laju: number | null } | null;
+  periods?: {
+    pertumbuhanLU: string | null;
+    pdrbKonstan: string | null;
+    lajuPdrbTahunan: string | null;
+  };
   lastUpdated: string;
 };
 
