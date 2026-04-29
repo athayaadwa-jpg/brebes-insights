@@ -444,7 +444,7 @@ const Ringkasan = () => {
               unit="%"
               icon={TrendingUp}
               trend={tren(data.seri, "lajuPdrbTahunan", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
-              hint={periodHint(yr(r.lajuPdrbTahunan))}
+              hint={periodHintQ(yr(r.lajuPdrbTahunan), data.periods?.lajuPdrbTahunan)}
             />
           )}
           {v(r.ikk) !== null && (
