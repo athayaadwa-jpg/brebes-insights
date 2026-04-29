@@ -148,7 +148,7 @@ const Indikator = () => {
       </Button>
 
       <PageHeader
-        eyebrow={`Indikator · ${latestYear}`}
+        eyebrow={`Indikator · ${latestYear}${periodeSuffix ? ` · ${periodeSuffix}` : ""}`}
         title={meta.nama}
         description={meta.deskripsi}
       />
