@@ -213,6 +213,14 @@ Deno.serve(async (req) => {
       lajuPdrbTahunan: latest("lajuPdrbTahunan"),
     };
 
+    // Label periode (mis. "Triwulan II") yang dideteksi dari header sumber.
+    // Hanya disetel jika header memang memuat kata "Triwulan ...".
+    const periods = {
+      pertumbuhanLU: extractTriwulan(COL.pertumbuhanLU),
+      pdrbKonstan: extractTriwulan(COL.pdrbKonstan),
+      lajuPdrbTahunan: extractTriwulan(COL.lajuPdrbTahunan),
+    };
+
     // PDRB (q-to-q) -> ambil baris terakhir
     const pdrbRows = pdrb.slice(1).filter((r: any[]) => r && r[2]);
     const lastPdrb = pdrbRows[pdrbRows.length - 1];
@@ -221,7 +229,7 @@ Deno.serve(async (req) => {
       : null;
 
     return new Response(
-      JSON.stringify({ ringkasan, seri, pdrb: pdrbInfo, lastUpdated: new Date().toISOString() }),
+      JSON.stringify({ ringkasan, seri, pdrb: pdrbInfo, periods, lastUpdated: new Date().toISOString() }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
     );
   } catch (err) {
