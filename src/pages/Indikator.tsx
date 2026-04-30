@@ -48,15 +48,17 @@ const DeltaBadge = ({
   const absDiff = Math.abs(diff);
   const unitText = satuan === "%" ? " poin" : satuan ? ` ${satuan}` : "";
   return (
-    <div className={`mt-2 inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold ${tone}`}>
-      <Icon className="h-3 w-3" />
-      <span>
-        {sign}{fmt(absDiff)}{unitText}
+    <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+      <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold whitespace-nowrap ${tone}`}>
+        <Icon className="h-3 w-3 shrink-0" />
+        <span>{sign}{fmt(absDiff)}{unitText}</span>
         {previous !== 0 && (
-          <span className="ml-1 opacity-80">({sign}{fmt(Math.abs(pct))}%)</span>
+          <span className="opacity-80">({sign}{fmt(Math.abs(pct))}%)</span>
         )}
       </span>
-      {prevTahun && <span className="opacity-70">vs {prevTahun}</span>}
+      {prevTahun && (
+        <span className="text-xs text-muted-foreground whitespace-nowrap">vs {prevTahun}</span>
+      )}
     </div>
   );
 };
