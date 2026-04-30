@@ -81,20 +81,20 @@ const Hubungi = () => {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="nama">Nama Lengkap</Label>
-              <Input id="nama" required placeholder="Nama Anda" />
+              <Input id="nama" name="nama" required maxLength={100} placeholder="Nama Anda" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" required placeholder="email@contoh.com" />
+              <Input id="email" name="email" type="email" required maxLength={255} placeholder="email@contoh.com" />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="subjek">Subjek</Label>
-            <Input id="subjek" required placeholder="Topik pesan Anda" />
+            <Input id="subjek" name="subjek" required maxLength={200} placeholder="Topik pesan Anda" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="pesan">Pesan</Label>
-            <Textarea id="pesan" required placeholder="Tuliskan pertanyaan atau masukan Anda…" rows={6} />
+            <Textarea id="pesan" name="pesan" required maxLength={2000} placeholder="Tuliskan pertanyaan atau masukan Anda…" rows={6} />
           </div>
           <Button type="submit" disabled={loading} className="w-full sm:w-auto">
             {loading ? "Mengirim…" : (<><Send className="mr-2 h-4 w-4" /> Kirim Pesan</>)}
