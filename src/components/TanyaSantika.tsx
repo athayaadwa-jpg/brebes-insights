@@ -45,6 +45,16 @@ const INDICATORS: IndicatorDef[] = [
       : `Jumlah Penduduk: ${fmtI(v(d.ringkasan.pendudukTotal)!)} jiwa (${yr(d.ringkasan.pendudukTotal)}). Tren: ${trendStr(d.seri, "pendudukTotal", fmtI)}`,
   },
   {
+    key: "pendudukLaki", group: "Demografi", label: "Penduduk Laki-laki",
+    format: (d) => v(d.ringkasan.pendudukLaki) === null ? null
+      : `Penduduk Laki-laki: ${fmtI(v(d.ringkasan.pendudukLaki)!)} jiwa (${yr(d.ringkasan.pendudukLaki)}). Tren: ${trendStr(d.seri, "pendudukLaki", fmtI)}`,
+  },
+  {
+    key: "pendudukPerempuan", group: "Demografi", label: "Penduduk Perempuan",
+    format: (d) => v(d.ringkasan.pendudukPerempuan) === null ? null
+      : `Penduduk Perempuan: ${fmtI(v(d.ringkasan.pendudukPerempuan)!)} jiwa (${yr(d.ringkasan.pendudukPerempuan)}). Tren: ${trendStr(d.seri, "pendudukPerempuan", fmtI)}`,
+  },
+  {
     key: "persenMiskin", group: "Kemiskinan", label: "% Penduduk Miskin",
     format: (d) => v(d.ringkasan.persenMiskin) === null ? null
       : `Persentase Penduduk Miskin: ${fmt(v(d.ringkasan.persenMiskin)!)}% (${yr(d.ringkasan.persenMiskin)}). Tren: ${trendStr(d.seri, "persenMiskin")}`,
