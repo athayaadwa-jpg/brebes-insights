@@ -6,18 +6,45 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
+
+const pesanSchema = z.object({
+  nama: z.string().trim().min(1, "Nama wajib diisi").max(100, "Nama maksimum 100 karakter"),
+  email: z.string().trim().email("Email tidak valid").max(255),
+  subjek: z.string().trim().min(1, "Subjek wajib diisi").max(200, "Subjek maksimum 200 karakter"),
+  pesan: z.string().trim().min(5, "Pesan minimum 5 karakter").max(2000, "Pesan maksimum 2000 karakter"),
+});
 
 const Hubungi = () => {
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const fd = new FormData(form);
+    const parsed = pesanSchema.safeParse({
+      nama: fd.get("nama"),
+      email: fd.get("email"),
+      subjek: fd.get("subjek"),
+      pesan: fd.get("pesan"),
+    });
+    if (!parsed.success) {
+      toast.error("Form belum lengkap", { description: parsed.error.issues[0]?.message });
+      return;
+    }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const { error } = await supabase.functions.invoke("kirim-pesan", { body: parsed.data });
+      if (error) throw error;
       toast.success("Pesan berhasil dikirim!", { description: "Tim kami akan menghubungi Anda segera." });
-      (e.target as HTMLFormElement).reset();
-    }, 800);
+      form.reset();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Terjadi kesalahan";
+      toast.error("Gagal mengirim pesan", { description: msg });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
