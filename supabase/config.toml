@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.tanya-santika]
 verify_jwt = false
+
+[functions.kirim-pesan]
+verify_jwt = false
