@@ -355,7 +355,7 @@ export const TanyaSantika = () => {
                 </button>
               )}
             </div>
-            <ScrollArea className="max-h-32">
+            <ScrollArea className="h-64">
               <div className="space-y-2 pr-2">
                 {grouped.map(([group, items]) => (
                   <div key={group}>
