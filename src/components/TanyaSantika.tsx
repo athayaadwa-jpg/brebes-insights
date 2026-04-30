@@ -45,6 +45,16 @@ const INDICATORS: IndicatorDef[] = [
       : `Jumlah Penduduk: ${fmtI(v(d.ringkasan.pendudukTotal)!)} jiwa (${yr(d.ringkasan.pendudukTotal)}). Tren: ${trendStr(d.seri, "pendudukTotal", fmtI)}`,
   },
   {
+    key: "pendudukLaki", group: "Demografi", label: "Penduduk Laki-laki",
+    format: (d) => v(d.ringkasan.pendudukLaki) === null ? null
+      : `Penduduk Laki-laki: ${fmtI(v(d.ringkasan.pendudukLaki)!)} jiwa (${yr(d.ringkasan.pendudukLaki)}). Tren: ${trendStr(d.seri, "pendudukLaki", fmtI)}`,
+  },
+  {
+    key: "pendudukPerempuan", group: "Demografi", label: "Penduduk Perempuan",
+    format: (d) => v(d.ringkasan.pendudukPerempuan) === null ? null
+      : `Penduduk Perempuan: ${fmtI(v(d.ringkasan.pendudukPerempuan)!)} jiwa (${yr(d.ringkasan.pendudukPerempuan)}). Tren: ${trendStr(d.seri, "pendudukPerempuan", fmtI)}`,
+  },
+  {
     key: "persenMiskin", group: "Kemiskinan", label: "% Penduduk Miskin",
     format: (d) => v(d.ringkasan.persenMiskin) === null ? null
       : `Persentase Penduduk Miskin: ${fmt(v(d.ringkasan.persenMiskin)!)}% (${yr(d.ringkasan.persenMiskin)}). Tren: ${trendStr(d.seri, "persenMiskin")}`,
@@ -58,6 +68,16 @@ const INDICATORS: IndicatorDef[] = [
     key: "miskinEkstrem", group: "Kemiskinan", label: "Kemiskinan Ekstrem",
     format: (d) => v(d.ringkasan.miskinEkstrem) === null ? null
       : `Kemiskinan Ekstrem: ${fmt(v(d.ringkasan.miskinEkstrem)!)}% (${yr(d.ringkasan.miskinEkstrem)}). Tren: ${trendStr(d.seri, "miskinEkstrem")}`,
+  },
+  {
+    key: "p1", group: "Kemiskinan", label: "Indeks Kedalaman (P1)",
+    format: (d) => v(d.ringkasan.p1) === null ? null
+      : `Indeks Kedalaman Kemiskinan (P1): ${fmt(v(d.ringkasan.p1)!)} (${yr(d.ringkasan.p1)}). Tren: ${trendStr(d.seri, "p1")}`,
+  },
+  {
+    key: "p2", group: "Kemiskinan", label: "Indeks Keparahan (P2)",
+    format: (d) => v(d.ringkasan.p2) === null ? null
+      : `Indeks Keparahan Kemiskinan (P2): ${fmt(v(d.ringkasan.p2)!)} (${yr(d.ringkasan.p2)}). Tren: ${trendStr(d.seri, "p2")}`,
   },
   {
     key: "garisKemiskinan", group: "Kemiskinan", label: "Garis Kemiskinan",
@@ -115,14 +135,24 @@ const INDICATORS: IndicatorDef[] = [
       : `Produksi Padi: ${fmtI(v(d.ringkasan.produksiPadi)!)} ton GKG (${yr(d.ringkasan.produksiPadi)})`,
   },
   {
+    key: "produksiBeras", group: "Pertanian", label: "Produksi Beras",
+    format: (d) => v(d.ringkasan.produksiBeras) === null ? null
+      : `Produksi Beras: ${fmtI(v(d.ringkasan.produksiBeras)!)} ton (${yr(d.ringkasan.produksiBeras)})`,
+  },
+  {
     key: "pdrbKonstan", group: "Ekonomi", label: "PDRB Harga Konstan",
     format: (d) => v(d.ringkasan.pdrbKonstan) === null ? null
       : `PDRB Atas Dasar Harga Konstan: ${fmt(v(d.ringkasan.pdrbKonstan)!)} miliar Rp (${yr(d.ringkasan.pdrbKonstan)}${d.periods?.pdrbKonstan ? " · " + d.periods.pdrbKonstan : ""})`,
   },
   {
-    key: "pertumbuhanLU", group: "Ekonomi", label: "Pertumbuhan Ekonomi",
+    key: "pertumbuhanLU", group: "Ekonomi", label: "Pertumbuhan Ekonomi (LU)",
     format: (d) => v(d.ringkasan.pertumbuhanLU) === null ? null
       : `Pertumbuhan Ekonomi (Lapangan Usaha): ${fmt(v(d.ringkasan.pertumbuhanLU)!)}% (${yr(d.ringkasan.pertumbuhanLU)}${d.periods?.pertumbuhanLU ? " · " + d.periods.pertumbuhanLU : ""})`,
+  },
+  {
+    key: "lajuPdrbTahunan", group: "Ekonomi", label: "Laju PDRB Tahunan",
+    format: (d) => v(d.ringkasan.lajuPdrbTahunan) === null ? null
+      : `Laju Pertumbuhan PDRB Tahunan: ${fmt(v(d.ringkasan.lajuPdrbTahunan)!)}% (${yr(d.ringkasan.lajuPdrbTahunan)}${d.periods?.lajuPdrbTahunan ? " · " + d.periods.lajuPdrbTahunan : ""})`,
   },
   {
     key: "ikk", group: "Ekonomi", label: "Indeks Kemahalan Konstruksi",
