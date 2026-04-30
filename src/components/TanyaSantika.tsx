@@ -70,6 +70,16 @@ const INDICATORS: IndicatorDef[] = [
       : `Kemiskinan Ekstrem: ${fmt(v(d.ringkasan.miskinEkstrem)!)}% (${yr(d.ringkasan.miskinEkstrem)}). Tren: ${trendStr(d.seri, "miskinEkstrem")}`,
   },
   {
+    key: "p1", group: "Kemiskinan", label: "Indeks Kedalaman (P1)",
+    format: (d) => v(d.ringkasan.p1) === null ? null
+      : `Indeks Kedalaman Kemiskinan (P1): ${fmt(v(d.ringkasan.p1)!)} (${yr(d.ringkasan.p1)}). Tren: ${trendStr(d.seri, "p1")}`,
+  },
+  {
+    key: "p2", group: "Kemiskinan", label: "Indeks Keparahan (P2)",
+    format: (d) => v(d.ringkasan.p2) === null ? null
+      : `Indeks Keparahan Kemiskinan (P2): ${fmt(v(d.ringkasan.p2)!)} (${yr(d.ringkasan.p2)}). Tren: ${trendStr(d.seri, "p2")}`,
+  },
+  {
     key: "garisKemiskinan", group: "Kemiskinan", label: "Garis Kemiskinan",
     format: (d) => v(d.ringkasan.garisKemiskinan) === null ? null
       : `Garis Kemiskinan: ${formatRupiah(normalizeGarisKemiskinan(v(d.ringkasan.garisKemiskinan)!))}/kapita/bulan (${yr(d.ringkasan.garisKemiskinan)})`,
