@@ -135,14 +135,24 @@ const INDICATORS: IndicatorDef[] = [
       : `Produksi Padi: ${fmtI(v(d.ringkasan.produksiPadi)!)} ton GKG (${yr(d.ringkasan.produksiPadi)})`,
   },
   {
+    key: "produksiBeras", group: "Pertanian", label: "Produksi Beras",
+    format: (d) => v(d.ringkasan.produksiBeras) === null ? null
+      : `Produksi Beras: ${fmtI(v(d.ringkasan.produksiBeras)!)} ton (${yr(d.ringkasan.produksiBeras)})`,
+  },
+  {
     key: "pdrbKonstan", group: "Ekonomi", label: "PDRB Harga Konstan",
     format: (d) => v(d.ringkasan.pdrbKonstan) === null ? null
       : `PDRB Atas Dasar Harga Konstan: ${fmt(v(d.ringkasan.pdrbKonstan)!)} miliar Rp (${yr(d.ringkasan.pdrbKonstan)}${d.periods?.pdrbKonstan ? " · " + d.periods.pdrbKonstan : ""})`,
   },
   {
-    key: "pertumbuhanLU", group: "Ekonomi", label: "Pertumbuhan Ekonomi",
+    key: "pertumbuhanLU", group: "Ekonomi", label: "Pertumbuhan Ekonomi (LU)",
     format: (d) => v(d.ringkasan.pertumbuhanLU) === null ? null
       : `Pertumbuhan Ekonomi (Lapangan Usaha): ${fmt(v(d.ringkasan.pertumbuhanLU)!)}% (${yr(d.ringkasan.pertumbuhanLU)}${d.periods?.pertumbuhanLU ? " · " + d.periods.pertumbuhanLU : ""})`,
+  },
+  {
+    key: "lajuPdrbTahunan", group: "Ekonomi", label: "Laju PDRB Tahunan",
+    format: (d) => v(d.ringkasan.lajuPdrbTahunan) === null ? null
+      : `Laju Pertumbuhan PDRB Tahunan: ${fmt(v(d.ringkasan.lajuPdrbTahunan)!)}% (${yr(d.ringkasan.lajuPdrbTahunan)}${d.periods?.lajuPdrbTahunan ? " · " + d.periods.lajuPdrbTahunan : ""})`,
   },
   {
     key: "ikk", group: "Ekonomi", label: "Indeks Kemahalan Konstruksi",
