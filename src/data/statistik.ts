@@ -117,6 +117,17 @@ export const INDICATORS: IndicatorData[] = [
     ranking: [],
   },
   {
+    slug: "produksi-beras",
+    nama: "Produksi Beras",
+    satuan: "ton",
+    higherIsBetter: true,
+    deskripsi:
+      "Produksi Beras adalah konversi dari Produksi Padi (gabah kering giling) menjadi beras siap konsumsi pada periode tertentu, dinyatakan dalam ton.",
+    highlight: { brebes: 0, tahun: 2025 },
+    series: [],
+    ranking: [],
+  },
+  {
     slug: "pertumbuhan-ekonomi",
     nama: "Pertumbuhan Ekonomi (PDRB)",
     satuan: "%",
