@@ -1,5 +1,9 @@
 // Edge function: ambil data DETAIL setiap indikator (series Brebes + ranking
 // se-Jawa Tengah) dari Google Sheets via Lovable Connector Gateway.
+//
+// Sumber utama: tab "Rangking Semua" (gid=1507957902) — satu tabel berisi
+// 9 grup indikator × 5 tahun (2021-2025) untuk semua kab/kota + Jawa Tengah +
+// Indonesia. Layout: kolom A = wilayah, B-AS = nilai per indikator per tahun.
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -8,20 +12,15 @@ const corsHeaders = {
 const SPREADSHEET_ID = "1BGKHK-qIYPe5Vpez9b7lRS3vp7igJ7JzW_jGGsmfjaw";
 const GATEWAY = "https://connector-gateway.lovable.dev/google_sheets/v4";
 
-// Parser angka format Indonesia: "15,60" -> 15.6, "1.035.743,00" -> 1035743,
-// nilai integer murni "117627" -> 117627.
+// Parser angka format Indonesia: "15,60" -> 15.6, "1.035.743,00" -> 1035743.
 const parseId = (s: unknown): number | null => {
   if (s === null || s === undefined) return null;
   const t = String(s).trim();
   if (!t || t === "#NA" || t === "-") return null;
-  // Format ID jika mengandung koma desimal: titik = ribuan, koma = desimal.
-  // Format murni angka tanpa pemisah (mis. "117627") atau dengan titik desimal
-  // ditangani Number() langsung.
   let cleaned: string;
   if (t.includes(",")) {
     cleaned = t.replace(/\./g, "").replace(/,/g, ".");
   } else if (/^\d{1,3}(\.\d{3})+$/.test(t)) {
-    // Pola seperti "1.035.743" -> hilangkan titik ribuan
     cleaned = t.replace(/\./g, "");
   } else {
     cleaned = t;
@@ -30,13 +29,7 @@ const parseId = (s: unknown): number | null => {
   return Number.isFinite(n) ? n : null;
 };
 
-// Bersihkan nama wilayah:
-// - hilangkan prefix "Kab. "
-// - rapikan spasi ganda (mis. "P a t i" -> "Pati" dijaga manual via map khusus)
-// - "Kota X" tetap apa adanya
-const WILAYAH_FIX: Record<string, string> = {
-  "P a t i": "Pati",
-};
+const WILAYAH_FIX: Record<string, string> = { "P a t i": "Pati" };
 const cleanWilayah = (s: string): string => {
   let t = s.trim().replace(/\s+/g, " ");
   if (t.startsWith("Kab. ")) t = t.slice(5);
@@ -46,25 +39,19 @@ const cleanWilayah = (s: string): string => {
 type RankRow = { wilayah: string; nilai: number };
 type SeriesRow = { tahun: number; brebes: number };
 
-// Definisi indikator yang didukung. Setiap indikator memetakan label baris
-// pada tab "Indikator Perbandingan" (untuk series Brebes) dan tab ranking
-// terpisah (untuk perbandingan antar Kab/Kota).
-type IndicatorDef = {
-  slug: string;
-  rankingSheet: string | null;     // null = ambil series saja (mis. IKK pakai sumber lain)
-  seriesLabel: string | null;      // label baris di "Indikator Perbandingan"
-  seriesAltSheet?: string;         // sheet alternatif (mis. tab "IKK!A:C")
-};
-
-const INDICATOR_DEFS: IndicatorDef[] = [
-  { slug: "tpt",                rankingSheet: "Rangking TPT",            seriesLabel: "TPT" },
-  { slug: "tpak",               rankingSheet: "Rangking TPAK",           seriesLabel: "TPAK Agustus" },
-  { slug: "kemiskinan",         rankingSheet: "Rangking Kemiskinan",     seriesLabel: "Persentase Penduduk miskin (%)" },
-  { slug: "ipm",                rankingSheet: "Rangking IPM",            seriesLabel: "IPM Metode baru (Dg UHH hasil Long Form SP2020)" },
-  { slug: "luas-panen-padi",    rankingSheet: "Rangking Luas Panen",     seriesLabel: "Luas Panen Padi (Hektare)" },
-  { slug: "produksi-padi",      rankingSheet: "Rangking Produksi Padi",  seriesLabel: "Produksi Padi (ton GKG)" },
-  { slug: "pertumbuhan-ekonomi", rankingSheet: "Rangking PDRB",          seriesLabel: "Pertumbuhan Ekonomi Menurut Lapangan Usaha" },
-  { slug: "ikk",                rankingSheet: "Rangking IKK",            seriesLabel: null, seriesAltSheet: "IKK!A1:C30" },
+// Urutan grup indikator pada tab "Rangking Semua" — harus sama dengan header
+// baris pertama (A1:AS1). Setiap grup berisi 5 kolom tahun (2021-2025).
+type GroupDef = { slug: string; header: string };
+const GROUPS: GroupDef[] = [
+  { slug: "tpak",                header: "TPAK" },
+  { slug: "tpt",                 header: "TPT" },
+  { slug: "ipm",                 header: "IPM" },
+  { slug: "kemiskinan",          header: "Kemiskinan" },
+  { slug: "luas-panen-padi",     header: "Luas Panen" },
+  { slug: "produksi-padi",       header: "Produksi Padi" },
+  { slug: "produksi-beras",      header: "Produksi Beras" },
+  { slug: "pertumbuhan-ekonomi", header: "PDRB" },
+  { slug: "ikk",                 header: "Indeks Kemahalan Konstruksi" },
 ];
 
 Deno.serve(async (req) => {
@@ -78,14 +65,9 @@ Deno.serve(async (req) => {
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY tidak tersedia");
     if (!GOOGLE_SHEETS_API_KEY) throw new Error("GOOGLE_SHEETS_API_KEY tidak tersedia");
 
-    const ranges: string[] = [
-      "Indikator Perbandingan!A1:N60",
-      ...INDICATOR_DEFS.filter((d) => d.rankingSheet).map((d) => `${d.rankingSheet}!A1:G400`),
-      "IKK!A1:C30",
-    ];
-    const qs = ranges.map((r) => `ranges=${encodeURIComponent(r)}`).join("&");
-    const url = `${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${qs}`;
-
+    // Baca SEMUA data dari tab "Rangking Semua" — kolom A sampai AS (1+45).
+    const range = "Rangking Semua!A1:AS200";
+    const url = `${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values/x?range=${encodeURIComponent(range)}`;
     const resp = await fetch(url, {
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -96,93 +78,85 @@ Deno.serve(async (req) => {
     if (!resp.ok) {
       throw new Error(`Google Sheets gateway error [${resp.status}]: ${JSON.stringify(raw)}`);
     }
+    const rows: string[][] = raw.values ?? [];
+    if (rows.length < 3) throw new Error("Sheet 'Rangking Semua' kosong/tidak valid");
 
-    const valueRanges: { range: string; values?: string[][] }[] = raw.valueRanges ?? [];
-    const byRange = new Map<string, string[][]>();
-    for (const vr of valueRanges) {
-      // Normalisasi key: hilangkan tanda kutip & range setelah "!"
-      const key = vr.range.replace(/^'?|'?(?=!)/g, "").split("!")[0];
-      byRange.set(key, vr.values ?? []);
-    }
+    const headerGroup = rows[0] ?? [];
+    const headerYears = rows[1] ?? [];
 
-    // ---- Series Brebes dari "Indikator Perbandingan" ----
-    const ip = byRange.get("Indikator Perbandingan") ?? [];
-    const headerYears = (ip[0] ?? []).slice(2).map((y) => Number(y)).filter((n) => Number.isFinite(n));
-    const seriesByLabel = new Map<string, SeriesRow[]>();
-    for (let i = 1; i < ip.length; i++) {
-      const row = ip[i];
-      const label = (row[0] ?? "").trim();
-      if (!label) continue;
-      const cells = row.slice(2);
-      const points: SeriesRow[] = [];
-      for (let j = 0; j < headerYears.length; j++) {
-        const v = parseId(cells[j]);
-        if (v !== null) points.push({ tahun: headerYears[j], brebes: v });
+    // Pemetaan slug -> daftar { col, tahun }
+    const slugCols = new Map<string, { col: number; tahun: number }[]>();
+    let currentSlug: string | null = null;
+    for (let c = 1; c < headerGroup.length; c++) {
+      const h = (headerGroup[c] ?? "").trim();
+      if (h) {
+        const g = GROUPS.find((g) => g.header.toLowerCase() === h.toLowerCase());
+        currentSlug = g ? g.slug : null;
       }
-      if (points.length) seriesByLabel.set(label, points);
+      if (!currentSlug) continue;
+      const tahun = Number((headerYears[c] ?? "").toString().trim());
+      if (!Number.isFinite(tahun)) continue;
+      const list = slugCols.get(currentSlug) ?? [];
+      list.push({ col: c, tahun });
+      slugCols.set(currentSlug, list);
     }
 
-    // ---- IKK series khusus dari tab "IKK" ----
-    const ikkRows = byRange.get("IKK") ?? [];
-    const ikkSeries: SeriesRow[] = [];
-    for (let i = 1; i < ikkRows.length; i++) {
-      const r = ikkRows[i];
-      const tahun = Number(r[1]);
-      const nilai = parseId(r[2]);
-      if (Number.isFinite(tahun) && nilai !== null) ikkSeries.push({ tahun, brebes: nilai });
-    }
-
-    // ---- Ranking per indikator: kelompokkan per tahun ----
-    // Mengembalikan ranking untuk SEMUA tahun yang tersedia, plus jateng &
-    // nasional series (per tahun). Frontend dapat memilih tahun untuk grafik
-    // batang dan menggambar garis Jateng/Nasional pada chart tren.
-    type RankByYear = Record<number, RankRow[]>;
-    type CompareByYear = Record<number, number>;
-    const buildRanking = (sheetName: string): {
-      tahun: number | null;
-      data: RankRow[];
-      jateng: number | null;
-      nasional: number | null;
-      rankingByYear: RankByYear;
-      jatengByYear: CompareByYear;
-      nasionalByYear: CompareByYear;
+    // Inisialisasi struktur per indikator
+    type Acc = {
+      slug: string;
+      series: SeriesRow[];                          // Brebes
+      seriesJateng: { tahun: number; nilai: number }[];
+      seriesNasional: { tahun: number; nilai: number }[];
+      rankingByYear: Record<number, RankRow[]>;
+      jatengByYear: Record<number, number>;
+      nasionalByYear: Record<number, number>;
       years: number[];
-    } => {
-      const rows = byRange.get(sheetName) ?? [];
-      const empty = {
-        tahun: null, data: [], jateng: null, nasional: null,
-        rankingByYear: {}, jatengByYear: {}, nasionalByYear: {}, years: [],
-      };
-      if (rows.length < 2) return empty;
-      const rankingByYear: RankByYear = {};
-      const jatengByYear: CompareByYear = {};
-      const nasionalByYear: CompareByYear = {};
-      for (let i = 1; i < rows.length; i++) {
-        const r = rows[i];
-        const y = Number(r[2]);
-        if (!Number.isFinite(y)) continue;
-        const wilayahRaw = String(r[0] ?? "").trim();
-        const nilai = parseId(r[3]);
-        if (!wilayahRaw || nilai === null) continue;
-        if (/^jawa tengah$/i.test(wilayahRaw)) { jatengByYear[y] = nilai; continue; }
-        if (/^(indonesia|nasional)$/i.test(wilayahRaw)) { nasionalByYear[y] = nilai; continue; }
-        (rankingByYear[y] ??= []).push({ wilayah: cleanWilayah(wilayahRaw), nilai });
-      }
-      const years = Object.keys(rankingByYear).map(Number).sort((a, b) => a - b);
-      if (!years.length) return empty;
-      const tahun = years[years.length - 1];
-      return {
-        tahun,
-        data: rankingByYear[tahun] ?? [],
-        jateng: jatengByYear[tahun] ?? null,
-        nasional: nasionalByYear[tahun] ?? null,
-        rankingByYear,
-        jatengByYear,
-        nasionalByYear,
-        years,
-      };
     };
+    const acc: Record<string, Acc> = {};
+    for (const g of GROUPS) {
+      acc[g.slug] = {
+        slug: g.slug,
+        series: [],
+        seriesJateng: [],
+        seriesNasional: [],
+        rankingByYear: {},
+        jatengByYear: {},
+        nasionalByYear: {},
+        years: [],
+      };
+    }
 
+    // Iterasi setiap baris wilayah (mulai baris ke-3)
+    for (let i = 2; i < rows.length; i++) {
+      const row = rows[i];
+      const wilayahRaw = (row?.[0] ?? "").trim();
+      if (!wilayahRaw) continue;
+      const isJateng = /^jawa tengah$/i.test(wilayahRaw);
+      const isNasional = /^(indonesia|nasional)$/i.test(wilayahRaw);
+      const isBrebes = /^kab\.\s*brebes$/i.test(wilayahRaw);
+
+      for (const g of GROUPS) {
+        const cols = slugCols.get(g.slug) ?? [];
+        for (const { col, tahun } of cols) {
+          const nilai = parseId(row[col]);
+          if (nilai === null) continue;
+          const a = acc[g.slug];
+          if (isJateng) {
+            a.jatengByYear[tahun] = nilai;
+          } else if (isNasional) {
+            a.nasionalByYear[tahun] = nilai;
+          } else {
+            (a.rankingByYear[tahun] ??= []).push({
+              wilayah: cleanWilayah(wilayahRaw),
+              nilai,
+            });
+            if (isBrebes) a.series.push({ tahun, brebes: nilai });
+          }
+        }
+      }
+    }
+
+    // Susun output final per indikator
     const indicators: Record<string, {
       slug: string;
       series: SeriesRow[];
@@ -198,41 +172,30 @@ Deno.serve(async (req) => {
       nasional: number | null;
     }> = {};
 
-    for (const def of INDICATOR_DEFS) {
-      let series: SeriesRow[] = [];
-      if (def.slug === "ikk") {
-        series = ikkSeries;
-      } else if (def.seriesLabel) {
-        series = seriesByLabel.get(def.seriesLabel) ?? [];
-      }
-      const rank = def.rankingSheet
-        ? buildRanking(def.rankingSheet)
-        : {
-            tahun: null, data: [], jateng: null, nasional: null,
-            rankingByYear: {}, jatengByYear: {}, nasionalByYear: {}, years: [],
-          };
-
-      // Bangun series Jateng/Nasional dari ranking per tahun (untuk grafik tren).
-      const seriesJateng = Object.entries(rank.jatengByYear)
-        .map(([y, v]) => ({ tahun: Number(y), nilai: v as number }))
-        .sort((a, b) => a.tahun - b.tahun);
-      const seriesNasional = Object.entries(rank.nasionalByYear)
-        .map(([y, v]) => ({ tahun: Number(y), nilai: v as number }))
-        .sort((a, b) => a.tahun - b.tahun);
-
-      indicators[def.slug] = {
-        slug: def.slug,
-        series,
-        seriesJateng,
-        seriesNasional,
-        ranking: rank.data,
-        rankingTahun: rank.tahun,
-        rankingByYear: rank.rankingByYear,
-        rankingYears: rank.years,
-        jatengByYear: rank.jatengByYear,
-        nasionalByYear: rank.nasionalByYear,
-        jateng: rank.jateng,
-        nasional: rank.nasional,
+    for (const g of GROUPS) {
+      const a = acc[g.slug];
+      a.series.sort((x, y) => x.tahun - y.tahun);
+      a.seriesJateng = Object.entries(a.jatengByYear)
+        .map(([y, v]) => ({ tahun: Number(y), nilai: v }))
+        .sort((x, y) => x.tahun - y.tahun);
+      a.seriesNasional = Object.entries(a.nasionalByYear)
+        .map(([y, v]) => ({ tahun: Number(y), nilai: v }))
+        .sort((x, y) => x.tahun - y.tahun);
+      const years = Object.keys(a.rankingByYear).map(Number).sort((x, y) => x - y);
+      const tahun = years.length ? years[years.length - 1] : null;
+      indicators[g.slug] = {
+        slug: g.slug,
+        series: a.series,
+        seriesJateng: a.seriesJateng,
+        seriesNasional: a.seriesNasional,
+        ranking: tahun !== null ? (a.rankingByYear[tahun] ?? []) : [],
+        rankingTahun: tahun,
+        rankingByYear: a.rankingByYear,
+        rankingYears: years,
+        jatengByYear: a.jatengByYear,
+        nasionalByYear: a.nasionalByYear,
+        jateng: tahun !== null ? (a.jatengByYear[tahun] ?? null) : null,
+        nasional: tahun !== null ? (a.nasionalByYear[tahun] ?? null) : null,
       };
     }
 
