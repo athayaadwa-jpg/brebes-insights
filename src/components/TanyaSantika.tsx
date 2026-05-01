@@ -336,7 +336,7 @@ export const TanyaSantika = () => {
               </span>
               Tanya Santika
             </SheetTitle>
-            <SheetDescription className="text-[11px] leading-snug sm:text-xs">
+            <SheetDescription className="text-muted-foreground leading-snug sm:text-xs text-xs font-sans">
               Asisten AI untuk insight perbandingan indikator strategis Kab. Brebes.
             </SheetDescription>
           </SheetHeader>
