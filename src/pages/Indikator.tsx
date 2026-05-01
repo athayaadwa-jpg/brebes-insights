@@ -82,16 +82,15 @@ const Indikator = () => {
   // Disimpan sebagai string untuk kompatibilitas dengan komponen Select.
   const rankingYears = useMemo(() => {
     const ys = live?.rankingYears ?? [];
-    return [...ys].sort((a, b) => b - a).slice(0, 3); // 3 tahun terakhir
+    return [...ys].sort((a, b) => b - a); // semua tahun, terbaru di depan
   }, [live]);
   const [pickedYear, setPickedYear] = useState<string>("");
   const activeYear = pickedYear ? Number(pickedYear) : rankingYears[0];
 
   if (!meta) return <Navigate to="/ringkasan" replace />;
 
-  // ----- Series Brebes (3 tahun terakhir) + series Jateng & Nasional -----
+  // ----- Series Brebes (semua tahun yang tersedia) + series Jateng & Nasional -----
   const allSeries = live?.series ?? [];
-  const lastYears = allSeries.slice(-3);
 
   const jatengMap = new Map<number, number>(
     (live?.seriesJateng ?? []).map((p) => [p.tahun, p.nilai]),
@@ -100,12 +99,13 @@ const Indikator = () => {
     (live?.seriesNasional ?? []).map((p) => [p.tahun, p.nilai]),
   );
 
-  const series: SeriesPoint[] = lastYears.map((p) => ({
+  const series: SeriesPoint[] = allSeries.map((p) => ({
     tahun: p.tahun,
     brebes: p.brebes,
     jateng: jatengMap.get(p.tahun),
     nasional: nasionalMap.get(p.tahun),
   }));
+  const trenLabel = `Tren ${series.length} Tahun Terakhir`;
 
   // ----- Ranking untuk tahun terpilih -----
   const rankingByYear = (live?.rankingByYear ?? {}) as Record<string, RankPoint[]>;
@@ -233,7 +233,7 @@ const Indikator = () => {
           <div className="mb-4 flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
-                <TrendingUp className="h-3.5 w-3.5" /> Tren 3 Tahun Terakhir
+                <TrendingUp className="h-3.5 w-3.5" /> {trenLabel}
               </div>
               <h2 className="mt-1 font-display text-xl font-bold">Perkembangan {meta.nama}</h2>
               <p className="text-sm text-muted-foreground">
