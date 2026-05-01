@@ -166,6 +166,7 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
 
 export const TanyaSantika = () => {
   const [open, setOpen] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Msg[]>([]);
