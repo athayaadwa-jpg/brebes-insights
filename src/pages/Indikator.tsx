@@ -89,9 +89,8 @@ const Indikator = () => {
 
   if (!meta) return <Navigate to="/ringkasan" replace />;
 
-  // ----- Series Brebes (3 tahun terakhir) + series Jateng & Nasional -----
+  // ----- Series Brebes (semua tahun yang tersedia) + series Jateng & Nasional -----
   const allSeries = live?.series ?? [];
-  const lastYears = allSeries.slice(-3);
 
   const jatengMap = new Map<number, number>(
     (live?.seriesJateng ?? []).map((p) => [p.tahun, p.nilai]),
@@ -100,12 +99,13 @@ const Indikator = () => {
     (live?.seriesNasional ?? []).map((p) => [p.tahun, p.nilai]),
   );
 
-  const series: SeriesPoint[] = lastYears.map((p) => ({
+  const series: SeriesPoint[] = allSeries.map((p) => ({
     tahun: p.tahun,
     brebes: p.brebes,
     jateng: jatengMap.get(p.tahun),
     nasional: nasionalMap.get(p.tahun),
   }));
+  const trenLabel = `Tren ${series.length} Tahun Terakhir`;
 
   // ----- Ranking untuk tahun terpilih -----
   const rankingByYear = (live?.rankingByYear ?? {}) as Record<string, RankPoint[]>;
