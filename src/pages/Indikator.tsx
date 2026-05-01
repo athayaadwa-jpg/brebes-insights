@@ -82,7 +82,7 @@ const Indikator = () => {
   // Disimpan sebagai string untuk kompatibilitas dengan komponen Select.
   const rankingYears = useMemo(() => {
     const ys = live?.rankingYears ?? [];
-    return [...ys].sort((a, b) => b - a).slice(0, 3); // 3 tahun terakhir
+    return [...ys].sort((a, b) => b - a); // semua tahun, terbaru di depan
   }, [live]);
   const [pickedYear, setPickedYear] = useState<string>("");
   const activeYear = pickedYear ? Number(pickedYear) : rankingYears[0];
