@@ -10,7 +10,7 @@ const corsHeaders = {
 
 const GATEWAY = "https://connector-gateway.lovable.dev/google_sheets/v4";
 const SPREADSHEET_ID = "1BGKHK-qIYPe5Vpez9b7lRS3vp7igJ7JzW_jGGsmfjaw";
-const SHEET_TITLE = "Pesan Masuk";
+const SHEET_TITLE = "PesanMasuk";
 const HEADER = ["Waktu", "Nama", "Email", "Subjek", "Pesan", "User Agent"];
 
 interface Body {
