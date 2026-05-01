@@ -87,7 +87,8 @@ Deno.serve(async (req) => {
     // Pemetaan slug -> daftar { col, tahun }
     const slugCols = new Map<string, { col: number; tahun: number }[]>();
     let currentSlug: string | null = null;
-    for (let c = 1; c < headerGroup.length; c++) {
+    const maxCols = Math.max(headerGroup.length, headerYears.length);
+    for (let c = 1; c < maxCols; c++) {
       const h = (headerGroup[c] ?? "").trim();
       if (h) {
         const g = GROUPS.find((g) => g.header.toLowerCase() === h.toLowerCase());
