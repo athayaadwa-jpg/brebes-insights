@@ -57,7 +57,7 @@ const DeltaBadge = ({
         )}
       </span>
       {prevTahun && (
-        <span className="text-xs text-muted-foreground whitespace-nowrap">vs {prevTahun}</span>
+        <span className="text-xs text-muted-foreground whitespace-nowrap">dibanding {prevTahun}</span>
       )}
     </div>
   );
