@@ -63,9 +63,12 @@ const DeltaBadge = ({
   );
 };
 
+const AGRI_SLUGS = new Set(["luas-panen-padi", "produksi-padi", "produksi-beras"]);
+
 const Indikator = () => {
   const { slug } = useParams();
   const meta = getIndicator(slug || "");
+  const isAgri = AGRI_SLUGS.has(meta?.slug ?? "");
   const { data: sheets, isLoading, isError } = useIndikatorSheets();
   const { data: ringkasan } = useRingkasanSheets();
 
@@ -102,8 +105,8 @@ const Indikator = () => {
   const series: SeriesPoint[] = allSeries.map((p) => ({
     tahun: p.tahun,
     brebes: p.brebes,
-    jateng: jatengMap.get(p.tahun),
-    nasional: nasionalMap.get(p.tahun),
+    jateng: isAgri ? undefined : jatengMap.get(p.tahun),
+    nasional: isAgri ? undefined : nasionalMap.get(p.tahun),
   }));
   const trenLabel = `Tren ${series.length} Tahun Terakhir`;
 
@@ -129,10 +132,10 @@ const Indikator = () => {
       ?? null
     : null;
 
-  const jatengLatest = live?.jateng ?? undefined;
-  const jatengPrev = prevYear ? live?.jatengByYear?.[String(prevYear)] ?? null : null;
-  const nasionalLatest = live?.nasional ?? undefined;
-  const nasionalPrev = prevYear ? live?.nasionalByYear?.[String(prevYear)] ?? null : null;
+  const jatengLatest = isAgri ? undefined : (live?.jateng ?? undefined);
+  const jatengPrev = isAgri ? null : (prevYear ? live?.jatengByYear?.[String(prevYear)] ?? null : null);
+  const nasionalLatest = isAgri ? undefined : (live?.nasional ?? undefined);
+  const nasionalPrev = isAgri ? null : (prevYear ? live?.nasionalByYear?.[String(prevYear)] ?? null : null);
 
   // Hitung peringkat Brebes pada tahun terbaru
   const latestRanking = rankingByYear[String(latestYear)] ?? [];
@@ -290,8 +293,8 @@ const Indikator = () => {
             data={ranking}
             higherIsBetter={meta.higherIsBetter}
             satuan={meta.satuan}
-            jateng={jatengActive ?? undefined}
-            nasional={nasionalActive ?? undefined}
+            jateng={isAgri ? undefined : (jatengActive ?? undefined)}
+            nasional={isAgri ? undefined : (nasionalActive ?? undefined)}
           />
         </section>
       )}
@@ -299,11 +302,18 @@ const Indikator = () => {
       {/* Note */}
       <section className="mt-6 flex items-start gap-3 rounded-xl border border-info/20 bg-info/5 p-4 text-sm">
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-info" />
-        <p className="text-muted-foreground">
-          <strong className="text-foreground">Sumber:</strong> Data dihimpun dari
-          publikasi BPS Kabupaten Brebes. Perubahan dihitung terhadap periode sebelumnya
-          yang tersedia pada sheet sumber.
-        </p>
+        <div className="text-muted-foreground space-y-1">
+          <p>
+            <strong className="text-foreground">Sumber:</strong> Data dihimpun dari
+            publikasi BPS Kabupaten Brebes. Perubahan dihitung terhadap periode sebelumnya
+            yang tersedia pada sheet sumber.
+          </p>
+          {isAgri && (
+            <p className="text-xs italic">
+              Perbedaan angka di belakang koma disebabkan oleh pembulatan angka.
+            </p>
+          )}
+        </div>
       </section>
 
       {/* Other indicators */}
