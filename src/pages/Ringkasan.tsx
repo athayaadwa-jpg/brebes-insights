@@ -23,6 +23,7 @@ const indicatorLinks = [
   { to: "/indikator/ipm", label: "IPM" },
   { to: "/indikator/luas-panen-padi", label: "Luas Panen Padi" },
   { to: "/indikator/produksi-padi", label: "Produksi Padi" },
+  { to: "/indikator/produksi-beras", label: "Produksi Beras" },
   { to: "/indikator/pertumbuhan-ekonomi", label: "Pertumbuhan Ekonomi" },
   { to: "/indikator/ikk", label: "Indeks Kemahalan Konstruksi" },
 ];
@@ -58,7 +59,7 @@ const tren = (
     delta,
     percent,
     positive: delta === 0 ? true : higherIsBetter ? naik : !naik,
-    comparedTo: `vs ${prevRow.tahun}`,
+    comparedTo: `dibanding ${prevRow.tahun}`,
     formatDelta,
     unit,
   };
@@ -406,16 +407,6 @@ const Ringkasan = () => {
       <section className="mb-10">
         <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Ekonomi</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data.pdrb && data.pdrb.laju !== null && (
-            <StatCard
-              label="Laju Pertumbuhan PDRB (q-to-q)"
-              value={fmt(data.pdrb.laju)}
-              unit="%"
-              icon={TrendingUp}
-              variant="primary"
-              hint={data.pdrb.periode}
-            />
-          )}
           {v(r.pdrbKonstan) !== null && (
             <StatCard
               label="PDRB Atas Dasar Harga Konstan"
@@ -439,7 +430,7 @@ const Ringkasan = () => {
           )}
           {v(r.lajuPdrbTahunan) !== null && (
             <StatCard
-              label="Laju Pertumbuhan PDRB (tahunan)"
+              label="Laju Pertumbuhan PDRB (q-to-q)"
               value={fmt(v(r.lajuPdrbTahunan)!)}
               unit="%"
               icon={TrendingUp}
