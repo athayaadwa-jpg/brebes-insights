@@ -132,10 +132,10 @@ const Indikator = () => {
       ?? null
     : null;
 
-  const jatengLatest = live?.jateng ?? undefined;
-  const jatengPrev = prevYear ? live?.jatengByYear?.[String(prevYear)] ?? null : null;
-  const nasionalLatest = live?.nasional ?? undefined;
-  const nasionalPrev = prevYear ? live?.nasionalByYear?.[String(prevYear)] ?? null : null;
+  const jatengLatest = isAgri ? undefined : (live?.jateng ?? undefined);
+  const jatengPrev = isAgri ? null : (prevYear ? live?.jatengByYear?.[String(prevYear)] ?? null : null);
+  const nasionalLatest = isAgri ? undefined : (live?.nasional ?? undefined);
+  const nasionalPrev = isAgri ? null : (prevYear ? live?.nasionalByYear?.[String(prevYear)] ?? null : null);
 
   // Hitung peringkat Brebes pada tahun terbaru
   const latestRanking = rankingByYear[String(latestYear)] ?? [];
