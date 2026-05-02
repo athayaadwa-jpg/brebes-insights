@@ -293,8 +293,8 @@ const Indikator = () => {
             data={ranking}
             higherIsBetter={meta.higherIsBetter}
             satuan={meta.satuan}
-            jateng={jatengActive ?? undefined}
-            nasional={nasionalActive ?? undefined}
+            jateng={isAgri ? undefined : (jatengActive ?? undefined)}
+            nasional={isAgri ? undefined : (nasionalActive ?? undefined)}
           />
         </section>
       )}
