@@ -63,9 +63,12 @@ const DeltaBadge = ({
   );
 };
 
+const AGRI_SLUGS = new Set(["luas-panen-padi", "produksi-padi", "produksi-beras"]);
+
 const Indikator = () => {
   const { slug } = useParams();
   const meta = getIndicator(slug || "");
+  const isAgri = AGRI_SLUGS.has(meta?.slug ?? "");
   const { data: sheets, isLoading, isError } = useIndikatorSheets();
   const { data: ringkasan } = useRingkasanSheets();
 
