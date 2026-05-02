@@ -105,8 +105,8 @@ const Indikator = () => {
   const series: SeriesPoint[] = allSeries.map((p) => ({
     tahun: p.tahun,
     brebes: p.brebes,
-    jateng: jatengMap.get(p.tahun),
-    nasional: nasionalMap.get(p.tahun),
+    jateng: isAgri ? undefined : jatengMap.get(p.tahun),
+    nasional: isAgri ? undefined : nasionalMap.get(p.tahun),
   }));
   const trenLabel = `Tren ${series.length} Tahun Terakhir`;
 
