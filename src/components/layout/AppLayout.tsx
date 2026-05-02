@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, Wheat, GraduationCap, Briefcase, LineChart, Menu, X, Sprout, Building2 } from "lucide-react";
+import { Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, Wheat, GraduationCap, Briefcase, LineChart, Menu, X, Sprout, Building2, Package } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import logoInteres from "@/assets/logo-interes.png";
@@ -17,6 +17,7 @@ const nav = [
       { to: "/indikator/ipm", label: "Indeks Pembangunan Manusia", icon: GraduationCap },
       { to: "/indikator/luas-panen-padi", label: "Luas Panen Padi", icon: Sprout },
       { to: "/indikator/produksi-padi", label: "Produksi Padi", icon: Wheat },
+      { to: "/indikator/produksi-beras", label: "Produksi Beras", icon: Package },
       { to: "/indikator/pertumbuhan-ekonomi", label: "Pertumbuhan Ekonomi", icon: LineChart },
       { to: "/indikator/ikk", label: "Indeks Kemahalan Konstruksi", icon: Building2 },
     ],
@@ -44,32 +45,31 @@ export const AppLayout = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile topbar */}
-      <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-card px-4 lg:hidden">
-        <div className="flex min-w-0 items-center gap-2">
-          <img src={logoInteres} alt="Interes" className="h-7 w-auto shrink-0 object-contain" />
-          <span className="truncate font-display text-sm font-semibold text-foreground/80">
-            ​
-          </span>
-        </div>
-        <button onClick={() => setOpen(!open)} className="rounded-md p-2 hover:bg-muted" aria-label="Menu">
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-      </header>
+      {/* Mobile topbar — hidden when sidebar is open */}
+      {!open && (
+        <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-card px-4 lg:hidden">
+          <div className="flex min-w-0 items-center gap-2">
+            <img src={logoInteres} alt="Interes" className="h-7 w-auto shrink-0 object-contain" />
+          </div>
+          <button onClick={() => setOpen(true)} className="rounded-md p-2 hover:bg-muted" aria-label="Menu">
+            <Menu className="h-5 w-5" />
+          </button>
+        </header>
+      )}
 
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-14 bottom-0 z-30 w-72 transform border-r border-sidebar-border bg-sidebar transition-transform lg:top-0 lg:translate-x-0",
+          "fixed left-0 top-0 bottom-0 z-50 w-72 transform border-r border-sidebar-border bg-sidebar transition-transform lg:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         <div className="flex h-full flex-col">
-          <div className="hidden flex-col items-start gap-1 border-b border-sidebar-border px-6 py-5 lg:flex">
-            <img src={logoInteres} alt="Interes" className="h-10 w-auto object-contain" />
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/70">
-              ​
-            </div>
+          <div className="flex items-center justify-between border-b border-sidebar-border px-6 py-4 lg:py-5">
+            <img src={logoInteres} alt="Interes" className="h-8 lg:h-10 w-auto object-contain" />
+            <button onClick={() => setOpen(false)} className="rounded-md p-1.5 hover:bg-sidebar-accent lg:hidden" aria-label="Tutup menu">
+              <X className="h-5 w-5 text-sidebar-foreground" />
+            </button>
           </div>
 
           <nav className="flex-1 space-y-1 overflow-y-auto p-4">
@@ -112,7 +112,7 @@ export const AppLayout = () => {
         </div>
       </main>
 
-      {open && <div className="fixed left-0 right-0 top-14 bottom-0 z-20 bg-foreground/40 lg:hidden" onClick={() => setOpen(false)} />}
+      {open && <div className="fixed inset-0 z-40 bg-foreground/40 lg:hidden" onClick={() => setOpen(false)} />}
 
       <TanyaSantika />
     </div>
