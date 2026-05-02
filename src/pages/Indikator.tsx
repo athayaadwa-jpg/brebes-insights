@@ -304,8 +304,15 @@ const Indikator = () => {
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-info" />
         <div className="text-muted-foreground space-y-1">
           <p>
-            <strong className="text-foreground">Catatan:</strong> Perbedaan angka di belakang koma disebabkan oleh pembulatan angka.
+            <strong className="text-foreground">Sumber:</strong> Data dihimpun dari
+            publikasi BPS Kabupaten Brebes. Perubahan dihitung terhadap periode sebelumnya
+            yang tersedia pada sheet sumber.
           </p>
+          {isAgri && (
+            <p className="text-xs italic">
+              Perbedaan angka di belakang koma disebabkan oleh pembulatan angka.
+            </p>
+          )}
         </div>
       </section>
 
