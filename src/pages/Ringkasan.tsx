@@ -214,16 +214,6 @@ const Ringkasan = () => {
               hint={periodHint(yr(r.jumlahMiskin))}
             />
           )}
-          {v(r.miskinEkstrem) !== null && (
-            <StatCard
-              label="Kemiskinan Ekstrem"
-              value={fmt(v(r.miskinEkstrem)!)}
-              unit="%"
-              icon={UserMinus}
-              trend={tren(data.seri, "miskinEkstrem", { higherIsBetter: false, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
-              hint={periodHint(yr(r.miskinEkstrem))}
-            />
-          )}
           {v(r.garisKemiskinan) !== null && (
             <StatCard
               label="Garis Kemiskinan"
