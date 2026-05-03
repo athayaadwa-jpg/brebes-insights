@@ -58,7 +58,7 @@ const Beranda = () => {
               { v: "2,08 jt", l: "Penduduk" },
               { v: "17", l: "Kecamatan" },
               { v: "5+", l: "Tahun Data" },
-              { v: "8", l: "Indikator Detail" },
+              { v: "14", l: "Indikator Detail" },
             ].map((s) => (
               <div key={s.l} className="rounded-xl border border-primary-foreground/20 bg-primary-foreground/10 p-4 backdrop-blur-sm">
                 <div className="font-display text-2xl font-bold text-primary-foreground">{s.v}</div>
