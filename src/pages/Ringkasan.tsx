@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import {
   ArrowRight, Banknote, BarChart3, Briefcase, GraduationCap, Scale, TrendingUp,
   Users, UserMinus, LineChart, Percent, AlertCircle, Building2, BookOpen, HeartPulse, Wallet, RefreshCw,
-  Wheat, Sprout, Package, User, UserRound, UsersRound, Factory
+  Wheat, Sprout, Package, User, UserRound, UsersRound, Factory, MapPinned, Landmark
 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
