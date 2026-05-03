@@ -200,7 +200,7 @@ const Indikator = () => {
               <MapPin className="h-3.5 w-3.5" /> Prov. Jawa Tengah
             </div>
             <div className="mt-2 flex items-baseline gap-1.5">
-              <span className="font-display text-4xl font-bold text-jateng">{fmt(jatengLatest)}</span>
+              <span className="font-display text-4xl font-bold text-jateng">{fmt(jatengLatest, digits)}</span>
               {meta.satuan && <span className={`text-sm font-medium text-muted-foreground ${meta.satuan === "%" ? "-ml-1.5" : ""}`}>{meta.satuan}</span>}
             </div>
             <DeltaBadge
@@ -218,7 +218,7 @@ const Indikator = () => {
               <MapPin className="h-3.5 w-3.5" /> Nasional
             </div>
             <div className="mt-2 flex items-baseline gap-1.5">
-              <span className="font-display text-4xl font-bold text-nasional">{fmt(nasionalLatest)}</span>
+              <span className="font-display text-4xl font-bold text-nasional">{fmt(nasionalLatest, digits)}</span>
               {meta.satuan && <span className={`text-sm font-medium text-muted-foreground ${meta.satuan === "%" ? "-ml-1.5" : ""}`}>{meta.satuan}</span>}
             </div>
             <DeltaBadge
