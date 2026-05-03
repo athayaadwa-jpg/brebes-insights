@@ -10,7 +10,7 @@ import { formatSmart } from "@/lib/format";
 import { useIndikatorSheets } from "@/hooks/useIndikatorSheets";
 import { useRingkasanSheets } from "@/hooks/useRingkasanSheets";
 
-const fmtN = (n: number, digits = 2) => formatSmart(n, digits);
+const fmt = (n: number, digits = 2) => formatSmart(n, digits);
 
 
 // Komponen badge perubahan (naik/turun) dari periode sebelumnya.
