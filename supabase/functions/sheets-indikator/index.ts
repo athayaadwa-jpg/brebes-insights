@@ -50,8 +50,13 @@ const GROUPS: GroupDef[] = [
   { slug: "luas-panen-padi",     header: "Luas Panen" },
   { slug: "produksi-padi",       header: "Produksi Padi" },
   { slug: "produksi-beras",      header: "Produksi Beras" },
-  { slug: "pertumbuhan-ekonomi", header: "PDRB" },
+  { slug: "pertumbuhan-ekonomi", header: "Laju Pertumbuhan (y-on-y) PDRB Triwulan IV" },
   { slug: "ikk",                 header: "Indeks Kemahalan Konstruksi" },
+  { slug: "uhh",                 header: "Umur Harapan Hidup saat Lahir" },
+  { slug: "hls",                 header: "Harapan Lama Sekolah" },
+  { slug: "rls",                 header: "Rata-rata Lama Sekolah" },
+  { slug: "pengeluaran-riil",    header: "Pengeluaran Riil per Kapita per Tahun yang disesuaikan" },
+  { slug: "gini-rasio",          header: "Gini Rasio" },
 ];
 
 Deno.serve(async (req) => {
@@ -66,7 +71,7 @@ Deno.serve(async (req) => {
     if (!GOOGLE_SHEETS_API_KEY) throw new Error("GOOGLE_SHEETS_API_KEY tidak tersedia");
 
     // Baca SEMUA data dari tab "Rangking Semua" — kolom A sampai AS (1+45).
-    const range = "Rangking Semua!A1:AS200";
+    const range = "Rangking Semua!A1:BT200";
     const url = `${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values/x?range=${encodeURIComponent(range)}`;
     const resp = await fetch(url, {
       headers: {
@@ -98,7 +103,12 @@ Deno.serve(async (req) => {
       const tahun = Number((headerYears[c] ?? "").toString().trim());
       if (!Number.isFinite(tahun)) continue;
       const list = slugCols.get(currentSlug) ?? [];
-      list.push({ col: c, tahun });
+      // Jika tahun duplikat (bug di sheet, mis. Luas Panen semua "2021"),
+      // auto-increment berdasarkan posisi dalam grup
+      const actualTahun = list.some((l) => l.tahun === tahun)
+        ? list[0].tahun + list.length
+        : tahun;
+      list.push({ col: c, tahun: actualTahun });
       slugCols.set(currentSlug, list);
     }
 

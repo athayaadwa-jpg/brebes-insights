@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, Wheat, GraduationCap, Briefcase, LineChart, Menu, X, Sprout, Building2, Package } from "lucide-react";
+import { Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, Wheat, GraduationCap, Briefcase, LineChart, Menu, X, Sprout, Building2, Package, Heart, School, BookOpenCheck, Wallet, BarChart3 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import logoInteres from "@/assets/logo-interes.png";
@@ -20,6 +20,11 @@ const nav = [
       { to: "/indikator/produksi-beras", label: "Produksi Beras", icon: Package },
       { to: "/indikator/pertumbuhan-ekonomi", label: "Pertumbuhan Ekonomi", icon: LineChart },
       { to: "/indikator/ikk", label: "Indeks Kemahalan Konstruksi", icon: Building2 },
+      { to: "/indikator/uhh", label: "Umur Harapan Hidup", icon: Heart },
+      { to: "/indikator/hls", label: "Harapan Lama Sekolah", icon: School },
+      { to: "/indikator/rls", label: "Rata-rata Lama Sekolah", icon: BookOpenCheck },
+      { to: "/indikator/pengeluaran-riil", label: "Pengeluaran Riil per Kapita", icon: Wallet },
+      { to: "/indikator/gini-rasio", label: "Gini Rasio", icon: BarChart3 },
     ],
   },
   {
