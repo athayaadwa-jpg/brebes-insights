@@ -50,8 +50,13 @@ const GROUPS: GroupDef[] = [
   { slug: "luas-panen-padi",     header: "Luas Panen" },
   { slug: "produksi-padi",       header: "Produksi Padi" },
   { slug: "produksi-beras",      header: "Produksi Beras" },
-  { slug: "pertumbuhan-ekonomi", header: "PDRB" },
+  { slug: "pertumbuhan-ekonomi", header: "Laju Pertumbuhan (y-on-y) PDRB Triwulan IV" },
   { slug: "ikk",                 header: "Indeks Kemahalan Konstruksi" },
+  { slug: "uhh",                 header: "Umur Harapan Hidup saat Lahir" },
+  { slug: "hls",                 header: "Harapan Lama Sekolah" },
+  { slug: "rls",                 header: "Rata-rata Lama Sekolah" },
+  { slug: "pengeluaran-riil",    header: "Pengeluaran Riil per Kapita per Tahun yang disesuaikan" },
+  { slug: "gini-rasio",          header: "Gini Rasio" },
 ];
 
 Deno.serve(async (req) => {
