@@ -10,8 +10,8 @@ import { formatSmart } from "@/lib/format";
 import { useIndikatorSheets } from "@/hooks/useIndikatorSheets";
 import { useRingkasanSheets } from "@/hooks/useRingkasanSheets";
 
-const fmt = (n: number, slug?: string) =>
-  slug === "gini-rasio" ? formatSmart(n, 3) : formatSmart(n, 2);
+const fmtN = (n: number, digits = 2) => formatSmart(n, digits);
+
 
 // Komponen badge perubahan (naik/turun) dari periode sebelumnya.
 // higherIsBetter menentukan warna: kenaikan pada indikator "lebih tinggi
