@@ -185,6 +185,18 @@ const Ringkasan = () => {
               hint={periodHint(yr(r.pendudukPerempuan))}
             />
           )}
+          <StatCard
+            label="Jumlah Kecamatan"
+            value="17"
+            unit="kecamatan"
+            icon={MapPinned}
+          />
+          <StatCard
+            label="Jumlah Desa/Kelurahan"
+            value="297"
+            unit="desa/kelurahan"
+            icon={Landmark}
+          />
         </div>
       </section>
 
