@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
     if (!GOOGLE_SHEETS_API_KEY) throw new Error("GOOGLE_SHEETS_API_KEY tidak tersedia");
 
     // Baca SEMUA data dari tab "Rangking Semua" — kolom A sampai AS (1+45).
-    const range = "Rangking Semua!A1:AS200";
+    const range = "Rangking Semua!A1:BT200";
     const url = `${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values/x?range=${encodeURIComponent(range)}`;
     const resp = await fetch(url, {
       headers: {
