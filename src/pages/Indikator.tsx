@@ -305,8 +305,7 @@ const Indikator = () => {
         <div className="text-muted-foreground space-y-1">
           <p>
             <strong className="text-foreground">Sumber:</strong> Data dihimpun dari
-            publikasi BPS Kabupaten Brebes. Perubahan dihitung terhadap periode sebelumnya
-            yang tersedia pada sheet sumber.
+            publikasi BPS Kabupaten Brebes. Perubahan dihitung terhadap periode sebelumnya.
           </p>
           {isAgri && (
             <p className="text-xs italic">
