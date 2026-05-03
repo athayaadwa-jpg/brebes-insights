@@ -104,9 +104,9 @@ Deno.serve(async (req) => {
       if (!Number.isFinite(tahun)) continue;
       const list = slugCols.get(currentSlug) ?? [];
       // Jika tahun duplikat (bug di sheet, mis. Luas Panen semua "2021"),
-      // auto-increment dari tahun pertama
-      const actualTahun = list.length > 0 && list.every((l) => l.tahun === tahun)
-        ? tahun + list.length
+      // auto-increment berdasarkan posisi dalam grup
+      const actualTahun = list.some((l) => l.tahun === tahun)
+        ? list[0].tahun + list.length
         : tahun;
       list.push({ col: c, tahun: actualTahun });
       slugCols.set(currentSlug, list);
