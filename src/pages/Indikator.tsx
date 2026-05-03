@@ -70,6 +70,7 @@ const Indikator = () => {
   const { slug } = useParams();
   const meta = getIndicator(slug || "");
   const isAgri = AGRI_SLUGS.has(meta?.slug ?? "");
+  const digits = meta?.slug === "gini-rasio" ? 3 : 2;
   const { data: sheets, isLoading, isError } = useIndikatorSheets();
   const { data: ringkasan } = useRingkasanSheets();
 
