@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import {
   ArrowRight, Banknote, BarChart3, Briefcase, GraduationCap, Scale, TrendingUp,
   Users, UserMinus, LineChart, Percent, AlertCircle, Building2, BookOpen, HeartPulse, Wallet, RefreshCw,
-  Wheat, Sprout, Package, User, UserRound, UsersRound, Factory
+  Wheat, Sprout, Package, User, UserRound, UsersRound, Factory, MapPinned, Landmark
 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -185,6 +185,18 @@ const Ringkasan = () => {
               hint={periodHint(yr(r.pendudukPerempuan))}
             />
           )}
+          <StatCard
+            label="Jumlah Kecamatan"
+            value="17"
+            unit="kecamatan"
+            icon={MapPinned}
+          />
+          <StatCard
+            label="Jumlah Desa/Kelurahan"
+            value="297"
+            unit="desa/kelurahan"
+            icon={Landmark}
+          />
         </div>
       </section>
 
@@ -212,16 +224,6 @@ const Ringkasan = () => {
               variant="accent"
               trend={tren(data.seri, "jumlahMiskin", { higherIsBetter: false, formatDelta: (n) => fmt(n), unit: "ribu jiwa" })}
               hint={periodHint(yr(r.jumlahMiskin))}
-            />
-          )}
-          {v(r.miskinEkstrem) !== null && (
-            <StatCard
-              label="Kemiskinan Ekstrem"
-              value={fmt(v(r.miskinEkstrem)!)}
-              unit="%"
-              icon={UserMinus}
-              trend={tren(data.seri, "miskinEkstrem", { higherIsBetter: false, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
-              hint={periodHint(yr(r.miskinEkstrem))}
             />
           )}
           {v(r.garisKemiskinan) !== null && (

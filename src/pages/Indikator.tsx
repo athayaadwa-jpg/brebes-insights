@@ -10,7 +10,8 @@ import { formatSmart } from "@/lib/format";
 import { useIndikatorSheets } from "@/hooks/useIndikatorSheets";
 import { useRingkasanSheets } from "@/hooks/useRingkasanSheets";
 
-const fmt = (n: number) => formatSmart(n, 2);
+const fmt = (n: number, digits = 2) => formatSmart(n, digits);
+
 
 // Komponen badge perubahan (naik/turun) dari periode sebelumnya.
 // higherIsBetter menentukan warna: kenaikan pada indikator "lebih tinggi
@@ -69,6 +70,7 @@ const Indikator = () => {
   const { slug } = useParams();
   const meta = getIndicator(slug || "");
   const isAgri = AGRI_SLUGS.has(meta?.slug ?? "");
+  const digits = meta?.slug === "gini-rasio" ? 3 : 2;
   const { data: sheets, isLoading, isError } = useIndikatorSheets();
   const { data: ringkasan } = useRingkasanSheets();
 
@@ -176,7 +178,7 @@ const Indikator = () => {
             <MapPin className="h-3.5 w-3.5" /> Kab. Brebes
           </div>
           <div className="mt-2 flex items-baseline gap-1.5">
-            <span className="font-display text-4xl font-extrabold text-brebes">{fmt(brebesLatest)}</span>
+            <span className="font-display text-4xl font-extrabold text-brebes">{fmt(brebesLatest, digits)}</span>
             {meta.satuan && <span className={`text-sm font-medium text-muted-foreground ${meta.satuan === "%" ? "-ml-1.5" : ""}`}>{meta.satuan}</span>}
           </div>
           <DeltaBadge
@@ -198,7 +200,7 @@ const Indikator = () => {
               <MapPin className="h-3.5 w-3.5" /> Prov. Jawa Tengah
             </div>
             <div className="mt-2 flex items-baseline gap-1.5">
-              <span className="font-display text-4xl font-bold text-jateng">{fmt(jatengLatest)}</span>
+              <span className="font-display text-4xl font-bold text-jateng">{fmt(jatengLatest, digits)}</span>
               {meta.satuan && <span className={`text-sm font-medium text-muted-foreground ${meta.satuan === "%" ? "-ml-1.5" : ""}`}>{meta.satuan}</span>}
             </div>
             <DeltaBadge
@@ -216,7 +218,7 @@ const Indikator = () => {
               <MapPin className="h-3.5 w-3.5" /> Nasional
             </div>
             <div className="mt-2 flex items-baseline gap-1.5">
-              <span className="font-display text-4xl font-bold text-nasional">{fmt(nasionalLatest)}</span>
+              <span className="font-display text-4xl font-bold text-nasional">{fmt(nasionalLatest, digits)}</span>
               {meta.satuan && <span className={`text-sm font-medium text-muted-foreground ${meta.satuan === "%" ? "-ml-1.5" : ""}`}>{meta.satuan}</span>}
             </div>
             <DeltaBadge
