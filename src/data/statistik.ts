@@ -149,6 +149,61 @@ export const INDICATORS: IndicatorData[] = [
     series: [],
     ranking: [],
   },
+  {
+    slug: "uhh",
+    nama: "Umur Harapan Hidup saat Lahir",
+    satuan: "tahun",
+    higherIsBetter: true,
+    deskripsi:
+      "Umur Harapan Hidup (UHH) saat lahir adalah rata-rata tahun hidup yang masih akan dijalani oleh seseorang yang telah berhasil mencapai umur tertentu, berdasarkan angka kematian menurut umur.",
+    highlight: { brebes: 0, tahun: 2025 },
+    series: [],
+    ranking: [],
+  },
+  {
+    slug: "hls",
+    nama: "Harapan Lama Sekolah",
+    satuan: "tahun",
+    higherIsBetter: true,
+    deskripsi:
+      "Harapan Lama Sekolah (HLS) adalah lamanya sekolah (dalam tahun) yang diharapkan akan dirasakan oleh anak pada umur tertentu di masa mendatang.",
+    highlight: { brebes: 0, tahun: 2025 },
+    series: [],
+    ranking: [],
+  },
+  {
+    slug: "rls",
+    nama: "Rata-rata Lama Sekolah",
+    satuan: "tahun",
+    higherIsBetter: true,
+    deskripsi:
+      "Rata-rata Lama Sekolah (RLS) adalah jumlah tahun yang digunakan oleh penduduk usia 25 tahun ke atas dalam menjalani pendidikan formal.",
+    highlight: { brebes: 0, tahun: 2025 },
+    series: [],
+    ranking: [],
+  },
+  {
+    slug: "pengeluaran-riil",
+    nama: "Pengeluaran Riil per Kapita",
+    satuan: "ribu Rp",
+    higherIsBetter: true,
+    deskripsi:
+      "Pengeluaran riil per kapita per tahun yang disesuaikan menggambarkan daya beli masyarakat, merupakan salah satu komponen pembentuk Indeks Pembangunan Manusia (IPM).",
+    highlight: { brebes: 0, tahun: 2025 },
+    series: [],
+    ranking: [],
+  },
+  {
+    slug: "gini-rasio",
+    nama: "Gini Rasio",
+    satuan: "",
+    higherIsBetter: false,
+    deskripsi:
+      "Gini Rasio adalah ukuran ketimpangan distribusi pendapatan penduduk. Nilainya berkisar antara 0 (merata sempurna) hingga 1 (timpang sempurna).",
+    highlight: { brebes: 0, tahun: 2025 },
+    series: [],
+    ranking: [],
+  },
 ];
 
 export const getIndicator = (slug: string) => INDICATORS.find(i => i.slug === slug);
