@@ -213,6 +213,7 @@ const Indikator = () => {
               higherIsBetter={meta.higherIsBetter}
               prevTahun={prevYear}
               digits={digits}
+            />
           </div>
         )}
         {nasionalLatest !== undefined && (
@@ -231,6 +232,7 @@ const Indikator = () => {
               higherIsBetter={meta.higherIsBetter}
               prevTahun={prevYear}
               digits={digits}
+            />
           </div>
         )}
       </section>
