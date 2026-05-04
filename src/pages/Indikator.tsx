@@ -22,12 +22,14 @@ const DeltaBadge = ({
   satuan,
   higherIsBetter,
   prevTahun,
+  digits = 2,
 }: {
   current: number;
   previous: number | null | undefined;
   satuan: string;
   higherIsBetter: boolean;
   prevTahun?: number | null;
+  digits?: number;
 }) => {
   if (previous === null || previous === undefined || !Number.isFinite(previous)) {
     return (
