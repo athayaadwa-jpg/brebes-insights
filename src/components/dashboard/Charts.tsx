@@ -10,7 +10,7 @@ const tooltipStyle = {
   boxShadow: "var(--shadow-md)",
 };
 
-export const SeriesChart = ({ data, satuan }: { data: SeriesPoint[]; satuan: string }) => {
+export const SeriesChart = ({ data, satuan, digits = 2 }: { data: SeriesPoint[]; satuan: string; digits?: number }) => {
   const hasJateng = data.some((d) => d.jateng !== undefined && d.jateng !== null);
   const hasNasional = data.some((d) => d.nasional !== undefined && d.nasional !== null);
   return (
@@ -21,11 +21,11 @@ export const SeriesChart = ({ data, satuan }: { data: SeriesPoint[]; satuan: str
         <YAxis
           stroke="hsl(var(--muted-foreground))"
           fontSize={12}
-          tickFormatter={(v: number) => formatSmart(v, 1)}
+          tickFormatter={(v: number) => formatSmart(v, Math.max(digits, 1))}
         />
         <Tooltip
           contentStyle={tooltipStyle}
-          formatter={(v: number) => withUnit(formatSmart(v), satuan)}
+          formatter={(v: number) => withUnit(formatSmart(v, digits), satuan)}
           labelFormatter={(label) => `Tahun ${label}`}
         />
         <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
@@ -124,7 +124,7 @@ export const RankingChart = ({
         />
         <Tooltip
           contentStyle={tooltipStyle}
-          formatter={(v: number) => withUnit(formatSmart(v), satuan)}
+          formatter={(v: number) => withUnit(formatSmart(v, digits), satuan)}
           labelFormatter={(label) => String(label)}
         />
         <Bar dataKey="nilai" radius={[0, 4, 4, 0]}>
