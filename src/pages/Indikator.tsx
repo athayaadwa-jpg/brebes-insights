@@ -189,6 +189,7 @@ const Indikator = () => {
             satuan={meta.satuan}
             higherIsBetter={meta.higherIsBetter}
             prevTahun={prevYear}
+            digits={digits}
           />
           {ranking.length > 0 && rankBrebes > 0 && (
             <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-brebes/10 px-2 py-0.5 text-xs font-semibold text-brebes">
@@ -211,7 +212,7 @@ const Indikator = () => {
               satuan={meta.satuan}
               higherIsBetter={meta.higherIsBetter}
               prevTahun={prevYear}
-            />
+              digits={digits}
           </div>
         )}
         {nasionalLatest !== undefined && (
@@ -229,7 +230,7 @@ const Indikator = () => {
               satuan={meta.satuan}
               higherIsBetter={meta.higherIsBetter}
               prevTahun={prevYear}
-            />
+              digits={digits}
           </div>
         )}
       </section>
@@ -248,7 +249,7 @@ const Indikator = () => {
               </p>
             </div>
           </div>
-          <SeriesChart data={series} satuan={meta.satuan} />
+          <SeriesChart data={series} satuan={meta.satuan} digits={digits} />
         </section>
       )}
 
@@ -297,6 +298,7 @@ const Indikator = () => {
             data={ranking}
             higherIsBetter={meta.higherIsBetter}
             satuan={meta.satuan}
+            digits={digits}
             jateng={isAgri ? undefined : (jatengActive ?? undefined)}
             nasional={isAgri ? undefined : (nasionalActive ?? undefined)}
           />
