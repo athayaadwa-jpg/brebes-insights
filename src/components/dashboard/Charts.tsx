@@ -93,7 +93,7 @@ export const RankingChart = ({
     <ResponsiveContainer width="100%" height={Math.max(560, chartData.length * 20)}>
       <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 48, bottom: 4, left: 8 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
-        <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v: number) => formatSmart(v, 1)} />
+        <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v: number) => formatSmart(v, Math.max(digits, 1))} />
         <YAxis
           type="category"
           dataKey="label"
