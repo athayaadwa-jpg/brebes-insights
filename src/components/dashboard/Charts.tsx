@@ -56,6 +56,7 @@ export const RankingChart = ({
   data,
   higherIsBetter,
   satuan,
+  digits = 2,
   jateng,
   nasional,
 }: {
