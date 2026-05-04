@@ -11,20 +11,16 @@ import { formatDecimal, formatInt, formatRupiah, normalizeGarisKemiskinan } from
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-// Definisi indikator yang bisa dipilih user untuk dianalisis Santika.
-// Setiap entri tahu cara mengambil nilai terbaru + tren dari payload Ringkasan.
 type IndicatorDef = {
   key: string;
   label: string;
   group: string;
-  // Mengembalikan baris ringkas: "Label: nilai (tahun) — tren: ..."
   format: (data: NonNullable<ReturnType<typeof useRingkasanSheets>["data"]>) => string | null;
 };
 
 const fmt = (n: number) => formatDecimal(n);
 const fmtI = (n: number) => formatInt(n);
 
-// Helper untuk membuat ringkasan tren 3 titik terakhir dari series.
 const trendStr = (
   seri: Array<Record<string, number | null>>,
   key: string,
@@ -85,9 +81,9 @@ const INDICATORS: IndicatorDef[] = [
       : `Garis Kemiskinan: ${formatRupiah(normalizeGarisKemiskinan(v(d.ringkasan.garisKemiskinan)!))}/kapita/bulan (${yr(d.ringkasan.garisKemiskinan)})`,
   },
   {
-    key: "gini", group: "Kemiskinan", label: "Gini Ratio",
+    key: "gini", group: "Kemiskinan", label: "Gini Rasio",
     format: (d) => v(d.ringkasan.gini) === null ? null
-      : `Gini Ratio: ${fmt(v(d.ringkasan.gini)!)} (${yr(d.ringkasan.gini)}). Tren: ${trendStr(d.seri, "gini")}`,
+      : `Gini Rasio: ${fmt(v(d.ringkasan.gini)!)} (${yr(d.ringkasan.gini)}). Tren: ${trendStr(d.seri, "gini")}`,
   },
   {
     key: "tpak", group: "Ketenagakerjaan", label: "TPAK",
@@ -107,37 +103,37 @@ const INDICATORS: IndicatorDef[] = [
   {
     key: "uhh", group: "Pembangunan Manusia", label: "Umur Harapan Hidup",
     format: (d) => v(d.ringkasan.uhh) === null ? null
-      : `Umur Harapan Hidup: ${fmt(v(d.ringkasan.uhh)!)} tahun (${yr(d.ringkasan.uhh)})`,
+      : `Umur Harapan Hidup: ${fmt(v(d.ringkasan.uhh)!)} tahun (${yr(d.ringkasan.uhh)}). Tren: ${trendStr(d.seri, "uhh")}`,
   },
   {
     key: "eys", group: "Pembangunan Manusia", label: "Harapan Lama Sekolah",
     format: (d) => v(d.ringkasan.eys) === null ? null
-      : `Harapan Lama Sekolah: ${fmt(v(d.ringkasan.eys)!)} tahun (${yr(d.ringkasan.eys)})`,
+      : `Harapan Lama Sekolah: ${fmt(v(d.ringkasan.eys)!)} tahun (${yr(d.ringkasan.eys)}). Tren: ${trendStr(d.seri, "eys")}`,
   },
   {
     key: "mys", group: "Pembangunan Manusia", label: "Rata-rata Lama Sekolah",
     format: (d) => v(d.ringkasan.mys) === null ? null
-      : `Rata-rata Lama Sekolah: ${fmt(v(d.ringkasan.mys)!)} tahun (${yr(d.ringkasan.mys)})`,
+      : `Rata-rata Lama Sekolah: ${fmt(v(d.ringkasan.mys)!)} tahun (${yr(d.ringkasan.mys)}). Tren: ${trendStr(d.seri, "mys")}`,
   },
   {
     key: "ppp", group: "Pembangunan Manusia", label: "Pengeluaran per Kapita",
     format: (d) => v(d.ringkasan.ppp) === null ? null
-      : `Pengeluaran per Kapita: ${fmtI(v(d.ringkasan.ppp)!)} ribu Rp/tahun (${yr(d.ringkasan.ppp)})`,
+      : `Pengeluaran per Kapita: ${fmtI(v(d.ringkasan.ppp)!)} ribu Rp/tahun (${yr(d.ringkasan.ppp)}). Tren: ${trendStr(d.seri, "ppp", fmtI)}`,
   },
   {
     key: "luasPanen", group: "Pertanian", label: "Luas Panen Padi",
     format: (d) => v(d.ringkasan.luasPanen) === null ? null
-      : `Luas Panen Padi: ${fmtI(v(d.ringkasan.luasPanen)!)} hektare (${yr(d.ringkasan.luasPanen)})`,
+      : `Luas Panen Padi: ${fmtI(v(d.ringkasan.luasPanen)!)} hektare (${yr(d.ringkasan.luasPanen)}). Tren: ${trendStr(d.seri, "luasPanen", fmtI)}`,
   },
   {
     key: "produksiPadi", group: "Pertanian", label: "Produksi Padi",
     format: (d) => v(d.ringkasan.produksiPadi) === null ? null
-      : `Produksi Padi: ${fmtI(v(d.ringkasan.produksiPadi)!)} ton GKG (${yr(d.ringkasan.produksiPadi)})`,
+      : `Produksi Padi: ${fmtI(v(d.ringkasan.produksiPadi)!)} ton GKG (${yr(d.ringkasan.produksiPadi)}). Tren: ${trendStr(d.seri, "produksiPadi", fmtI)}`,
   },
   {
     key: "produksiBeras", group: "Pertanian", label: "Produksi Beras",
     format: (d) => v(d.ringkasan.produksiBeras) === null ? null
-      : `Produksi Beras: ${fmtI(v(d.ringkasan.produksiBeras)!)} ton (${yr(d.ringkasan.produksiBeras)})`,
+      : `Produksi Beras: ${fmtI(v(d.ringkasan.produksiBeras)!)} ton (${yr(d.ringkasan.produksiBeras)}). Tren: ${trendStr(d.seri, "produksiBeras", fmtI)}`,
   },
   {
     key: "pdrbKonstan", group: "Ekonomi", label: "PDRB Harga Konstan",
@@ -157,7 +153,7 @@ const INDICATORS: IndicatorDef[] = [
   {
     key: "ikk", group: "Ekonomi", label: "Indeks Kemahalan Konstruksi",
     format: (d) => v(d.ringkasan.ikk) === null ? null
-      : `IKK: ${fmt(v(d.ringkasan.ikk)!)} (${yr(d.ringkasan.ikk)})`,
+      : `IKK: ${fmt(v(d.ringkasan.ikk)!)} (${yr(d.ringkasan.ikk)}). Tren: ${trendStr(d.seri, "ikk")}`,
   },
 ];
 
@@ -174,8 +170,8 @@ export const TanyaSantika = () => {
   const { data } = useRingkasanSheets();
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Group indicators untuk render checkbox per kategori
   const grouped = useMemo(() => {
     const map = new Map<string, IndicatorDef[]>();
     INDICATORS.forEach((i) => {
@@ -185,12 +181,19 @@ export const TanyaSantika = () => {
     return Array.from(map.entries());
   }, []);
 
-  // Auto-scroll ke bawah saat ada pesan baru
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, streaming]);
+
+  // Auto-resize textarea to content, capped at 5 lines
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 120) + "px";
+  }, [input]);
 
   const toggle = (k: string) =>
     setSelected((s) => {
@@ -199,7 +202,6 @@ export const TanyaSantika = () => {
       return next;
     });
 
-  // Susun konteks teks berisi indikator-indikator yang dipilih.
   const buildContext = (): string => {
     if (!data || selected.size === 0) return "";
     const lines: string[] = [];
@@ -329,20 +331,21 @@ export const TanyaSantika = () => {
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" className="flex w-full flex-col gap-0 p-0 sm:max-w-md lg:max-w-lg">
-          <SheetHeader className="shrink-0 space-y-1 border-b border-border bg-gradient-to-br from-primary/5 to-accent/5 px-4 py-3 pr-12 text-left sm:px-5 sm:py-4">
+          {/* Header */}
+          <SheetHeader className="shrink-0 space-y-1 border-b border-border bg-gradient-to-br from-primary/10 to-accent/10 px-4 py-3 pr-12 text-left sm:px-5 sm:py-4">
             <SheetTitle className="flex items-center gap-2 text-base sm:text-lg">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-primary-foreground sm:h-8 sm:w-8">
                 <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </span>
               Tanya Santika
             </SheetTitle>
-            <SheetDescription className="text-muted-foreground leading-snug sm:text-xs text-xs font-sans">
+            <SheetDescription className="text-muted-foreground leading-snug text-xs">
               Asisten AI untuk insight perbandingan indikator strategis Kab. Brebes.
             </SheetDescription>
           </SheetHeader>
 
           {/* Indicator picker — collapsible */}
-          <div className="shrink-0 border-b border-border bg-muted/30">
+          <div className="shrink-0 border-b border-border bg-muted/40">
             <button
               type="button"
               onClick={() => setPickerOpen((s) => !s)}
@@ -352,7 +355,7 @@ export const TanyaSantika = () => {
               <div className="flex min-w-0 items-center gap-2">
                 <span className="text-xs font-semibold text-foreground">Pilih indikator</span>
                 {selected.size > 0 ? (
-                  <Badge variant="secondary" className="h-5 shrink-0 px-1.5 text-[10px]">
+                  <Badge className="h-5 shrink-0 px-1.5 text-[10px] bg-primary text-primary-foreground">
                     {selected.size} dipilih
                   </Badge>
                 ) : (
@@ -366,7 +369,7 @@ export const TanyaSantika = () => {
                     tabIndex={0}
                     onClick={(e) => { e.stopPropagation(); setSelected(new Set()); }}
                     onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); setSelected(new Set()); } }}
-                    className="text-[11px] text-muted-foreground hover:text-foreground"
+                    className="text-[11px] text-destructive hover:text-destructive/80 font-medium"
                   >
                     Hapus
                   </span>
@@ -376,11 +379,11 @@ export const TanyaSantika = () => {
             </button>
             {pickerOpen && (
               <div className="px-4 pb-3 sm:px-5">
-                <ScrollArea className="h-44 sm:h-56">
-                  <div className="space-y-2.5 pr-2">
+                <ScrollArea className="h-48 sm:h-56">
+                  <div className="space-y-3 pr-2">
                     {grouped.map(([group, items]) => (
                       <div key={group}>
-                        <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                        <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-primary/70">
                           {group}
                         </div>
                         <div className="flex flex-wrap gap-1.5">
@@ -391,10 +394,10 @@ export const TanyaSantika = () => {
                                 key={ind.key}
                                 onClick={() => toggle(ind.key)}
                                 className={cn(
-                                  "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                                  "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-all",
                                   active
-                                    ? "border-primary bg-primary text-primary-foreground"
-                                    : "border-border bg-background text-foreground hover:border-primary/40",
+                                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                                    : "border-border bg-card text-foreground hover:border-primary/50 hover:bg-accent/50",
                                 )}
                               >
                                 {active && <Check className="h-3 w-3" />}
@@ -416,7 +419,7 @@ export const TanyaSantika = () => {
             {messages.length === 0 && (
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
-                  Halo! Saya <strong>Santika</strong>. Pilih beberapa indikator di atas, lalu tanyakan
+                  Halo! Saya <strong className="text-foreground">Santika</strong>. Pilih beberapa indikator di atas, lalu tanyakan
                   perbandingan atau hubungannya. Beberapa contoh:
                 </p>
                 <div className="flex flex-col gap-2">
@@ -424,7 +427,7 @@ export const TanyaSantika = () => {
                     <button
                       key={p}
                       onClick={() => setInput(p)}
-                      className="rounded-lg border border-border bg-card px-3 py-2 text-left text-xs text-foreground/80 transition-colors hover:border-primary/40 hover:bg-muted"
+                      className="rounded-lg border border-border bg-card px-3 py-2.5 text-left text-xs text-foreground transition-colors hover:border-primary/40 hover:bg-accent/50"
                     >
                       {p}
                     </button>
@@ -444,10 +447,10 @@ export const TanyaSantika = () => {
                 >
                   <div
                     className={cn(
-                      "max-w-[88%] break-words rounded-2xl px-3 py-2 text-sm sm:px-3.5 sm:py-2.5",
+                      "max-w-[88%] break-words rounded-2xl px-3.5 py-2.5 text-sm",
                       m.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-foreground",
+                        ? "bg-primary text-primary-foreground rounded-br-md"
+                        : "bg-muted/80 text-foreground border border-border rounded-bl-md",
                     )}
                   >
                     {m.role === "assistant" ? (
@@ -462,7 +465,7 @@ export const TanyaSantika = () => {
               ))}
               {streaming && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex justify-start">
-                  <div className="rounded-2xl bg-muted px-3.5 py-2.5">
+                  <div className="rounded-2xl bg-muted/80 border border-border px-3.5 py-2.5 rounded-bl-md">
                     <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                   </div>
                 </div>
@@ -471,9 +474,10 @@ export const TanyaSantika = () => {
           </div>
 
           {/* Input */}
-          <div className="shrink-0 border-t border-border bg-card px-3 py-2.5 pb-[max(env(safe-area-inset-bottom),0.625rem)] sm:px-4 sm:py-3">
-            <div className="flex items-end gap-1.5 sm:gap-2">
+          <div className="shrink-0 border-t border-border bg-card/80 backdrop-blur-sm px-3 py-2.5 pb-[max(env(safe-area-inset-bottom),0.625rem)] sm:px-4 sm:py-3">
+            <div className="flex items-end gap-2">
               <textarea
+                ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -488,14 +492,15 @@ export const TanyaSantika = () => {
                     ? "Pilih indikator dulu, lalu tanyakan…"
                     : "Tanya perbandingan / insight…"
                 }
-                className="flex-1 resize-none rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex-1 resize-none overflow-hidden rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                style={{ maxHeight: 120 }}
               />
               {messages.length > 0 && (
-                <Button onClick={reset} variant="outline" size="icon" title="Mulai ulang" className="h-9 w-9 shrink-0 sm:h-10 sm:w-10">
+                <Button onClick={reset} variant="outline" size="icon" title="Mulai ulang" className="h-9 w-9 shrink-0 rounded-xl sm:h-10 sm:w-10">
                   <RotateCcw className="h-4 w-4" />
                 </Button>
               )}
-              <Button onClick={send} disabled={!input.trim() || streaming} size="icon" className="h-9 w-9 shrink-0 sm:h-10 sm:w-10">
+              <Button onClick={send} disabled={!input.trim() || streaming} size="icon" className="h-9 w-9 shrink-0 rounded-xl sm:h-10 sm:w-10">
                 {streaming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </Button>
             </div>
