@@ -316,8 +316,8 @@ const Indikator = () => {
             publikasi BPS Kabupaten Brebes. Perubahan dihitung terhadap periode sebelumnya.
           </p>
           {isAgri && (
-            <p className="text-xs italic">
-              Perbedaan angka di belakang koma disebabkan oleh pembulatan angka.
+            <p className="text-xs font-bold">
+              Catatan: Perbedaan angka di belakang koma disebabkan oleh pembulatan angka
             </p>
           )}
         </div>
