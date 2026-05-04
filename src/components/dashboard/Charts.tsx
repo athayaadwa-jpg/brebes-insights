@@ -62,6 +62,7 @@ export const RankingChart = ({
   data: RankPoint[];
   higherIsBetter: boolean;
   satuan: string;
+  digits?: number;
   jateng?: number;
   nasional?: number;
 }) => {
