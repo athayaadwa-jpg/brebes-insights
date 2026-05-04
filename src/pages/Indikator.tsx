@@ -22,12 +22,14 @@ const DeltaBadge = ({
   satuan,
   higherIsBetter,
   prevTahun,
+  digits = 2,
 }: {
   current: number;
   previous: number | null | undefined;
   satuan: string;
   higherIsBetter: boolean;
   prevTahun?: number | null;
+  digits?: number;
 }) => {
   if (previous === null || previous === undefined || !Number.isFinite(previous)) {
     return (
@@ -52,7 +54,7 @@ const DeltaBadge = ({
     <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
       <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold whitespace-nowrap ${tone}`}>
         <Icon className="h-3 w-3 shrink-0" />
-        <span>{sign}{fmt(absDiff)}{unitText}</span>
+        <span>{sign}{fmt(absDiff, digits)}{unitText}</span>
         {previous !== 0 && (
           <span className="opacity-80">({sign}{fmt(Math.abs(pct))}%)</span>
         )}
@@ -187,6 +189,7 @@ const Indikator = () => {
             satuan={meta.satuan}
             higherIsBetter={meta.higherIsBetter}
             prevTahun={prevYear}
+            digits={digits}
           />
           {ranking.length > 0 && rankBrebes > 0 && (
             <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-brebes/10 px-2 py-0.5 text-xs font-semibold text-brebes">
@@ -209,6 +212,7 @@ const Indikator = () => {
               satuan={meta.satuan}
               higherIsBetter={meta.higherIsBetter}
               prevTahun={prevYear}
+              digits={digits}
             />
           </div>
         )}
@@ -227,6 +231,7 @@ const Indikator = () => {
               satuan={meta.satuan}
               higherIsBetter={meta.higherIsBetter}
               prevTahun={prevYear}
+              digits={digits}
             />
           </div>
         )}
@@ -246,7 +251,7 @@ const Indikator = () => {
               </p>
             </div>
           </div>
-          <SeriesChart data={series} satuan={meta.satuan} />
+          <SeriesChart data={series} satuan={meta.satuan} digits={digits} />
         </section>
       )}
 
@@ -295,6 +300,7 @@ const Indikator = () => {
             data={ranking}
             higherIsBetter={meta.higherIsBetter}
             satuan={meta.satuan}
+            digits={digits}
             jateng={isAgri ? undefined : (jatengActive ?? undefined)}
             nasional={isAgri ? undefined : (nasionalActive ?? undefined)}
           />
