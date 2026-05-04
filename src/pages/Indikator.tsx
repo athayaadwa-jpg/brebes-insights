@@ -54,7 +54,7 @@ const DeltaBadge = ({
     <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
       <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold whitespace-nowrap ${tone}`}>
         <Icon className="h-3 w-3 shrink-0" />
-        <span>{sign}{fmt(absDiff)}{unitText}</span>
+        <span>{sign}{fmt(absDiff, digits)}{unitText}</span>
         {previous !== 0 && (
           <span className="opacity-80">({sign}{fmt(Math.abs(pct))}%)</span>
         )}
