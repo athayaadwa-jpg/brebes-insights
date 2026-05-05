@@ -265,7 +265,7 @@ const Indikator = () => {
               </div>
               <h2 className="mt-1 font-display text-xl font-bold">Posisi Brebes di Jawa Tengah</h2>
               <p className="text-sm text-muted-foreground">
-                Diurutkan dari yang {meta.higherIsBetter ? "tertinggi" : "terendah"} (lebih baik). Batang berwarna menandai{" "}
+                Diurutkan dari yang {meta.higherIsBetter ? "tertinggi" : "terendah"} (lebih baik). Grafik batang berwarna menandai{" "}
                 <span className="font-semibold text-brebes">Kab. Brebes</span>
                 {jatengActive !== undefined && (
                   <>, <span className="font-semibold text-jateng">Jawa Tengah</span></>
