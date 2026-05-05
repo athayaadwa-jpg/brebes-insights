@@ -34,7 +34,7 @@ export const SeriesChart = ({ data, satuan, digits = 2 }: { data: SeriesPoint[];
           <Line type="monotone" dataKey="jateng" name="Jawa Tengah" stroke="hsl(var(--jateng))" strokeWidth={2} dot={{ r: 4 }} connectNulls />
         )}
         {hasNasional && (
-          <Line type="monotone" dataKey="nasional" name="Nasional" stroke="hsl(var(--nasional))" strokeWidth={2} strokeDasharray="6 4" dot={{ r: 4 }} connectNulls />
+          <Line type="monotone" dataKey="nasional" name="Indonesia" stroke="hsl(var(--nasional))" strokeWidth={2} strokeDasharray="6 4" dot={{ r: 4 }} connectNulls />
         )}
       </LineChart>
     </ResponsiveContainer>
