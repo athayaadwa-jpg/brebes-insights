@@ -173,6 +173,8 @@ export const TanyaSantika = () => {
   const abortRef = useRef<AbortController | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const GROUP_ORDER = ["Demografi", "Kemiskinan", "Ketenagakerjaan", "Pembangunan Manusia", "Pertanian", "Ekonomi"];
+
   const grouped = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     const filtered = q
@@ -183,7 +185,9 @@ export const TanyaSantika = () => {
       if (!map.has(i.group)) map.set(i.group, []);
       map.get(i.group)!.push(i);
     });
-    return Array.from(map.entries());
+    return GROUP_ORDER
+      .filter((g) => map.has(g))
+      .map((g) => [g, map.get(g)!] as [string, IndicatorDef[]]);
   }, [searchQuery]);
 
   useEffect(() => {
@@ -384,7 +388,7 @@ export const TanyaSantika = () => {
             </button>
             {pickerOpen && (
               <div className="px-4 pb-3 sm:px-5">
-              <div className="relative mb-2">
+              <div className="relative mb-2.5">
                   <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="text"
@@ -394,17 +398,23 @@ export const TanyaSantika = () => {
                     className="w-full rounded-md border border-border bg-background py-1.5 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                 </div>
-                <ScrollArea className="h-48 sm:h-56">
-                  <div className="space-y-3 pr-2">
+                <ScrollArea className="h-52 sm:h-60">
+                  <div className="space-y-3.5 pr-2">
                     {grouped.length === 0 && (
-                      <p className="py-4 text-center text-xs text-muted-foreground">Tidak ditemukan</p>
+                      <p className="py-6 text-center text-xs text-muted-foreground">Tidak ditemukan</p>
                     )}
                     {grouped.map(([group, items]) => (
                       <div key={group}>
-                        <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-primary/70">
-                          {group}
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-primary/70">
+                            {group}
+                          </span>
+                          <span className="h-px flex-1 bg-border" />
+                          <span className="text-[10px] tabular-nums text-muted-foreground">
+                            {items.filter((i) => selected.has(i.key)).length}/{items.length}
+                          </span>
                         </div>
-                        <div className="flex flex-wrap gap-1.5">
+                        <div className="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap">
                           {items.map((ind) => {
                             const active = selected.has(ind.key);
                             return (
@@ -412,14 +422,14 @@ export const TanyaSantika = () => {
                                 key={ind.key}
                                 onClick={() => toggle(ind.key)}
                                 className={cn(
-                                  "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-all",
+                                  "inline-flex items-center justify-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-all sm:justify-start",
                                   active
                                     ? "border-primary bg-primary text-primary-foreground shadow-sm"
                                     : "border-border bg-card text-foreground hover:border-primary/50 hover:bg-accent/50",
                                 )}
                               >
-                                {active && <Check className="h-3 w-3" />}
-                                {ind.label}
+                                {active && <Check className="h-3 w-3 shrink-0" />}
+                                <span className="truncate">{ind.label}</span>
                               </button>
                             );
                           })}
