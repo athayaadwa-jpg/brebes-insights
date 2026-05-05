@@ -173,6 +173,8 @@ export const TanyaSantika = () => {
   const abortRef = useRef<AbortController | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const GROUP_ORDER = ["Demografi", "Kemiskinan", "Ketenagakerjaan", "Pembangunan Manusia", "Pertanian", "Ekonomi"];
+
   const grouped = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     const filtered = q
@@ -183,7 +185,9 @@ export const TanyaSantika = () => {
       if (!map.has(i.group)) map.set(i.group, []);
       map.get(i.group)!.push(i);
     });
-    return Array.from(map.entries());
+    return GROUP_ORDER
+      .filter((g) => map.has(g))
+      .map((g) => [g, map.get(g)!] as [string, IndicatorDef[]]);
   }, [searchQuery]);
 
   useEffect(() => {
