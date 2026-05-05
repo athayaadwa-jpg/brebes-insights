@@ -384,8 +384,21 @@ export const TanyaSantika = () => {
             </button>
             {pickerOpen && (
               <div className="px-4 pb-3 sm:px-5">
+              <div className="relative mb-2">
+                  <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Cari indikator..."
+                    className="w-full rounded-md border border-border bg-background py-1.5 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                </div>
                 <ScrollArea className="h-48 sm:h-56">
                   <div className="space-y-3 pr-2">
+                    {grouped.length === 0 && (
+                      <p className="py-4 text-center text-xs text-muted-foreground">Tidak ditemukan</p>
+                    )}
                     {grouped.map(([group, items]) => (
                       <div key={group}>
                         <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-primary/70">
