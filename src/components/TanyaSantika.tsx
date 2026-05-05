@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { MessageCircle, Send, Sparkles, Loader2, RotateCcw, Check, ChevronDown } from "lucide-react";
+import { MessageCircle, Send, Sparkles, Loader2, RotateCcw, Check, ChevronDown, Search } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
@@ -163,6 +163,7 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
 export const TanyaSantika = () => {
   const [open, setOpen] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -173,13 +174,17 @@ export const TanyaSantika = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const grouped = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    const filtered = q
+      ? INDICATORS.filter((i) => i.label.toLowerCase().includes(q) || i.group.toLowerCase().includes(q))
+      : INDICATORS;
     const map = new Map<string, IndicatorDef[]>();
-    INDICATORS.forEach((i) => {
+    filtered.forEach((i) => {
       if (!map.has(i.group)) map.set(i.group, []);
       map.get(i.group)!.push(i);
     });
     return Array.from(map.entries());
-  }, []);
+  }, [searchQuery]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -379,8 +384,21 @@ export const TanyaSantika = () => {
             </button>
             {pickerOpen && (
               <div className="px-4 pb-3 sm:px-5">
+              <div className="relative mb-2">
+                  <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Cari indikator..."
+                    className="w-full rounded-md border border-border bg-background py-1.5 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                </div>
                 <ScrollArea className="h-48 sm:h-56">
                   <div className="space-y-3 pr-2">
+                    {grouped.length === 0 && (
+                      <p className="py-4 text-center text-xs text-muted-foreground">Tidak ditemukan</p>
+                    )}
                     {grouped.map(([group, items]) => (
                       <div key={group}>
                         <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-primary/70">
