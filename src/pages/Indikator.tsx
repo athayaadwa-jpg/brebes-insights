@@ -267,12 +267,12 @@ const Indikator = () => {
               <p className="text-sm text-muted-foreground">
                 Diurutkan dari yang {meta.higherIsBetter ? "tertinggi" : "terendah"} (lebih baik). Grafik batang berwarna menandai{" "}
                 <span className="font-semibold text-brebes">Kab. Brebes</span>
-                {jatengActive !== undefined && (
+                {!isAgri && jatengActive !== undefined && (
                   <>, <span className="font-semibold text-jateng">Jawa Tengah</span></>
                 )}
-                {nasionalActive !== undefined && (
+                {!isAgri && nasionalActive !== undefined && (
                   <>
-                    {jatengActive !== undefined ? ", dan " : " dan "}
+                    {!isAgri && jatengActive !== undefined ? ", dan " : " dan "}
                     <span className="font-semibold text-nasional">Indonesia</span>
                   </>
                 )}
