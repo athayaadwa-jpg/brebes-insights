@@ -8,7 +8,7 @@ const features = [
   { icon: Layers, title: "Data Terintegrasi", desc: "Indikator strategis kependudukan, ekonomi, dan kesejahteraan dalam satu tampilan." },
   { icon: TrendingUp, title: "Tren 5 Tahun", desc: "Pantau perkembangan setiap indikator dengan grafik time-series yang jelas." },
   { icon: BarChart3, title: "Perbandingan Wilayah", desc: "Data tersaji dengan perbandingan 35 Kab/Kota di Jawa Tengah" },
-  { icon: ShieldCheck, title: "Sumber Resmi", desc: "Data bersumber dari BPS Kabupaten Brebes dan Provinsi Jawa Tengah." },
+  { icon: ShieldCheck, title: "Sumber Resmi", desc: "Data bersumber dari Publikasi dan Rilis resmi BPS" },
 ];
 
 const Beranda = () => {
