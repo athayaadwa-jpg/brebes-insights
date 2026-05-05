@@ -241,10 +241,15 @@ Deno.serve(async (req) => {
       ? { periode: String(lastPdrb[2]), laju: parseId(lastPdrb[3]) }
       : null;
 
-    return new Response(
-      JSON.stringify({ ringkasan, seri, pdrb: pdrbInfo, periods, lastUpdated: new Date().toISOString() }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
-    );
+    const body = JSON.stringify({ ringkasan, seri, pdrb: pdrbInfo, periods, lastUpdated: new Date().toISOString() });
+    // Update cache
+    cachedResponse = body;
+    cacheTimestamp = Date.now();
+
+    return new Response(body, {
+      headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "MISS" },
+      status: 200,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("sheets-ringkasan error:", message);
