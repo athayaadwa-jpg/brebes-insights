@@ -174,13 +174,17 @@ export const TanyaSantika = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const grouped = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    const filtered = q
+      ? INDICATORS.filter((i) => i.label.toLowerCase().includes(q) || i.group.toLowerCase().includes(q))
+      : INDICATORS;
     const map = new Map<string, IndicatorDef[]>();
-    INDICATORS.forEach((i) => {
+    filtered.forEach((i) => {
       if (!map.has(i.group)) map.set(i.group, []);
       map.get(i.group)!.push(i);
     });
     return Array.from(map.entries());
-  }, []);
+  }, [searchQuery]);
 
   useEffect(() => {
     if (scrollRef.current) {
