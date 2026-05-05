@@ -219,7 +219,7 @@ const Indikator = () => {
         {nasionalLatest !== undefined && (
           <div className="rounded-xl border border-border bg-card p-5 shadow-soft">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-nasional">
-              <MapPin className="h-3.5 w-3.5" /> Nasional
+              <MapPin className="h-3.5 w-3.5" /> Indonesia
             </div>
             <div className="mt-2 flex items-baseline gap-1.5">
               <span className="font-display text-4xl font-bold text-nasional">{fmt(nasionalLatest, digits)}</span>
@@ -247,7 +247,7 @@ const Indikator = () => {
               </div>
               <h2 className="mt-1 font-display text-xl font-bold">Perkembangan {meta.nama}</h2>
               <p className="text-sm text-muted-foreground">
-                Perbandingan Kab. Brebes, Jawa Tengah, dan Nasional berdasarkan publikasi BPS.
+                Perbandingan Kab. Brebes, Jawa Tengah, dan Indonesia berdasarkan publikasi BPS.
               </p>
             </div>
           </div>
