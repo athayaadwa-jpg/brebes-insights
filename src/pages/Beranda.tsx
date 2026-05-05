@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 const features = [
   { icon: Layers, title: "Data Terintegrasi", desc: "Indikator strategis kependudukan, ekonomi, dan kesejahteraan dalam satu tampilan." },
   { icon: TrendingUp, title: "Tren 5 Tahun", desc: "Pantau perkembangan setiap indikator dengan grafik time-series yang jelas." },
-  { icon: BarChart3, title: "Perbandingan Wilayah", desc: "Data bersumber dari rilis resmi BPS" },
+  { icon: BarChart3, title: "Perbandingan Wilayah", desc: "Data bersumber dari Publikasi dan Rilis resmi BPS" },
   { icon: ShieldCheck, title: "Sumber Resmi", desc: "Data bersumber dari BPS Kabupaten Brebes dan Provinsi Jawa Tengah." },
 ];
 
