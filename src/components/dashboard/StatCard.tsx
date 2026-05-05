@@ -93,13 +93,13 @@ export const StatCard = ({
         {Icon && (
           <div
             className={cn(
-              "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
-              variant === "primary" && "bg-primary/10 text-primary",
-              variant === "accent" && "bg-accent/15 text-accent",
-              variant === "default" && "bg-muted text-foreground/70",
+              "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl shadow-sm",
+              variant === "primary" && "bg-primary/15 text-primary ring-1 ring-primary/20",
+              variant === "accent" && "bg-accent/15 text-accent ring-1 ring-accent/20",
+              variant === "default" && "bg-blue-500/10 text-blue-500 ring-1 ring-blue-500/15",
             )}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-6 w-6" strokeWidth={2.25} />
           </div>
         )}
       </div>
