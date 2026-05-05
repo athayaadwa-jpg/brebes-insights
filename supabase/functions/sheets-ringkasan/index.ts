@@ -129,6 +129,10 @@ Deno.serve(async (req) => {
       apsBase: idx("APS"),
       apmBase: idx("APM"),
       apkBase: idx("APK"),
+      bangunanTempatTinggal: idx("Jumlah Bangunan Tempat Tinggal"),
+      produksiBawangMerah: idx("Produksi Bawang Merah"),
+      produksiCabeRawit: idx("Produksi Cabe Rawit"),
+      produksiKentang: idx("Produksi Kentang"),
     };
 
     // Helper: ambil nilai pada offset relatif terhadap kolom dasar (untuk
@@ -183,6 +187,10 @@ Deno.serve(async (req) => {
       apkSd: at(r, COL.apkBase, 0),
       apkSmp: at(r, COL.apkBase, 1),
       apkSma: at(r, COL.apkBase, 2),
+      bangunanTempatTinggal: parseId(r[COL.bangunanTempatTinggal]),
+      produksiBawangMerah: parseId(r[COL.produksiBawangMerah]),
+      produksiCabeRawit: parseId(r[COL.produksiCabeRawit]),
+      produksiKentang: parseId(r[COL.produksiKentang]),
     }));
 
     // Ambil tahun terakhir yang punya nilai untuk setiap indikator
@@ -224,6 +232,10 @@ Deno.serve(async (req) => {
       pertumbuhanLU: latest("pertumbuhanLU"),
       pdrbKonstan: latest("pdrbKonstan"),
       lajuPdrbTahunan: latest("lajuPdrbTahunan"),
+      bangunanTempatTinggal: latest("bangunanTempatTinggal"),
+      produksiBawangMerah: latest("produksiBawangMerah"),
+      produksiCabeRawit: latest("produksiCabeRawit"),
+      produksiKentang: latest("produksiKentang"),
     };
 
     // Label periode (mis. "Triwulan II") yang dideteksi dari header sumber.

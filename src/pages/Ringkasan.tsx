@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import {
   ArrowRight, Banknote, BarChart3, Briefcase, GraduationCap, Scale, TrendingUp,
   Users, UserMinus, LineChart, Percent, AlertCircle, Building2, BookOpen, HeartPulse, Wallet, RefreshCw,
-  Wheat, Sprout, Package, User, UserRound, UsersRound, Factory, MapPinned, Landmark
+  Wheat, Sprout, Package, User, UserRound, UsersRound, Factory, MapPinned, Landmark, Home
 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -183,6 +183,16 @@ const Ringkasan = () => {
               icon={UserRound}
               trend={tren(data.seri, "pendudukPerempuan", { formatDelta: fmtInt, unit: "jiwa" })}
               hint={periodHint(yr(r.pendudukPerempuan))}
+            />
+          )}
+          {v(r.bangunanTempatTinggal) !== null && (
+            <StatCard
+              label="Jumlah Bangunan Tempat Tinggal"
+              value={fmtInt(v(r.bangunanTempatTinggal)!)}
+              unit="unit"
+              icon={Home}
+              trend={tren(data.seri, "bangunanTempatTinggal", { higherIsBetter: true, formatDelta: fmtInt, unit: "unit" })}
+              hint={`Pemutakhiran Wilkerstat SE2026 · ${periodHint(yr(r.bangunanTempatTinggal))}`}
             />
           )}
           <StatCard
@@ -405,7 +415,44 @@ const Ringkasan = () => {
         </div>
       </section>
 
-      {/* Ekonomi */}
+      {/* Hortikultura */}
+      <section className="mb-10">
+        <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Hortikultura</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {v(r.produksiBawangMerah) !== null && (
+            <StatCard
+              label="Produksi Bawang Merah"
+              value={fmtInt(v(r.produksiBawangMerah)!)}
+              unit="kuintal"
+              icon={Sprout}
+              variant="primary"
+              trend={tren(data.seri, "produksiBawangMerah", { higherIsBetter: true, formatDelta: fmtInt, unit: "kuintal" })}
+              hint={`Tabulasi SPH-SBS · ${periodHint(yr(r.produksiBawangMerah))}`}
+            />
+          )}
+          {v(r.produksiCabeRawit) !== null && (
+            <StatCard
+              label="Produksi Cabe Rawit"
+              value={fmtInt(v(r.produksiCabeRawit)!)}
+              unit="kuintal"
+              icon={Sprout}
+              trend={tren(data.seri, "produksiCabeRawit", { higherIsBetter: true, formatDelta: fmtInt, unit: "kuintal" })}
+              hint={`Tabulasi SPH-SBS · ${periodHint(yr(r.produksiCabeRawit))}`}
+            />
+          )}
+          {v(r.produksiKentang) !== null && (
+            <StatCard
+              label="Produksi Kentang"
+              value={fmtInt(v(r.produksiKentang)!)}
+              unit="kuintal"
+              icon={Sprout}
+              trend={tren(data.seri, "produksiKentang", { higherIsBetter: true, formatDelta: fmtInt, unit: "kuintal" })}
+              hint={`Tabulasi SPH-SBS · ${periodHint(yr(r.produksiKentang))}`}
+            />
+          )}
+        </div>
+      </section>
+
       <section className="mb-10">
         <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Ekonomi</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
