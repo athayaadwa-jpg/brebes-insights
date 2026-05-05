@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { MessageCircle, Send, Sparkles, Loader2, RotateCcw, Check, ChevronDown } from "lucide-react";
+import { MessageCircle, Send, Sparkles, Loader2, RotateCcw, Check, ChevronDown, Search } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
