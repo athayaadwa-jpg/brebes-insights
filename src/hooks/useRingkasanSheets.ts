@@ -29,6 +29,10 @@ export type RingkasanSheets = {
     pertumbuhanLU: LatestValue;       // %
     pdrbKonstan: LatestValue;         // miliar Rp
     lajuPdrbTahunan: LatestValue;     // %
+    bangunanTempatTinggal: LatestValue; // unit
+    produksiBawangMerah: LatestValue;   // kuintal
+    produksiCabeRawit: LatestValue;     // kuintal
+    produksiKentang: LatestValue;       // kuintal
   };
   seri: Array<Record<string, number | null>>;
   pdrb: { periode: string; laju: number | null } | null;
