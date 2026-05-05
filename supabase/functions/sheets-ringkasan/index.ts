@@ -8,9 +8,22 @@ const corsHeaders = {
 const SPREADSHEET_ID = "1BGKHK-qIYPe5Vpez9b7lRS3vp7igJ7JzW_jGGsmfjaw";
 const GATEWAY = "https://connector-gateway.lovable.dev/google_sheets/v4";
 
+// In-memory cache to avoid hitting Google Sheets rate limits
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+let cachedResponse: string | null = null;
+let cacheTimestamp = 0;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
+  }
+
+  // Serve from cache if fresh
+  if (cachedResponse && Date.now() - cacheTimestamp < CACHE_TTL_MS) {
+    return new Response(cachedResponse, {
+      headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "HIT" },
+      status: 200,
+    });
   }
 
   try {
@@ -228,10 +241,15 @@ Deno.serve(async (req) => {
       ? { periode: String(lastPdrb[2]), laju: parseId(lastPdrb[3]) }
       : null;
 
-    return new Response(
-      JSON.stringify({ ringkasan, seri, pdrb: pdrbInfo, periods, lastUpdated: new Date().toISOString() }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
-    );
+    const body = JSON.stringify({ ringkasan, seri, pdrb: pdrbInfo, periods, lastUpdated: new Date().toISOString() });
+    // Update cache
+    cachedResponse = body;
+    cacheTimestamp = Date.now();
+
+    return new Response(body, {
+      headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "MISS" },
+      status: 200,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("sheets-ringkasan error:", message);

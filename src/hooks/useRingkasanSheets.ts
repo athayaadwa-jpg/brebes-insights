@@ -49,6 +49,9 @@ export const useRingkasanSheets = () => {
       if (!data) throw new Error("Tidak ada data dari Google Sheets");
       return data;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attempt) => Math.min(5000 * 2 ** attempt, 30000),
   });
 };
