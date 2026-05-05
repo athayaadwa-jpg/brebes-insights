@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import {
   ArrowRight, Banknote, BarChart3, Briefcase, GraduationCap, Scale, TrendingUp,
   Users, UserMinus, LineChart, Percent, AlertCircle, Building2, BookOpen, HeartPulse, Wallet, RefreshCw,
-  Wheat, Sprout, Package, User, UserRound, UsersRound, Factory, MapPinned, Landmark
+  Wheat, Sprout, Package, User, UserRound, UsersRound, Factory, MapPinned, Landmark, Home
 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -183,6 +183,16 @@ const Ringkasan = () => {
               icon={UserRound}
               trend={tren(data.seri, "pendudukPerempuan", { formatDelta: fmtInt, unit: "jiwa" })}
               hint={periodHint(yr(r.pendudukPerempuan))}
+            />
+          )}
+          {v(r.bangunanTempatTinggal) !== null && (
+            <StatCard
+              label="Jumlah Bangunan Tempat Tinggal"
+              value={fmtInt(v(r.bangunanTempatTinggal)!)}
+              unit="unit"
+              icon={Home}
+              trend={tren(data.seri, "bangunanTempatTinggal", { higherIsBetter: true, formatDelta: fmtInt, unit: "unit" })}
+              hint={`Pemutakhiran Wilkerstat SE2026 · ${periodHint(yr(r.bangunanTempatTinggal))}`}
             />
           )}
           <StatCard
