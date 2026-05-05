@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 const features = [
   { icon: Layers, title: "Data Terintegrasi", desc: "Indikator strategis kependudukan, ekonomi, dan kesejahteraan dalam satu tampilan." },
   { icon: TrendingUp, title: "Tren 5 Tahun", desc: "Pantau perkembangan setiap indikator dengan grafik time-series yang jelas." },
-  { icon: BarChart3, title: "Perbandingan Wilayah", desc: "Posisi Kab. Brebes dibanding 17 Kecamatan se-Kabupaten Brebes." },
+  { icon: BarChart3, title: "Perbandingan Wilayah", desc: "Data bersumber dari rilis resmi BPS" },
   { icon: ShieldCheck, title: "Sumber Resmi", desc: "Data bersumber dari BPS Kabupaten Brebes dan Provinsi Jawa Tengah." },
 ];
 
@@ -76,7 +76,7 @@ const Beranda = () => {
             <Database className="h-3 w-3" /> Tentang Aplikasi
           </div>
           <h2 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Satu jendela untuk memahami<br /> kondisi Kabupaten Brebes.
+            Satu jendela untuk memahami<br />kondisi Kabupaten Brebes
           </h2>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground">
             <strong className="text-foreground">INTERES</strong> menghadirkan kompilasi indikator statistik
