@@ -133,6 +133,8 @@ Deno.serve(async (req) => {
       produksiBawangMerah: idx("Produksi Bawang Merah"),
       produksiCabeRawit: idx("Produksi Cabe Rawit"),
       produksiKentang: idx("Produksi Kentang"),
+      jumlahKecamatan: idx("Jumlah Kecamatan"),
+      jumlahDesaKelurahan: idx("Jumlah Desa/Kelurahan"),
     };
 
     // Helper: ambil nilai pada offset relatif terhadap kolom dasar (untuk
