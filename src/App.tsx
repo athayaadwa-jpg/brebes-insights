@@ -11,6 +11,7 @@ import Indikator from "./pages/Indikator";
 import Konsep from "./pages/Konsep";
 import Panduan from "./pages/Panduan";
 import Hubungi from "./pages/Hubungi";
+import Metodologi from "./pages/Metodologi";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/ringkasan" element={<Ringkasan />} />
             <Route path="/indikator/:slug" element={<Indikator />} />
             <Route path="/konsep" element={<Konsep />} />
+            <Route path="/metodologi" element={<Metodologi />} />
             <Route path="/panduan" element={<Panduan />} />
             <Route path="/hubungi" element={<Hubungi />} />
           </Route>
