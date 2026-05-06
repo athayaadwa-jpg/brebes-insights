@@ -533,7 +533,7 @@ export const TanyaSantika = () => {
               </Button>
             </div>
             <p className="mt-1.5 text-[10px] leading-snug text-muted-foreground">
-              Insight AI berdasarkan data terpilih. Verifikasi sebelum dipakai untuk keputusan.
+              Hasil insight AI ini berdasarkan data terpilih, Verifikasi hasil terlebih dahulu sebelum dipakai untuk keputusan.
             </p>
           </div>
         </SheetContent>
