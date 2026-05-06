@@ -70,7 +70,13 @@ const Hubungi = () => {
               </div>
               <div>
                 <div className="font-display font-semibold">{c.title}</div>
-                <div className="whitespace-pre-line text-sm text-muted-foreground">{c.body}</div>
+                {"href" in c && c.href ? (
+                  <a href={c.href} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
+                    {c.body}
+                  </a>
+                ) : (
+                  <div className="whitespace-pre-line text-sm text-muted-foreground">{c.body}</div>
+                )}
               </div>
             </div>
           ))}
