@@ -44,6 +44,9 @@ export type RingkasanSheets = {
     lajuPdrbTahunan: string | null;
   };
   lastUpdated: string;
+  fallback?: boolean;
+  stale?: boolean;
+  error?: string;
 };
 
 export const useRingkasanSheets = () => {
@@ -58,6 +61,7 @@ export const useRingkasanSheets = () => {
     staleTime: 10 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     retry: 2,
+    refetchOnWindowFocus: false,
     retryDelay: (attempt) => Math.min(5000 * 2 ** attempt, 30000),
   });
 };
