@@ -45,7 +45,7 @@ const KonsepPage = () => {
       <PageHeader
         eyebrow="Glosarium"
         title="Konsep & Definisi"
-        description="Penjelasan istilah dan konsep statistik yang digunakan dalam dashboard INTERES. Sumber data: Google Sheets BPS Kab. Brebes — diperbarui otomatis."
+        description="Penjelasan istilah dan konsep statistik yang digunakan dalam dashboard INTERES."
       />
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
