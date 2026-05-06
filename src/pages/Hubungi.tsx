@@ -62,6 +62,7 @@ const Hubungi = () => {
             { icon: Mail, title: "Email", body: "bps3329@bps.go.id" },
             { icon: Phone, title: "Telepon", body: "(0283) 671168" },
             { icon: Clock, title: "Jam Layanan", body: "Senin – Kamis\n08.00 – 15.00 WIB\nJum'at\n08.00 – 15.30 WIB" },
+            { icon: Globe, title: "Website", body: "brebeskab.bps.go.id", href: "https://brebeskab.bps.go.id" },
           ].map((c) => (
             <div key={c.title} className="flex gap-4 rounded-xl border border-border bg-card p-5 shadow-soft">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
