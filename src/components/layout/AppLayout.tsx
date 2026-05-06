@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, Wheat, GraduationCap, Briefcase, LineChart, Menu, X, Sprout, Building2, Package, Heart, School, BookOpenCheck, Wallet, BarChart3 } from "lucide-react";
+import { Home, LayoutDashboard, BookOpen, HelpCircle, Mail, TrendingUp, Users, Wheat, GraduationCap, Briefcase, LineChart, Menu, X, Sprout, Building2, Package, Heart, School, BookOpenCheck, Wallet, BarChart3, FileText } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import logoInteres from "@/assets/logo-interes.png";
@@ -31,6 +31,7 @@ const nav = [
     section: "Informasi",
     items: [
       { to: "/konsep", label: "Konsep & Definisi", icon: BookOpen },
+      { to: "/metodologi", label: "Catatan Metodologi", icon: FileText },
       { to: "/panduan", label: "Panduan", icon: HelpCircle },
       { to: "/hubungi", label: "Hubungi Kami", icon: Mail },
     ],
