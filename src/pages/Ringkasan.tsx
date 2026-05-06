@@ -195,18 +195,24 @@ const Ringkasan = () => {
               hint={`Pemutakhiran Wilkerstat SE2026 · ${periodHint(yr(r.bangunanTempatTinggal))}`}
             />
           )}
-          <StatCard
-            label="Jumlah Kecamatan"
-            value="17"
-            unit="kecamatan"
-            icon={MapPinned}
-          />
-          <StatCard
-            label="Jumlah Desa/Kelurahan"
-            value="297"
-            unit="desa/kelurahan"
-            icon={Landmark}
-          />
+          {v(r.jumlahKecamatan) !== null && (
+            <StatCard
+              label="Jumlah Kecamatan"
+              value={fmtInt(v(r.jumlahKecamatan)!)}
+              unit="kecamatan"
+              icon={MapPinned}
+              hint={periodHint(yr(r.jumlahKecamatan))}
+            />
+          )}
+          {v(r.jumlahDesaKelurahan) !== null && (
+            <StatCard
+              label="Jumlah Desa/Kelurahan"
+              value={fmtInt(v(r.jumlahDesaKelurahan)!)}
+              unit="desa/kelurahan"
+              icon={Landmark}
+              hint={periodHint(yr(r.jumlahDesaKelurahan))}
+            />
+          )}
         </div>
       </section>
 

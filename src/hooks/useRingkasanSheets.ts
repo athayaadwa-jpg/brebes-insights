@@ -33,6 +33,8 @@ export type RingkasanSheets = {
     produksiBawangMerah: LatestValue;   // kuintal
     produksiCabeRawit: LatestValue;     // kuintal
     produksiKentang: LatestValue;       // kuintal
+    jumlahKecamatan: LatestValue;
+    jumlahDesaKelurahan: LatestValue;
   };
   seri: Array<Record<string, number | null>>;
   pdrb: { periode: string; laju: number | null } | null;
