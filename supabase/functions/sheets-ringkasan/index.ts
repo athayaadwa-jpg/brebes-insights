@@ -13,6 +13,36 @@ const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 let cachedResponse: string | null = null;
 let cacheTimestamp = 0;
 
+const RINGKASAN_KEYS = [
+  "persenMiskin", "jumlahMiskin", "garisKemiskinan", "p1", "p2", "miskinEkstrem",
+  "jumlahMiskinEkstrem", "gini", "distribusi40Bawah", "distribusi40Tengah", "distribusi20Atas",
+  "tpak", "tpt", "uhh", "eys", "mys", "ppp", "ipm", "ikk", "luasPanen", "produksiPadi",
+  "produksiBeras", "pendudukLaki", "pendudukPerempuan", "pendudukTotal", "pertumbuhanLU",
+  "pdrbKonstan", "lajuPdrbTahunan", "bangunanTempatTinggal", "produksiBawangMerah",
+  "produksiCabeRawit", "produksiKentang", "jumlahKecamatan", "jumlahDesaKelurahan",
+] as const;
+
+const emptyRingkasan = () => Object.fromEntries(RINGKASAN_KEYS.map((key) => [key, null]));
+
+const fallbackBody = (message: string) => JSON.stringify({
+  ringkasan: emptyRingkasan(),
+  seri: [],
+  pdrb: null,
+  periods: { pertumbuhanLU: null, pdrbKonstan: null, lajuPdrbTahunan: null },
+  lastUpdated: new Date().toISOString(),
+  fallback: true,
+  error: message,
+});
+
+const cachedFallbackBody = (message: string) => {
+  if (!cachedResponse) return null;
+  try {
+    return JSON.stringify({ ...JSON.parse(cachedResponse), fallback: true, stale: true, error: message });
+  } catch {
+    return cachedResponse;
+  }
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -47,7 +77,18 @@ Deno.serve(async (req) => {
     });
     const raw = await resp.json();
     if (!resp.ok) {
-      throw new Error(`Google Sheets gateway error [${resp.status}]: ${JSON.stringify(raw)}`);
+      const message = `Google Sheets gateway error [${resp.status}]: ${JSON.stringify(raw)}`;
+      console.error("sheets-ringkasan gateway error:", message);
+
+      if (resp.status === 429 || resp.status >= 500) {
+        const body = cachedFallbackBody(message) ?? fallbackBody(message);
+        return new Response(body, {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": cachedResponse ? "STALE" : "FALLBACK" },
+        });
+      }
+
+      throw new Error(message);
     }
 
     const indikator = raw.valueRanges?.[0]?.values ?? [];
@@ -271,6 +312,15 @@ Deno.serve(async (req) => {
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("sheets-ringkasan error:", message);
+
+    if (/429|quota|resource_exhausted|rate_limit|network|fetch/i.test(message)) {
+      const body = cachedFallbackBody(message) ?? fallbackBody(message);
+      return new Response(body, {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": cachedResponse ? "STALE" : "FALLBACK" },
+      });
+    }
+
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

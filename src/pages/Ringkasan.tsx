@@ -132,11 +132,13 @@ const Ringkasan = () => {
     ...[r.persenMiskin, r.tpt, r.tpak, r.ipm, r.gini, r.jumlahMiskin]
       .map((x) => x?.tahun ?? 0),
   );
+  const hasFallback = Boolean(data.fallback);
+  const headerEyebrow = tahunRef > 0 ? `Data terkini · hingga tahun ${tahunRef}` : "Data sementara";
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        eyebrow={`Data terkini · hingga tahun ${tahunRef}`}
+        eyebrow={headerEyebrow}
         title="Ringkasan Eksekutif"
         description="Sajian angka-angka kunci yang menggambarkan kondisi terkini Kabupaten Brebes. "
       />
@@ -149,6 +151,12 @@ const Ringkasan = () => {
           <RefreshCw className={`mr-2 h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} /> Muat ulang
         </Button>
       </div>
+
+      {hasFallback && (
+        <div className="mb-6 rounded-xl border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
+          Data Google Sheets sedang dibatasi sementara. Menampilkan data tersimpan bila tersedia; silakan muat ulang beberapa saat lagi.
+        </div>
+      )}
 
       {/* Demografi */}
       <section className="mb-10">

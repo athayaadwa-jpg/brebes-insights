@@ -44,6 +44,73 @@ export type RingkasanSheets = {
     lajuPdrbTahunan: string | null;
   };
   lastUpdated: string;
+  fallback?: boolean;
+  stale?: boolean;
+  error?: string;
+};
+
+const CACHE_KEY = "interes:ringkasan-sheets";
+
+const emptyValue = null as LatestValue;
+
+const fallbackData = (message: string): RingkasanSheets => ({
+  ringkasan: {
+    persenMiskin: emptyValue,
+    jumlahMiskin: emptyValue,
+    garisKemiskinan: emptyValue,
+    p1: emptyValue,
+    p2: emptyValue,
+    miskinEkstrem: emptyValue,
+    gini: emptyValue,
+    tpak: emptyValue,
+    tpt: emptyValue,
+    uhh: emptyValue,
+    eys: emptyValue,
+    mys: emptyValue,
+    ppp: emptyValue,
+    ipm: emptyValue,
+    ikk: emptyValue,
+    luasPanen: emptyValue,
+    produksiPadi: emptyValue,
+    produksiBeras: emptyValue,
+    pendudukLaki: emptyValue,
+    pendudukPerempuan: emptyValue,
+    pendudukTotal: emptyValue,
+    pertumbuhanLU: emptyValue,
+    pdrbKonstan: emptyValue,
+    lajuPdrbTahunan: emptyValue,
+    bangunanTempatTinggal: emptyValue,
+    produksiBawangMerah: emptyValue,
+    produksiCabeRawit: emptyValue,
+    produksiKentang: emptyValue,
+    jumlahKecamatan: emptyValue,
+    jumlahDesaKelurahan: emptyValue,
+  },
+  seri: [],
+  pdrb: null,
+  periods: { pertumbuhanLU: null, pdrbKonstan: null, lajuPdrbTahunan: null },
+  lastUpdated: new Date().toISOString(),
+  fallback: true,
+  error: message,
+});
+
+const readCache = (): RingkasanSheets | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(CACHE_KEY);
+    return raw ? JSON.parse(raw) as RingkasanSheets : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeCache = (data: RingkasanSheets) => {
+  if (typeof window === "undefined" || data.fallback) return;
+  try {
+    window.localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  } catch {
+    // Ignore storage quota/privacy mode errors.
+  }
 };
 
 export const useRingkasanSheets = () => {
@@ -51,13 +118,22 @@ export const useRingkasanSheets = () => {
     queryKey: ["sheets-ringkasan"],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke<RingkasanSheets>("sheets-ringkasan");
-      if (error) throw error;
-      if (!data) throw new Error("Tidak ada data dari Google Sheets");
+      if (error) {
+        const cached = readCache();
+        return cached ? { ...cached, fallback: true, stale: true, error: error.message } : fallbackData(error.message);
+      }
+      if (!data) return fallbackData("Tidak ada data dari Google Sheets");
+      if (data.fallback) {
+        const cached = readCache();
+        return cached ? { ...cached, fallback: true, stale: true, error: data.error } : data;
+      }
+      writeCache(data);
       return data;
     },
     staleTime: 10 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     retry: 2,
+    refetchOnWindowFocus: false,
     retryDelay: (attempt) => Math.min(5000 * 2 ** attempt, 30000),
   });
 };
