@@ -193,6 +193,8 @@ Deno.serve(async (req) => {
       produksiBawangMerah: parseId(r[COL.produksiBawangMerah]),
       produksiCabeRawit: parseId(r[COL.produksiCabeRawit]),
       produksiKentang: parseId(r[COL.produksiKentang]),
+      jumlahKecamatan: parseId(r[COL.jumlahKecamatan]),
+      jumlahDesaKelurahan: parseId(r[COL.jumlahDesaKelurahan]),
     }));
 
     // Ambil tahun terakhir yang punya nilai untuk setiap indikator
@@ -238,6 +240,8 @@ Deno.serve(async (req) => {
       produksiBawangMerah: latest("produksiBawangMerah"),
       produksiCabeRawit: latest("produksiCabeRawit"),
       produksiKentang: latest("produksiKentang"),
+      jumlahKecamatan: latest("jumlahKecamatan"),
+      jumlahDesaKelurahan: latest("jumlahDesaKelurahan"),
     };
 
     // Label periode (mis. "Triwulan II") yang dideteksi dari header sumber.
