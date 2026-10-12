@@ -16,6 +16,11 @@ const fmt = formatDecimal;
 const fmtInt = formatInt;
 const fmtRp = (n: number) => formatRupiah(n);
 
+// Sembunyikan sementara kartu PDRB/Pertumbuhan Ekonomi triwulanan di Ringkasan.
+// Ubah menjadi true untuk menampilkannya kembali.
+const TAMPIL_EKONOMI_TRIWULANAN: boolean = false;
+
+
 const indicatorLinks = [
   { to: "/indikator/tpt", label: "Tingkat Pengangguran Terbuka" },
   { to: "/indikator/tpak", label: "Tingkat Partisipasi Angkatan Kerja" },
@@ -470,7 +475,7 @@ const Ringkasan = () => {
       <section className="mb-10">
         <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Ekonomi</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {v(r.pdrbKonstan) !== null && (
+          {TAMPIL_EKONOMI_TRIWULANAN && v(r.pdrbKonstan) !== null && (
             <StatCard
               label="PDRB Atas Dasar Harga Konstan"
               value={fmt(v(r.pdrbKonstan)!)}
@@ -481,7 +486,7 @@ const Ringkasan = () => {
               hint={periodHintQ(yr(r.pdrbKonstan), data.periods?.pdrbKonstan)}
             />
           )}
-          {v(r.pertumbuhanLU) !== null && (
+          {TAMPIL_EKONOMI_TRIWULANAN && v(r.pertumbuhanLU) !== null && (
             <StatCard
               label="Pertumbuhan Ekonomi Menurut Lapangan Usaha"
               value={fmt(v(r.pertumbuhanLU)!)}
@@ -491,7 +496,7 @@ const Ringkasan = () => {
               hint={periodHintQ(yr(r.pertumbuhanLU), data.periods?.pertumbuhanLU)}
             />
           )}
-          {v(r.lajuPdrbTahunan) !== null && (
+          {TAMPIL_EKONOMI_TRIWULANAN && v(r.lajuPdrbTahunan) !== null && (
             <StatCard
               label="Laju Pertumbuhan PDRB (q-to-q)"
               value={fmt(v(r.lajuPdrbTahunan)!)}
