@@ -209,7 +209,7 @@ const Ringkasan = () => {
               value={fmtInt(v(r.jumlahKecamatan)!)}
               unit="kecamatan"
               icon={MapPinned}
-              hint={periodHint(yr(r.jumlahKecamatan))}
+              hint={`Pemutakhiran Wilkerstat SE2026 · ${periodHint(yr(r.jumlahKecamatan))}`}
             />
           )}
           {v(r.jumlahDesaKelurahan) !== null && (
@@ -218,7 +218,7 @@ const Ringkasan = () => {
               value={fmtInt(v(r.jumlahDesaKelurahan)!)}
               unit="desa/kelurahan"
               icon={Landmark}
-              hint={periodHint(yr(r.jumlahDesaKelurahan))}
+              hint={`Pemutakhiran Wilkerstat SE2026 · ${periodHint(yr(r.jumlahDesaKelurahan))}`}
             />
           )}
         </div>

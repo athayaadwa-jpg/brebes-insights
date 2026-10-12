@@ -17,7 +17,7 @@ export const SeriesChart = ({ data, satuan, digits = 2 }: { data: SeriesPoint[];
     <ResponsiveContainer width="100%" height={320}>
       <LineChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: -8 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-        <XAxis dataKey="tahun" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+        <XAxis dataKey={data.some((d) => d.periode) ? "periode" : "tahun"} stroke="hsl(var(--muted-foreground))" fontSize={12} />
         <YAxis
           stroke="hsl(var(--muted-foreground))"
           fontSize={12}
@@ -26,7 +26,7 @@ export const SeriesChart = ({ data, satuan, digits = 2 }: { data: SeriesPoint[];
         <Tooltip
           contentStyle={tooltipStyle}
           formatter={(v: number) => withUnit(formatSmart(v, digits), satuan)}
-          labelFormatter={(label) => `Tahun ${label}`}
+          labelFormatter={(label) => String(label).includes("Triwulan") ? String(label) : `Tahun ${label}`}
         />
         <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
         <Line type="monotone" dataKey="brebes" name="Kab. Brebes" stroke="hsl(var(--brebes))" strokeWidth={3} dot={{ r: 5, fill: "hsl(var(--brebes))" }} activeDot={{ r: 7 }} />
