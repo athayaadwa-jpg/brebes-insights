@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getIndicator, INDICATORS, type SeriesPoint, type RankPoint } from "@/data/statistik";
 import { formatSmart } from "@/lib/format";
 import { useIndikatorSheets } from "@/hooks/useIndikatorSheets";
-import { useRingkasanSheets } from "@/hooks/useRingkasanSheets";
 
 const fmt = (n: number, digits = 2) => formatSmart(n, digits);
 
@@ -28,7 +27,7 @@ const DeltaBadge = ({
   previous: number | null | undefined;
   satuan: string;
   higherIsBetter: boolean;
-  prevTahun?: number | null;
+  prevTahun?: string | number | null;
   digits?: number;
 }) => {
   if (previous === null || previous === undefined || !Number.isFinite(previous)) {
@@ -74,16 +73,9 @@ const Indikator = () => {
   const isAgri = AGRI_SLUGS.has(meta?.slug ?? "");
   const digits = meta?.slug === "gini-rasio" ? 3 : 2;
   const { data: sheets, isLoading, isError } = useIndikatorSheets();
-  const { data: ringkasan } = useRingkasanSheets();
-
-  // Suffix periode (mis. "Triwulan II") — hanya berlaku untuk indikator PDRB/Pertumbuhan Ekonomi
-  // jika header sumber memuatnya.
-  const periodeSuffix =
-    meta?.slug === "pertumbuhan-ekonomi"
-      ? ringkasan?.periods?.pertumbuhanLU ?? null
-      : null;
-
   const live = sheets?.indicators[meta?.slug ?? ""];
+  const periodLabel = (key: number) => live?.periodLabels?.[String(key)] ?? String(key);
+  const isQuarterly = live?.rankingYears.some((year) => !Number.isInteger(year)) ?? false;
 
   // Tahun terpilih untuk grafik ranking (default = tahun terbaru).
   // Disimpan sebagai string untuk kompatibilitas dengan komponen Select.
@@ -92,7 +84,7 @@ const Indikator = () => {
     return [...ys].sort((a, b) => b - a); // semua tahun, terbaru di depan
   }, [live]);
   const [pickedYear, setPickedYear] = useState<string>("");
-  const activeYear = pickedYear ? Number(pickedYear) : rankingYears[0];
+  const activeYear = rankingYears.includes(Number(pickedYear)) ? Number(pickedYear) : rankingYears[0];
 
   if (!meta) return <Navigate to="/ringkasan" replace />;
 
@@ -108,11 +100,12 @@ const Indikator = () => {
 
   const series: SeriesPoint[] = allSeries.map((p) => ({
     tahun: p.tahun,
+    periode: isQuarterly ? periodLabel(p.tahun) : undefined,
     brebes: p.brebes,
     jateng: isAgri ? undefined : jatengMap.get(p.tahun),
     nasional: isAgri ? undefined : nasionalMap.get(p.tahun),
   }));
-  const trenLabel = `Tren ${series.length} Tahun Terakhir`;
+  const trenLabel = `Tren ${series.length} ${isQuarterly ? "Triwulan" : "Tahun"} Terakhir`;
 
   // ----- Ranking untuk tahun terpilih -----
   const rankingByYear = (live?.rankingByYear ?? {}) as Record<string, RankPoint[]>;
@@ -157,7 +150,7 @@ const Indikator = () => {
       </Button>
 
       <PageHeader
-        eyebrow={`Indikator · ${latestYear}${periodeSuffix ? ` · ${periodeSuffix}` : ""}`}
+        eyebrow={`Indikator · ${periodLabel(latestYear)}`}
         title={meta.nama}
         description={meta.deskripsi}
       />
@@ -188,7 +181,7 @@ const Indikator = () => {
             previous={brebesPrev}
             satuan={meta.satuan}
             higherIsBetter={meta.higherIsBetter}
-            prevTahun={prevYear}
+            prevTahun={prevYear === null ? null : periodLabel(prevYear)}
             digits={digits}
           />
           {ranking.length > 0 && rankBrebes > 0 && (
@@ -211,7 +204,7 @@ const Indikator = () => {
               previous={jatengPrev}
               satuan={meta.satuan}
               higherIsBetter={meta.higherIsBetter}
-              prevTahun={prevYear}
+              prevTahun={prevYear === null ? null : periodLabel(prevYear)}
               digits={digits}
             />
           </div>
@@ -230,7 +223,7 @@ const Indikator = () => {
               previous={nasionalPrev}
               satuan={meta.satuan}
               higherIsBetter={meta.higherIsBetter}
-              prevTahun={prevYear}
+              prevTahun={prevYear === null ? null : periodLabel(prevYear)}
               digits={digits}
             />
           </div>
@@ -261,7 +254,7 @@ const Indikator = () => {
           <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
-                <Trophy className="h-3.5 w-3.5" /> Peringkat Antar Kabupaten/Kota · {activeYear}
+                <Trophy className="h-3.5 w-3.5" /> Peringkat Antar Kabupaten/Kota · {activeYear === undefined ? "" : periodLabel(activeYear)}
               </div>
               <h2 className="mt-1 font-display text-xl font-bold">Posisi Brebes di Jawa Tengah</h2>
               <p className="text-sm text-muted-foreground">
@@ -280,17 +273,17 @@ const Indikator = () => {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-muted-foreground">Tahun:</span>
+              <span className="text-xs font-medium text-muted-foreground">{isQuarterly ? "Periode:" : "Tahun:"}</span>
               <Select
                 value={String(activeYear ?? "")}
                 onValueChange={(v) => setPickedYear(v)}
               >
-                <SelectTrigger className="h-9 w-28">
+                <SelectTrigger className={isQuarterly ? "h-9 w-48" : "h-9 w-28"}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {rankingYears.map((y) => (
-                    <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                    <SelectItem key={y} value={String(y)}>{periodLabel(y)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

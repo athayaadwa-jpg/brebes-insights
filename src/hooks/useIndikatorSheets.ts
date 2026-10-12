@@ -7,6 +7,7 @@ export type IndikatorComparePoint = { tahun: number; nilai: number };
 
 export type IndikatorSheetsItem = {
   slug: string;
+  periodLabels?: Record<string, string>;
   series: IndikatorSeriesPoint[];
   seriesJateng: IndikatorComparePoint[];
   seriesNasional: IndikatorComparePoint[];

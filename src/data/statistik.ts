@@ -11,7 +11,7 @@ export const KAB_KOTA_JATENG = [
   "Kota Pekalongan", "Kota Tegal",
 ];
 
-export type SeriesPoint = { tahun: number; brebes: number; jateng?: number; nasional?: number };
+export type SeriesPoint = { tahun: number; periode?: string; brebes: number; jateng?: number; nasional?: number };
 export type RankPoint = { wilayah: string; nilai: number };
 
 export type IndicatorData = {

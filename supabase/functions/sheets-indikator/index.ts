@@ -4,6 +4,8 @@
 // Sumber utama: tab "Rangking Semua" (gid=1507957902) — satu tabel berisi
 // 9 grup indikator × 5 tahun (2021-2025) untuk semua kab/kota + Jawa Tengah +
 // Indonesia. Layout: kolom A = wilayah, B-AS = nilai per indikator per tahun.
+import { isEconomicHeader, normalizeHeader, parseIndicatorPeriod } from "../_shared/indicator-periods.ts";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -50,7 +52,7 @@ const GROUPS: GroupDef[] = [
   { slug: "luas-panen-padi",     header: "Luas Panen" },
   { slug: "produksi-padi",       header: "Produksi Padi" },
   { slug: "produksi-beras",      header: "Produksi Beras" },
-  { slug: "pertumbuhan-ekonomi", header: "Laju Pertumbuhan (y-on-y) PDRB Triwulan IV" },
+  { slug: "pertumbuhan-ekonomi", header: "Laju Pertumbuhan (y-on-y) PDRB Triwulanan" },
   { slug: "ikk",                 header: "Indeks Kemahalan Konstruksi" },
   { slug: "uhh",                 header: "Umur Harapan Hidup saat Lahir" },
   { slug: "hls",                 header: "Harapan Lama Sekolah" },
@@ -71,8 +73,8 @@ Deno.serve(async (req) => {
     if (!GOOGLE_SHEETS_API_KEY) throw new Error("GOOGLE_SHEETS_API_KEY tidak tersedia");
 
     // Baca SEMUA data dari tab "Rangking Semua" — kolom A sampai AS (1+45).
-    const range = "Rangking Semua!A1:BT200";
-    const url = `${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values/x?range=${encodeURIComponent(range)}`;
+    const range = "'Rangking Semua'!A1:ZZ200";
+    const url = `${GATEWAY}/spreadsheets/${SPREADSHEET_ID}/values:batchGet?ranges=${encodeURIComponent(range)}`;
     const resp = await fetch(url, {
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -83,7 +85,7 @@ Deno.serve(async (req) => {
     if (!resp.ok) {
       throw new Error(`Google Sheets gateway error [${resp.status}]: ${JSON.stringify(raw)}`);
     }
-    const rows: string[][] = raw.values ?? [];
+    const rows: string[][] = raw.valueRanges?.[0]?.values ?? [];
     if (rows.length < 3) throw new Error("Sheet 'Rangking Semua' kosong/tidak valid");
 
     const headerGroup = rows[0] ?? [];
@@ -91,17 +93,20 @@ Deno.serve(async (req) => {
 
     // Pemetaan slug -> daftar { col, tahun }
     const slugCols = new Map<string, { col: number; tahun: number }[]>();
+    const periodLabels: Record<string, string> = {};
     let currentSlug: string | null = null;
     const maxCols = Math.max(headerGroup.length, headerYears.length);
     for (let c = 1; c < maxCols; c++) {
       const h = (headerGroup[c] ?? "").trim();
       if (h) {
-        const g = GROUPS.find((g) => g.header.toLowerCase() === h.toLowerCase());
+        const g = GROUPS.find((g) => normalizeHeader(g.header) === normalizeHeader(h)
+          || (g.slug === "pertumbuhan-ekonomi" && isEconomicHeader(h)));
         currentSlug = g ? g.slug : null;
       }
       if (!currentSlug) continue;
-      const tahun = Number((headerYears[c] ?? "").toString().trim());
-      if (!Number.isFinite(tahun)) continue;
+      const period = parseIndicatorPeriod(headerYears[c]);
+      if (!period) continue;
+      const tahun = period.key;
       const list = slugCols.get(currentSlug) ?? [];
       // Jika tahun duplikat (bug di sheet, mis. Luas Panen semua "2021"),
       // auto-increment berdasarkan posisi dalam grup
@@ -109,6 +114,7 @@ Deno.serve(async (req) => {
         ? list[0].tahun + list.length
         : tahun;
       list.push({ col: c, tahun: actualTahun });
+      periodLabels[String(actualTahun)] = actualTahun === tahun ? period.label : String(actualTahun);
       slugCols.set(currentSlug, list);
     }
 
@@ -181,6 +187,7 @@ Deno.serve(async (req) => {
       nasionalByYear: Record<number, number>;
       jateng: number | null;
       nasional: number | null;
+      periodLabels: Record<string, string>;
     }> = {};
 
     for (const g of GROUPS) {
@@ -197,6 +204,7 @@ Deno.serve(async (req) => {
       indicators[g.slug] = {
         slug: g.slug,
         series: a.series,
+        periodLabels,
         seriesJateng: a.seriesJateng,
         seriesNasional: a.seriesNasional,
         ranking: tahun !== null ? (a.rankingByYear[tahun] ?? []) : [],
