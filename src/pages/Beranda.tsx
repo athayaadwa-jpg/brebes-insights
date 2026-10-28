@@ -3,6 +3,7 @@ import { ArrowRight, BarChart3, Database, Layers, MapPin, ShieldCheck, TrendingU
 import heroImage from "@/assets/hero-brebes.jpg";
 import logoInteresLight from "@/assets/logo-interes-light.png";
 import { Button } from "@/components/ui/button";
+import { useRingkasanSheets } from "@/hooks/useRingkasanSheets";
 
 const features = [
   { icon: Layers, title: "Data Terintegrasi", desc: "Indikator strategis kependudukan, ekonomi, dan kesejahteraan dalam satu tampilan." },
@@ -12,6 +13,28 @@ const features = [
 ];
 
 const Beranda = () => {
+  const { data } = useRingkasanSheets();
+
+  // Angka mini-stat diambil dinamis dari data Google Sheets,
+  // dengan nilai bawaan bila data belum/batal dimuat.
+  const penduduk = data?.ringkasan.pendudukTotal;
+  const pendudukLabel = penduduk
+    ? `${(penduduk.value / 1_000_000).toLocaleString("id-ID", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} jt`
+    : "2,08 jt";
+
+  const kecamatan = data?.ringkasan.jumlahKecamatan;
+  const kecamatanLabel = kecamatan ? String(kecamatan.value) : "17";
+
+  const tahunData = (() => {
+    const years = (data?.seri ?? [])
+      .filter((s) => Object.entries(s).some(([k, v]) => k !== "tahun" && v !== null && v !== undefined))
+      .map((s) => s.tahun)
+      .filter((t): t is number => typeof t === "number" && Number.isFinite(t));
+    if (years.length === 0) return "5+";
+    const unique = Array.from(new Set(years)).sort((a, b) => a - b);
+    return `${unique[0]}–${unique[unique.length - 1]}`;
+  })();
+
   return (
     <div className="space-y-16 animate-fade-in">
       {/* Hero */}
@@ -55,9 +78,9 @@ const Beranda = () => {
           {/* Inline mini-stats */}
           <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             {[
-              { v: "2,08 jt", l: "Penduduk" },
-              { v: "17", l: "Kecamatan" },
-              { v: "5+", l: "Tahun Data" },
+              { v: pendudukLabel, l: "Penduduk" },
+              { v: kecamatanLabel, l: "Kecamatan" },
+              { v: tahunData, l: "Tahun Data" },
               { v: "14", l: "Indikator Detail" },
             ].map((s) => (
               <div key={s.l} className="rounded-xl border border-primary-foreground/20 bg-primary-foreground/10 p-4 backdrop-blur-sm">
