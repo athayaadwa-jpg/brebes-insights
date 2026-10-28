@@ -13,6 +13,27 @@ const features = [
 ];
 
 const Beranda = () => {
+  const { data } = useRingkasanSheets();
+
+  // Angka mini-stat diambil dinamis dari data Google Sheets,
+  // dengan nilai bawaan bila data belum/batal dimuat.
+  const penduduk = data?.ringkasan.pendudukTotal;
+  const pendudukLabel = penduduk
+    ? `${(penduduk.value / 1_000_000).toLocaleString("id-ID", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} jt`
+    : "2,08 jt";
+
+  const kecamatan = data?.ringkasan.jumlahKecamatan;
+  const kecamatanLabel = kecamatan ? String(kecamatan.value) : "17";
+
+  const tahunData = (() => {
+    const years = (data?.seri ?? [])
+      .map((s) => s.tahun)
+      .filter((t): t is number => typeof t === "number" && Number.isFinite(t));
+    if (years.length === 0) return "5+";
+    const unique = Array.from(new Set(years)).sort((a, b) => a - b);
+    return `${unique[0]}–${unique[unique.length - 1]}`;
+  })();
+
   return (
     <div className="space-y-16 animate-fade-in">
       {/* Hero */}
