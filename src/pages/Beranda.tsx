@@ -3,6 +3,7 @@ import { ArrowRight, BarChart3, Database, Layers, MapPin, ShieldCheck, TrendingU
 import heroImage from "@/assets/hero-brebes.jpg";
 import logoInteresLight from "@/assets/logo-interes-light.png";
 import { Button } from "@/components/ui/button";
+import { useRingkasanSheets } from "@/hooks/useRingkasanSheets";
 
 const features = [
   { icon: Layers, title: "Data Terintegrasi", desc: "Indikator strategis kependudukan, ekonomi, dan kesejahteraan dalam satu tampilan." },
