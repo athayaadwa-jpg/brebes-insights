@@ -77,9 +77,9 @@ const Beranda = () => {
           {/* Inline mini-stats */}
           <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             {[
-              { v: "2,08 jt", l: "Penduduk" },
-              { v: "17", l: "Kecamatan" },
-              { v: "5+", l: "Tahun Data" },
+              { v: pendudukLabel, l: "Penduduk" },
+              { v: kecamatanLabel, l: "Kecamatan" },
+              { v: tahunData, l: "Tahun Data" },
               { v: "14", l: "Indikator Detail" },
             ].map((s) => (
               <div key={s.l} className="rounded-xl border border-primary-foreground/20 bg-primary-foreground/10 p-4 backdrop-blur-sm">
