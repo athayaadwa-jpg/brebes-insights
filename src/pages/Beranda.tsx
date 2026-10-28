@@ -27,6 +27,7 @@ const Beranda = () => {
 
   const tahunData = (() => {
     const years = (data?.seri ?? [])
+      .filter((s) => Object.entries(s).some(([k, v]) => k !== "tahun" && v !== null && v !== undefined))
       .map((s) => s.tahun)
       .filter((t): t is number => typeof t === "number" && Number.isFinite(t));
     if (years.length === 0) return "5+";
