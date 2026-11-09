@@ -28,6 +28,7 @@ export type RingkasanSheets = {
     pendudukTotal: LatestValue;       // jiwa
     pertumbuhanLU: LatestValue;       // %
     pdrbKonstan: LatestValue;         // miliar Rp
+    pdrbPengeluaranBerlaku: LatestValue; // miliar Rp
     lajuPdrbTahunan: LatestValue;     // %
     bangunanTempatTinggal: LatestValue; // unit
     produksiBawangMerah: LatestValue;   // kuintal
@@ -78,6 +79,7 @@ const fallbackData = (message: string): RingkasanSheets => ({
     pendudukTotal: emptyValue,
     pertumbuhanLU: emptyValue,
     pdrbKonstan: emptyValue,
+    pdrbPengeluaranBerlaku: emptyValue,
     lajuPdrbTahunan: emptyValue,
     bangunanTempatTinggal: emptyValue,
     produksiBawangMerah: emptyValue,

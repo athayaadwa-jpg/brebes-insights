@@ -16,11 +16,6 @@ const fmt = formatDecimal;
 const fmtInt = formatInt;
 const fmtRp = (n: number) => formatRupiah(n);
 
-// Sembunyikan sementara kartu PDRB/Pertumbuhan Ekonomi triwulanan di Ringkasan.
-// Ubah menjadi true untuk menampilkannya kembali.
-const TAMPIL_EKONOMI_TRIWULANAN: boolean = false;
-
-
 const indicatorLinks = [
   { to: "/indikator/tpt", label: "Tingkat Pengangguran Terbuka" },
   { to: "/indikator/tpak", label: "Tingkat Partisipasi Angkatan Kerja" },
@@ -475,28 +470,38 @@ const Ringkasan = () => {
       <section className="mb-10">
         <h2 className="mb-4 font-display text-lg font-bold tracking-tight">Ekonomi</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {TAMPIL_EKONOMI_TRIWULANAN && v(r.pdrbKonstan) !== null && (
+          {v(r.pertumbuhanLU) !== null && (
             <StatCard
-              label="PDRB Atas Dasar Harga Konstan"
+              label="Laju Pertumbuhan PDRB ADHK Menurut Lapangan Usaha"
+              value={fmt(v(r.pertumbuhanLU)!)}
+              unit="%"
+              icon={BarChart3}
+              trend={tren(data.seri, "pertumbuhanLU", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
+              hint={periodHint(yr(r.pertumbuhanLU))}
+            />
+          )}
+          {v(r.pdrbPengeluaranBerlaku) !== null && (
+            <StatCard
+              label="PDRB Menurut Pengeluaran ADHB"
+              value={fmt(v(r.pdrbPengeluaranBerlaku)!)}
+              unit="miliar Rp"
+              icon={Factory}
+              trend={tren(data.seri, "pdrbPengeluaranBerlaku", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "miliar" })}
+              hint={periodHint(yr(r.pdrbPengeluaranBerlaku))}
+            />
+          )}
+          {v(r.pdrbKonstan) !== null && (
+            <StatCard
+              label="PDRB Menurut Pengeluaran ADHK 2010"
               value={fmt(v(r.pdrbKonstan)!)}
               unit="miliar Rp"
               icon={Factory}
               variant="accent"
               trend={tren(data.seri, "pdrbKonstan", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "miliar" })}
-              hint={periodHintQ(yr(r.pdrbKonstan), data.periods?.pdrbKonstan)}
+              hint={periodHint(yr(r.pdrbKonstan))}
             />
           )}
-          {TAMPIL_EKONOMI_TRIWULANAN && v(r.pertumbuhanLU) !== null && (
-            <StatCard
-              label="Pertumbuhan Ekonomi Menurut Lapangan Usaha"
-              value={fmt(v(r.pertumbuhanLU)!)}
-              unit="%"
-              icon={BarChart3}
-              trend={tren(data.seri, "pertumbuhanLU", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
-              hint={periodHintQ(yr(r.pertumbuhanLU), data.periods?.pertumbuhanLU)}
-            />
-          )}
-          {TAMPIL_EKONOMI_TRIWULANAN && v(r.lajuPdrbTahunan) !== null && (
+          {v(r.lajuPdrbTahunan) !== null && (
             <StatCard
               label="Laju Pertumbuhan PDRB (q-to-q)"
               value={fmt(v(r.lajuPdrbTahunan)!)}
