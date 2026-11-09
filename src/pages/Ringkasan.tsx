@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import {
-  ArrowRight, Banknote, BarChart3, Briefcase, GraduationCap, Scale, TrendingUp,
+  ArrowRight, Banknote, BarChart3, Briefcase, GraduationCap, Scale,
   Users, UserMinus, LineChart, Percent, AlertCircle, Building2, BookOpen, HeartPulse, Wallet, RefreshCw,
   Wheat, Sprout, Package, User, UserRound, UsersRound, Factory, MapPinned, Landmark, Home
 } from "lucide-react";
@@ -70,13 +70,6 @@ const tren = (
 // Hint period builder for cards
 const periodHint = (year: number | null, prefix = "Tahun") =>
   year ? `${prefix} ${year}` : "";
-
-// Hint period dengan dukungan label triwulan (mis. "Tahun 2025 · Triwulan II").
-const periodHintQ = (year: number | null, suffix?: string | null, prefix = "Tahun") => {
-  const base = periodHint(year, prefix);
-  if (!base) return suffix ?? "";
-  return suffix ? `${base} · ${suffix}` : base;
-};
 
 // Garis Kemiskinan kadang ditulis "563,762" di sheet (dimaksud 563.762 Rp).
 // Jika nilai hasil parser < 10.000, anggap satuan "ribu" dan kalikan 1000.
@@ -499,16 +492,6 @@ const Ringkasan = () => {
               variant="accent"
               trend={tren(data.seri, "pdrbKonstan", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "miliar" })}
               hint={periodHint(yr(r.pdrbKonstan))}
-            />
-          )}
-          {v(r.lajuPdrbTahunan) !== null && (
-            <StatCard
-              label="Laju Pertumbuhan PDRB (q-to-q)"
-              value={fmt(v(r.lajuPdrbTahunan)!)}
-              unit="%"
-              icon={TrendingUp}
-              trend={tren(data.seri, "lajuPdrbTahunan", { higherIsBetter: true, formatDelta: (n) => fmt(n), unit: "poin %", showPercent: false })}
-              hint={periodHintQ(yr(r.lajuPdrbTahunan), data.periods?.lajuPdrbTahunan)}
             />
           )}
           {v(r.ikk) !== null && (
