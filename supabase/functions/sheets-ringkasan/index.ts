@@ -18,7 +18,7 @@ const RINGKASAN_KEYS = [
   "jumlahMiskinEkstrem", "gini", "distribusi40Bawah", "distribusi40Tengah", "distribusi20Atas",
   "tpak", "tpt", "uhh", "eys", "mys", "ppp", "ipm", "ikk", "luasPanen", "produksiPadi",
   "produksiBeras", "pendudukLaki", "pendudukPerempuan", "pendudukTotal", "pertumbuhanLU",
-  "pdrbKonstan", "lajuPdrbTahunan", "bangunanTempatTinggal", "produksiBawangMerah",
+  "pdrbKonstan", "pdrbPengeluaranBerlaku", "lajuPdrbTahunan", "bangunanTempatTinggal", "produksiBawangMerah",
   "produksiCabeRawit", "produksiKentang", "jumlahKecamatan", "jumlahDesaKelurahan",
 ] as const;
 
@@ -116,6 +116,13 @@ Deno.serve(async (req) => {
       if (exact !== -1) return exact;
       return header.findIndex((h: string) => norm(h).startsWith(want));
     };
+    const idxAny = (...labels: string[]) => {
+      for (const label of labels) {
+        const col = idx(label);
+        if (col !== -1) return col;
+      }
+      return -1;
+    };
 
     // Ekstrak label periode (mis. "Triwulan II") dari teks header sumber.
     // Mengembalikan null jika tidak ditemukan pola triwulan.
@@ -161,8 +168,15 @@ Deno.serve(async (req) => {
       pendudukTotal: idx("Proyeksi Penduduk Total (Jiwa)"),
       // Catatan: header sheet kini menambah suffix " (Triwulan II)" untuk kolom
       // PDRB. Pencarian prefix di atas menanganinya secara otomatis.
-      pertumbuhanLU: idx("Pertumbuhan Ekonomi Menurut Lapangan Usaha"),
-      pdrbKonstan: idx("PDRB Atas Dasar Harga Konstan (miliar rupiah)"),
+      pertumbuhanLU: idxAny(
+        "Laju Pertumbuhan Produk Domestik Regional Bruto Atas Dasar Harga Konstan 2010 Menurut Lapangan Usaha",
+        "Pertumbuhan Ekonomi Menurut Lapangan Usaha",
+      ),
+      pdrbPengeluaranBerlaku: idx("Produk Domestik Regional Bruto (PDRB) Menurut Pengeluaran Atas Dasar Harga Berlaku (Milyar Rupiah)"),
+      pdrbKonstan: idxAny(
+        "Produk Domestik Regional Bruto (PDRB) Menurut Pengeluaran Atas Dasar Harga Konstan 2010 (Milyar Rupiah)",
+        "PDRB Atas Dasar Harga Konstan (miliar rupiah)",
+      ),
       lajuPdrbTahunan: idx("Laju Pertumbuhan PDRB (q to q) (persen)"),
       // Kolom partisipasi sekolah (header utama + sub-header pada baris 1).
       // Kolom utama hanya berisi label "APS"/"APM"/"APK"; nilai per kelompok
@@ -218,6 +232,7 @@ Deno.serve(async (req) => {
       pendudukPerempuan: parseId(r[COL.pendudukPerempuan]),
       pendudukTotal: parseId(r[COL.pendudukTotal]),
       pertumbuhanLU: parseId(r[COL.pertumbuhanLU]),
+      pdrbPengeluaranBerlaku: parseId(r[COL.pdrbPengeluaranBerlaku]),
       pdrbKonstan: parseId(r[COL.pdrbKonstan]),
       lajuPdrbTahunan: parseId(r[COL.lajuPdrbTahunan]),
       // Partisipasi sekolah: APS (07-12, 13-15, 16-18 th), APM/APK (SD, SMP, SMA)
@@ -275,6 +290,7 @@ Deno.serve(async (req) => {
       pendudukPerempuan: latest("pendudukPerempuan"),
       pendudukTotal: latest("pendudukTotal"),
       pertumbuhanLU: latest("pertumbuhanLU"),
+      pdrbPengeluaranBerlaku: latest("pdrbPengeluaranBerlaku"),
       pdrbKonstan: latest("pdrbKonstan"),
       lajuPdrbTahunan: latest("lajuPdrbTahunan"),
       bangunanTempatTinggal: latest("bangunanTempatTinggal"),
